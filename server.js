@@ -4,23 +4,20 @@ const { createClient } = require('@supabase/supabase-js');
 
 const PORT = process.env.PORT || 10000;
 
-// بيانات التوثيق والمعلومات الخاصة بالمرحل (NIP-11)
 const RELAY_METADATA = {
   name: "كلمات والقلم",
   description: "مرحّل كلمات الخاص لنشر المحتوى والتواصل عبر Nostr",
-  pubkey: "", // يمكنك وضع مفتاحك العام (npub أو hex) هنا إن أردت
+  pubkey: "",
   contact: "bal612.com@gmail.com",
   supported_nips: [1, 11, 20],
   software: "kalimat-custom-relay",
   version: "1.0.0",
-  icon: "https://kalimat-ruddy.vercel.app/icon.png", // رابط الشعار (أو أي رابط صورة مباشر للشعار)
+  icon: "https://kalimat-ruddy.vercel.app/icon.png",
   privacy_policy: "https://kalimat.app/privacy",
   terms_of_service: "https://kalimat.app/terms"
 };
 
-// إنشاء خادم HTTP للتعامل مع طلبات البيانات وطلبات الـ WebSocket
 const server = http.createServer((req, res) => {
-  // إضافة ترويسات CORS للسماح بالوصول من أي تطبيق
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
@@ -31,18 +28,15 @@ const server = http.createServer((req, res) => {
     return;
   }
 
-  // عند طلب معلومات المرحل (NIP-11)
   if (req.headers['accept'] === 'application/nostr+json') {
     res.writeHead(200, { 'Content-Type': 'application/json' });
     res.end(JSON.stringify(RELAY_METADATA));
   } else {
-    // الاستجابة العادية عند فتح الرابط في المتصفح
     res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
     res.end('مرحباً بك في مرحّل كلمات (Kalimat Nostr Relay)');
   }
 });
 
-// إعداد خادم الـ WebSocket على نفس الخادم
 const wss = new WebSocketServer({ server });
 
 const SUPABASE_URL = 'https://iewuxvilbwlvvxgdnfze.supabase.co';

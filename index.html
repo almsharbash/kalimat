@@ -13,87 +13,151 @@
       --subtext: #94a3b8;
       --accent: #38bdf8;
       --border: #334155;
+      --error: #f87171;
     }
+    * { box-sizing: border-box; font-family: system-ui, -apple-system, sans-serif; }
     body {
       margin: 0;
-      font-family: system-ui, -apple-system, sans-serif;
       background-color: var(--bg);
       color: var(--text);
       display: flex;
       justify-content: center;
+      min-height: 100vh;
     }
-    .app {
+    .app-container {
       width: 100%;
-      max-width: 500px;
+      max-width: 480px;
       min-height: 100vh;
       border-left: 1px solid var(--border);
       border-right: 1px solid var(--border);
-      padding-bottom: 70px;
+      display: flex;
+      flex-direction: column;
     }
+
+    /* شاشة تسجيل الدخول المستقلة */
+    .auth-screen {
+      padding: 30px 20px;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      flex-grow: 1;
+    }
+    .auth-brand {
+      text-align: center;
+      font-size: 2.2rem;
+      font-weight: bold;
+      color: var(--accent);
+      margin-bottom: 8px;
+    }
+    .auth-sub {
+      text-align: center;
+      color: var(--subtext);
+      font-size: 0.95rem;
+      margin-bottom: 30px;
+    }
+    .auth-card {
+      background: var(--card);
+      padding: 24px;
+      border-radius: 16px;
+      border: 1px solid var(--border);
+    }
+    .input-group {
+      margin-bottom: 16px;
+    }
+    .input-group label {
+      display: block;
+      font-size: 0.85rem;
+      color: var(--subtext);
+      margin-bottom: 6px;
+    }
+    input[type="email"], input[type="password"], input[type="text"] {
+      width: 100%;
+      background: #0f172a;
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 12px;
+      color: var(--text);
+      font-size: 0.95rem;
+      outline: none;
+    }
+    input:focus { border-color: var(--accent); }
+    .btn-primary {
+      width: 100%;
+      background-color: var(--accent);
+      color: #0f172a;
+      border: none;
+      border-radius: 10px;
+      padding: 12px;
+      font-weight: bold;
+      font-size: 1rem;
+      cursor: pointer;
+      margin-top: 10px;
+    }
+    .auth-switch {
+      text-align: center;
+      margin-top: 20px;
+      font-size: 0.9rem;
+      color: var(--subtext);
+    }
+    .auth-switch a {
+      color: var(--accent);
+      text-decoration: none;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .msg-box {
+      color: var(--error);
+      font-size: 0.85rem;
+      margin-top: 10px;
+      text-align: center;
+    }
+
+    /* شاشة المنصة المباشرة */
     header {
       position: sticky;
       top: 0;
-      background-color: rgba(15, 23, 42, 0.85);
+      background-color: rgba(15, 23, 42, 0.9);
       backdrop-filter: blur(8px);
       border-bottom: 1px solid var(--border);
       padding: 16px;
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 1.2rem;
-      font-weight: bold;
-      color: var(--accent);
+      z-index: 10;
     }
-    .auth-container, .composer {
+    .brand-name { font-size: 1.3rem; font-weight: bold; color: var(--accent); }
+    .btn-logout {
+      background: transparent;
+      color: var(--subtext);
+      border: 1px solid var(--border);
+      border-radius: 20px;
+      padding: 6px 14px;
+      font-size: 0.85rem;
+      cursor: pointer;
+    }
+    .composer {
       padding: 16px;
       border-bottom: 1px solid var(--border);
     }
-    input[type="email"], input[type="password"], input[type="text"] {
-      width: 100%;
-      background: var(--card);
-      border: 1px solid var(--border);
-      border-radius: 8px;
-      padding: 10px;
-      color: var(--text);
-      font-size: 0.9rem;
-      margin-bottom: 8px;
-      box-sizing: border-box;
-      outline: none;
-    }
     textarea {
       width: 100%;
-      height: 80px;
+      height: 85px;
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 12px;
       color: var(--text);
-      font-size: 1rem;
+      font-size: 0.95rem;
       resize: none;
-      box-sizing: border-box;
       outline: none;
     }
-    button {
-      background-color: var(--accent);
-      color: #0f172a;
-      border: none;
-      border-radius: 20px;
-      padding: 8px 18px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-    .btn-secondary {
-      background: transparent;
-      color: var(--subtext);
-      border: 1px solid var(--border);
-    }
-    .feed { padding: 12px; }
+    .feed { padding: 16px; }
     .post {
       background: var(--card);
       border: 1px solid var(--border);
       border-radius: 12px;
       padding: 14px;
-      margin-bottom: 12px;
+      margin-bottom: 14px;
     }
     .post-header {
       display: flex;
@@ -120,36 +184,61 @@
 </head>
 <body>
 
-  <div class="app">
-    <header>
-      <span>كلمات</span>
-      <button id="logoutBtn" class="btn-secondary hidden" onclick="handleLogout()">خروج</button>
-    </header>
+  <div class="app-container">
 
-    <!-- واجهة تسجيل الدخول / إنشاء حساب -->
-    <div id="authBox" class="auth-container">
-      <h3 id="authTitle" style="margin-top:0;">تسجيل الدخول</h3>
-      <input type="text" id="usernameInput" placeholder="الاسم المستعار (للغياب فقط عند إنشاء حساب)" class="hidden">
-      <input type="email" id="emailInput" placeholder="البريد الإلكتروني">
-      <input type="password" id="passwordInput" placeholder="كلمة السر">
-      <div style="display:flex; gap:10px; margin-top:8px;">
-        <button onclick="handleAuth()" id="authSubmitBtn">دخول</button>
-        <button class="btn-secondary" onclick="toggleAuthMode()" id="authToggleBtn">إنشاء حساب جديد</button>
+    <!-- 1. شاشة تسجيل الدخول والإنشاء المستقلة -->
+    <div id="authScreen" class="auth-screen">
+      <div class="auth-brand">كلمات</div>
+      <div class="auth-sub" id="authSub">سجل دخولك للتفاعل مع المنشورات</div>
+
+      <div class="auth-card">
+        <div id="usernameGroup" class="input-group hidden">
+          <label>الاسم المستعار</label>
+          <input type="text" id="usernameInput" placeholder="أدخل اسمك المفضّل">
+        </div>
+
+        <div class="input-group">
+          <label>البريد الإلكتروني</label>
+          <input type="email" id="emailInput" placeholder="name@example.com">
+        </div>
+
+        <div class="input-group">
+          <label>كلمة السر</label>
+          <input type="password" id="passwordInput" placeholder="••••••••">
+        </div>
+
+        <button class="btn-primary" id="authBtn" onclick="handleAuth()">تسجيل الدخول</button>
+        <div id="errorMsg" class="msg-box"></div>
+      </div>
+
+      <div class="auth-switch">
+        <span id="switchText">ليس لديك حساب؟</span>
+        <a id="switchBtn" onclick="toggleAuthMode()">إنشاء حساب جديد</a>
       </div>
     </div>
 
-    <!-- واجهة كتابة المنشور (تظهر بعد الدخول) -->
-    <div id="composerBox" class="composer hidden">
-      <textarea id="postContent" placeholder="ماذا يدور في ذهنك؟"></textarea>
-      <div style="display:flex; justify-content:space-between; align-items:center; margin-top:10px;">
-        <span id="userBadge" style="font-size:0.85rem; color:var(--accent);"></span>
-        <button onclick="publishPost()">نشر</button>
+    <!-- 2. واجهة التطبيق الرئيسية (تظهر بعد الدخول) -->
+    <div id="appScreen" class="hidden">
+      <header>
+        <span class="brand-name">كلمات</span>
+        <div style="display:flex; align-items:center; gap:10px;">
+          <span id="userBadge" style="font-size:0.85rem; color:var(--accent);"></span>
+          <button class="btn-logout" onclick="handleLogout()">خروج</button>
+        </div>
+      </header>
+
+      <div class="composer">
+        <textarea id="postContent" placeholder="ماذا يدور في ذهنك اليوم؟"></textarea>
+        <div style="display:flex; justify-content:flex-end; margin-top:10px;">
+          <button class="btn-primary" style="width:auto; padding: 8px 24px;" onclick="publishPost()">نشر</button>
+        </div>
+      </div>
+
+      <div class="feed" id="feed">
+        <div style="text-align:center; color: var(--subtext); padding: 20px;">جاري تحميل المنشورات...</div>
       </div>
     </div>
 
-    <div class="feed" id="feed">
-      <div style="text-align:center; color: var(--subtext); padding: 20px;">جاري التحميل...</div>
-    </div>
   </div>
 
   <script>
@@ -157,69 +246,68 @@
     const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFybmJmanZ1dHprbW9hbm5tdWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MjY2NTYsImV4cCI6MjEwNTAwMjY1Nn0.QwxNDItMRnATNTdoMqImak-s_zkQaD9vosuvMc3wm_M';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let isSignUp = false;
+    let isSignUpMode = false;
     let currentUser = null;
 
     function toggleAuthMode() {
-      isSignUp = !isSignUp;
-      document.getElementById('authTitle').innerText = isSignUp ? 'حساب جديد' : 'تسجيل الدخول';
-      document.getElementById('authSubmitBtn').innerText = isSignUp ? 'إنشاء الحساب' : 'دخول';
-      document.getElementById('authToggleBtn').innerText = isSignUp ? 'لديك حساب؟ سجل دخولك' : 'إنشاء حساب جديد';
-      document.getElementById('usernameInput').classList.toggle('hidden', !isSignUp);
+      isSignUpMode = !isSignUpMode;
+      document.getElementById('errorMsg').innerText = '';
+      document.getElementById('usernameGroup').classList.toggle('hidden', !isSignUpMode);
+      document.getElementById('authSub').innerText = isSignUpMode ? 'أنشئ حسابك للبدء في المشاركة' : 'سجل دخولك للتفاعل مع المنشورات';
+      document.getElementById('authBtn').innerText = isSignUpMode ? 'إنشاء الحساب' : 'تسجيل الدخول';
+      document.getElementById('switchText').innerText = isSignUpMode ? 'لديك حساب بالفعل؟' : 'ليس لديك حساب؟';
+      document.getElementById('switchBtn').innerText = isSignUpMode ? 'تسجيل الدخول' : 'إنشاء حساب جديد';
     }
 
-    async function checkUser() {
+    async function checkSession() {
       const { data: { user } } = await _supabase.auth.getUser();
       currentUser = user;
       if (user) {
-        document.getElementById('authBox').classList.add('hidden');
-        document.getElementById('composerBox').classList.remove('hidden');
-        document.getElementById('logoutBtn').classList.remove('hidden');
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
         const name = user.user_metadata?.full_name || user.email.split('@')[0];
-        document.getElementById('userBadge').innerText = 'الحساب: ' + name;
+        document.getElementById('userBadge').innerText = name;
+        fetchPosts();
       } else {
-        document.getElementById('authBox').classList.remove('hidden');
-        document.getElementById('composerBox').classList.add('hidden');
-        document.getElementById('logoutBtn').classList.add('hidden');
+        document.getElementById('authScreen').classList.remove('hidden');
+        document.getElementById('appScreen').classList.add('hidden');
       }
-      fetchPosts();
     }
 
     async function handleAuth() {
       const email = document.getElementById('emailInput').value.trim();
       const password = document.getElementById('passwordInput').value.trim();
       const username = document.getElementById('usernameInput').value.trim();
+      const errBox = document.getElementById('errorMsg');
+      errBox.innerText = '';
 
-      if (!email || !password) return alert('يرجى كتابة البريد وكلمة السر');
+      if (!email || !password) return errBox.innerText = 'يرجى ملء جميع الحقول المطلوبة';
 
-      if (isSignUp) {
+      if (isSignUpMode) {
         const { data, error } = await _supabase.auth.signUp({
           email,
           password,
           options: { data: { full_name: username || 'مستخدم كلمات' } }
         });
-        if (error) alert('خطأ في الإنشاء: ' + error.message);
-        else {
-          alert('تم إنشاء الحساب بنجاح!');
-          checkUser();
-        }
+        if (error) errBox.innerText = error.message;
+        else checkSession();
       } else {
         const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-        if (error) alert('خطأ في الدخول: ' + error.message);
-        else checkUser();
+        if (error) errBox.innerText = 'البريد أو كلمة السر غير صحيحة';
+        else checkSession();
       }
     }
 
     async function handleLogout() {
       await _supabase.auth.signOut();
-      checkUser();
+      checkSession();
     }
 
     async function fetchPosts() {
       const { data, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
       const feed = document.getElementById('feed');
-      if (error || !data) {
-        feed.innerHTML = `<div style="text-align:center; color: var(--subtext);">لا توجد منشورات.</div>`;
+      if (error || !data || data.length === 0) {
+        feed.innerHTML = `<div style="text-align:center; color: var(--subtext);">لا توجد منشورات حتى الآن. كن أول من ينشر!</div>`;
         return;
       }
       feed.innerHTML = data.map(post => `
@@ -236,7 +324,7 @@
 
     async function publishPost() {
       const content = document.getElementById('postContent').value.trim();
-      if (!content) return alert('اكتب منشورك أولاً');
+      if (!content) return;
 
       const name = currentUser?.user_metadata?.full_name || currentUser?.email?.split('@')[0] || 'مستخدم';
 
@@ -248,7 +336,7 @@
       }
     }
 
-    checkUser();
+    checkSession();
   </script>
 </body>
-</html>
+  </html>

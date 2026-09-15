@@ -3,59 +3,220 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>كلمات - Nostr</title>
+  <title>كلمات - Kalimat</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, sans-serif; }
-    body { background: #0f1419; color: #fff; display: flex; justify-content: center; min-height: 100vh; }
-    .container { width: 100%; max-width: 600px; border-left: 1px solid #2f3336; border-right: 1px solid #2f3336; padding: 15px; }
-    h1 { color: #a855f7; margin-bottom: 10px; }
-    .status { color: #4ade80; font-size: 14px; margin-bottom: 20px; }
-    textarea { width: 100%; background: #16181c; border: 1px solid #2f3336; color: #fff; padding: 10px; border-radius: 8px; resize: none; margin-bottom: 10px; }
-    button { background: #a855f7; color: #fff; border: none; padding: 10px 20px; border-radius: 20px; font-weight: bold; cursor: pointer; }
-    .card { background: #16181c; padding: 12px; margin-top: 10px; border-radius: 8px; border: 1px solid #2f3336; }
-    .pubkey { font-size: 12px; color: #71767b; font-family: monospace; }
+    :root {
+      --bg: #0f172a;
+      --card: #1e293b;
+      --text: #f8fafc;
+      --subtext: #94a3b8;
+      --accent: #38bdf8;
+      --border: #334155;
+    }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, sans-serif;
+      background-color: var(--bg);
+      color: var(--text);
+      display: flex;
+      justify-content: center;
+    }
+    .app {
+      width: 100%;
+      max-width: 500px;
+      min-height: 100vh;
+      border-left: 1px solid var(--border);
+      border-right: 1px solid var(--border);
+      padding-bottom: 70px;
+    }
+    header {
+      position: sticky;
+      top: 0;
+      background-color: rgba(15, 23, 42, 0.85);
+      backdrop-filter: blur(8px);
+      border-bottom: 1px solid var(--border);
+      padding: 16px;
+      text-align: center;
+      font-size: 1.2rem;
+      font-weight: bold;
+      color: var(--accent);
+    }
+    .composer {
+      padding: 16px;
+      border-bottom: 1px solid var(--border);
+    }
+    textarea {
+      width: 100%;
+      height: 80px;
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 12px;
+      color: var(--text);
+      font-size: 1rem;
+      resize: none;
+      box-sizing: border-box;
+      outline: none;
+    }
+    textarea:focus { border-color: var(--accent); }
+    .composer-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+    }
+    input[type="text"] {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      color: var(--text);
+      font-size: 0.85rem;
+      outline: none;
+    }
+    button {
+      background-color: var(--accent);
+      color: #0f172a;
+      border: none;
+      border-radius: 20px;
+      padding: 8px 18px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+    .feed { padding: 12px; }
+    .post {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 14px;
+      margin-bottom: 12px;
+    }
+    .post-header {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-bottom: 8px;
+    }
+    .avatar {
+      width: 38px;
+      height: 38px;
+      border-radius: 50%;
+      background: var(--accent);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      color: #0f172a;
+      font-weight: bold;
+    }
+    .author-name { font-weight: bold; font-size: 0.95rem; }
+    .post-time { font-size: 0.75rem; color: var(--subtext); margin-right: auto; }
+    .post-content { font-size: 0.95rem; line-height: 1.5; white-space: pre-wrap; }
+    .post-footer {
+      display: flex;
+      gap: 16px;
+      margin-top: 10px;
+      color: var(--subtext);
+      font-size: 0.85rem;
+    }
+    .nav-bar {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 500px;
+      background: var(--bg);
+      border-top: 1px solid var(--border);
+      display: flex;
+      justify-content: space-around;
+      padding: 12px 0;
+    }
+    .nav-item { color: var(--subtext); text-decoration: none; font-size: 1.2rem; }
+    .nav-item.active { color: var(--accent); }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1>كلمات⚡Nostr</h1>
-    <div class="status" id="status">جاري الاتصال بالشبكة...</div>
-    <textarea id="postText" rows="3" placeholder="ماذا يدور في ذهنك؟"></textarea>
-    <button onclick="publishPost()">نشر 🚀</button>
-    <div id="feed" style="margin-top: 20px;"></div>
+
+  <div class="app">
+    <header>كلمات</header>
+
+    <div class="composer">
+      <textarea id="postContent" placeholder="ماذا يدور في ذهنك؟"></textarea>
+      <div class="composer-actions">
+        <input type="text" id="authorName" placeholder="اسمك" value="أحمد">
+        <button onclick="publishPost()">نشر</button>
+      </div>
+    </div>
+
+    <div class="feed" id="feed">
+      <div style="text-align:center; color: var(--subtext); padding: 20px;">جاري تحميل المنشورات...</div>
+    </div>
+
+    <div class="nav-bar">
+      <a href="#" class="nav-item active">🏠</a>
+      <a href="#" class="nav-item">🔍</a>
+      <a href="#" class="nav-item">🔔</a>
+      <a href="#" class="nav-item">👤</a>
+    </div>
   </div>
 
   <script>
-    const socket = new WebSocket('wss://relay.damus.io');
-    const posts = [];
+    const SUPABASE_URL = 'https://qrnbfjvutzkmoannmujk.supabase.co';
+    const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFybmJmanZ1dHprbW9hbm5tdWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODk0MjY2NTYsImV4cCI6MjEwNTAwMjY1Nn0.QwxNDItMRnATNTdoMqImak-s_zkQaD9vosuvMc3wm_M';
+    
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    socket.onopen = () => {
-      document.getElementById('status').innerText = 'متصل بشبكة Nostr الحية ⚡';
-      socket.send(JSON.stringify(["REQ", "sub", { kinds: [1], limit: 15 }]));
-    };
+    async function fetchPosts() {
+      const { data, error } = await _supabase
+        .from('posts')
+        .select('*')
+        .order('created_at', { ascending: false });
 
-    socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data[0] === "EVENT") {
-        const p = data[2];
-        posts.unshift(p);
-        render();
-      }
-    };
-
-    function render() {
       const feed = document.getElementById('feed');
-      feed.innerHTML = posts.map(p => `
-        <div class="card">
-          <div class="pubkey">${p.pubkey.substring(0, 10)}...</div>
-          <div style="margin-top:5px;">${p.content}</div>
+      if (error) {
+        feed.innerHTML = `<div style="color:red; text-align:center;">حدث خطأ أثناء تحميل المنشورات</div>`;
+        return;
+      }
+
+      if (!data || data.length === 0) {
+        feed.innerHTML = `<div style="text-align:center; color: var(--subtext); padding: 20px;">لا توجد منشورات بعد. كن أول من ينشر!</div>`;
+        return;
+      }
+
+      feed.innerHTML = data.map(post => `
+        <div class="post">
+          <div class="post-header">
+            <div class="avatar">${post.author_name ? post.author_name[0].toUpperCase() : '؟'}</div>
+            <div class="author-name">${post.author_name}</div>
+            <div class="post-time">${new Date(post.created_at).toLocaleTimeString('ar-EG', {hour: '2-digit', minute:'2-digit'})}</div>
+          </div>
+          <div class="post-content">${post.content}</div>
+          <div class="post-footer">
+            <span>❤️ ${post.likes_count || 0}</span>
+            <span>💬 تعليق</span>
+          </div>
         </div>
       `).join('');
     }
 
-    function publishPost() {
-      alert('تم استقبال منشورك محلياً! التوقيع على Nostr يتطلب مفتاح nsec.');
+    async function publishPost() {
+      const content = document.getElementById('postContent').value.trim();
+      const author = document.getElementById('authorName').value.trim() || 'مجهول';
+
+      if (!content) return alert('الرجاء كتابة نص المنشور');
+
+      const { error } = await _supabase
+        .from('posts')
+        .insert([{ content: content, author_name: author }]);
+
+      if (error) {
+        alert('حدث خطأ أثناء النشر: ' + error.message);
+      } else {
+        document.getElementById('postContent').value = '';
+        fetchPosts();
+      }
     }
+
+    fetchPosts();
   </script>
 </body>
 </html>

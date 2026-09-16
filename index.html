@@ -17,6 +17,7 @@
       --accent: #1d9bf0;
       --accent-hover: #1a8cd8;
       --like-color: #f91880;
+      --repost-color: #00ba7c;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -26,6 +27,10 @@
 
     header { position: sticky; top: 0; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
     
+    .header-right { display: flex; align-items: center; gap: 12px; }
+    .back-btn { font-size: 1.2rem; color: var(--text-main); cursor: pointer; padding: 4px; display: none; }
+    .back-btn:hover { color: var(--accent); }
+
     /* الشعار (Logo) */
     .brand { font-size: 1.3rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 10px; cursor: pointer; }
     .brand img.app-logo { height: 28px; width: auto; object-fit: contain; }
@@ -81,10 +86,11 @@
     .post-action { display: flex; align-items: center; gap: 6px; cursor: pointer; transition: color 0.2s; }
     .post-action:hover { color: var(--accent); }
     .post-action.liked { color: var(--like-color); }
+    .post-action.reposted { color: var(--repost-color); }
 
     .comments-box { margin-top: 12px; border-top: 1px solid var(--border-color); padding-top: 10px; display: none; }
     .comments-box.active { display: block; }
-    .comment-item { background: #0c0d0e; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 0.85rem; }
+    .comment-item { background: #0c0d0e; padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 0.85rem; border: 1px solid var(--border-color); }
     .comment-user { font-weight: bold; color: var(--accent); margin-bottom: 2px; }
 
     /* Profile View */
@@ -118,11 +124,15 @@
 
   <div class="app-container">
     <header>
-      <!-- اللوغو الأساسي مع اسم المنصة -->
-      <div class="brand" onclick="switchTab('homeSection')">
-        <!-- عند توفر صورة اللوغو الخاصة بك قم بإلغاء التهميش واستبدال الرابط -->
-        <!-- <img src="logo.png" class="app-logo" alt="Kalimat Logo"> -->
-        <i class="fa-solid fa-feather-pointed"></i> كلمات
+      <div class="header-right">
+        <!-- زر الرجوع -->
+        <i id="backBtn" class="fa-solid fa-arrow-right back-btn" onclick="goBackHome()" title="رجوع"></i>
+        <!-- اللوغو الأساسي مع اسم المنصة -->
+        <div class="brand" onclick="switchTab('homeSection')">
+          <!-- عند توفر صورة اللوغو الخاصة بك قم بإلغاء التهميش واستبدال الرابط -->
+          <!-- <img src="logo.png" class="app-logo" alt="Kalimat Logo"> -->
+          <i class="fa-solid fa-feather-pointed"></i> كلمات
+        </div>
       </div>
       <div id="userBadge" class="user-pill hidden" onclick="switchTab('profileSection')"></div>
     </header>
@@ -222,7 +232,7 @@
       <div id="myPostsList"></div>
     </div>
 
-    <!-- Chat View (مُعدل ومكتمل بالكامل) -->
+    <!-- Chat View -->
     <div id="chatSection" class="page-section">
       <div class="chat-container">
         <h3 style="margin-bottom: 15px; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">الرسائل المباشرة</h3>
@@ -358,16 +368,38 @@
       location.reload();
     }
 
+    /* التنقل وإدارة زر الرجوع */
     function switchTab(sectionId, el) {
       document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
       
       document.getElementById(sectionId).classList.add('active');
-      if (el) el.classList.add('active');
+      
+      const backBtn = document.getElementById('backBtn');
+      if (sectionId === 'homeSection') {
+        backBtn.style.display = 'none';
+      } else {
+        backBtn.style.display = 'block';
+      }
+
+      if (el) {
+        el.classList.add('active');
+      } else {
+        const links = document.querySelectorAll('.nav-link');
+        if (sectionId === 'homeSection') links[0]?.classList.add('active');
+        else if (sectionId === 'searchSection') links[1]?.classList.add('active');
+        else if (sectionId === 'chatSection') links[2]?.classList.add('active');
+        else if (sectionId === 'notificationsSection') links[3]?.classList.add('active');
+        else if (sectionId === 'profileSection') links[4]?.classList.add('active');
+      }
 
       if(sectionId === 'profileSection') {
         renderMyPosts();
       }
+    }
+
+    function goBackHome() {
+      switchTab('homeSection');
     }
 
     function toggleEmojiPicker() {
@@ -445,7 +477,9 @@
         content: text,
         image_url: selectedImageData,
         likes: 0,
+        reposts: 0,
         liked_by_me: false,
+        reposted_by_me: false,
         comments: [],
         created_at: new Date().toISOString()
       };
@@ -474,6 +508,35 @@
         savePostsToStorage();
         renderPosts(localPosts);
       }
+    }
+
+    /* دالة تفعيل وتعديل إعادة النشر */
+    function toggleRepost(postId) {
+      const originalPost = localPosts.find(p => p.id === postId);
+      if (!originalPost) return;
+
+      if (!originalPost.reposts) originalPost.reposts = 0;
+      originalPost.reposted_by_me = !originalPost.reposted_by_me;
+      originalPost.reposts += originalPost.reposted_by_me ? 1 : -1;
+
+      if (originalPost.reposted_by_me) {
+        const repostedPost = {
+          id: Date.now(),
+          author_name: activeUser,
+          content: `🔁 إعادة نشر من @${originalPost.author_name}:\n\n${originalPost.content}`,
+          image_url: originalPost.image_url,
+          likes: 0,
+          reposts: 0,
+          liked_by_me: false,
+          reposted_by_me: false,
+          comments: [],
+          created_at: new Date().toISOString()
+        };
+        localPosts.unshift(repostedPost);
+      }
+
+      savePostsToStorage();
+      renderPosts(localPosts);
     }
 
     function toggleComments(postId) {
@@ -509,7 +572,9 @@
             content: p.content || '',
             image_url: p.image_url || null,
             likes: p.likes || 0,
+            reposts: p.reposts || 0,
             liked_by_me: false,
+            reposted_by_me: false,
             comments: []
           }));
 
@@ -526,7 +591,7 @@
 
       if (localPosts.length === 0) {
         localPosts = [
-          { id: 1, author_name: 'Kalimat', content: 'مرحباً بك! جرب إضافة منشور أو صورة، وسيظل محفوظاً بشكل دائم الآن.', likes: 0, liked_by_me: false, comments: [] }
+          { id: 1, author_name: 'Kalimat', content: 'مرحباً بك! جرب إضافة منشور أو صورة، وسيظل محفوظاً بشكل دائم الآن.', likes: 0, reposts: 0, liked_by_me: false, reposted_by_me: false, comments: [] }
         ];
         savePostsToStorage();
       }
@@ -571,13 +636,15 @@
                 <div class="post-action" onclick="toggleComments(${p.id})">
                   <i class="fa-regular fa-comment"></i> ${commentsList.length}
                 </div>
-                <div class="post-action"><i class="fa-solid fa-retweet"></i> 0</div>
+                <div class="post-action ${p.reposted_by_me ? 'reposted' : ''}" onclick="toggleRepost(${p.id})">
+                  <i class="fa-solid fa-retweet"></i> ${p.reposts || 0}
+                </div>
                 <div class="post-action ${p.liked_by_me ? 'liked' : ''}" onclick="toggleLike(${p.id})">
                   <i class="fa-${p.liked_by_me ? 'solid' : 'regular'} fa-heart"></i> ${p.likes}
                 </div>
               </div>
 
-              <!-- Comments -->
+              <!-- Comments Section (Hidden by default) -->
               <div id="comments-${p.id}" class="comments-box">
                 <div id="comments-list-${p.id}">
                   ${commentsList.map(c => `
@@ -654,7 +721,6 @@
       }
     }
 
-    /* دالة إرسال الرسائل المباشرة */
     function sendChatMessage() {
       const input = document.getElementById('chatInput');
       const text = input.value.trim();

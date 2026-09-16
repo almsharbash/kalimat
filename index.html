@@ -523,6 +523,13 @@
     }
 
     checkUser();
+//    window.addEventListener('DOMContentLoaded', () => {
+      setTimeout(() => {
+        if (typeof navigateTo === 'function') {
+          navigateTo('home');
+        }
+      }, 300);
+    });
   </script>
 </body>
 </html>

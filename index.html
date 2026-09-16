@@ -3,132 +3,386 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>كلمات</title>
+  <title>كلمات - Kalimat</title>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
-      --bg: #000000;
-      --card: #16181c;
-      --text: #e7e9ea;
-      --subtext: #71767b;
-      --accent: #e91e63;
-      --border: #2f3336;
+      --bg: #090a0f;
+      --card-bg: #12141c;
+      --card-border: #1f2231;
+      --text-main: #f3f4f6;
+      --text-sub: #8b92a5;
+      --accent-gradient: linear-gradient(135deg, #f43f5e, #e11d48);
+      --accent: #f43f5e;
+      --hover-bg: #1a1d29;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
-    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
-    .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; min-height: 100vh; border-left: 1px solid var(--border); border-right: 1px solid var(--border); position: relative; padding-bottom: 60px; }
-    
-    header { position: sticky; top: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; z-index: 100; }
-    .logo { font-size: 1.2rem; font-weight: bold; color: var(--text); display: flex; align-items: center; gap: 8px; }
-    .search-bar { width: 100%; background: #202327; border: none; border-radius: 9999px; padding: 10px 16px; color: white; outline: none; margin: 10px 0; }
-    
-    .auth-container { padding: 32px 20px; display: flex; flex-direction: column; gap: 16px; align-items: center; }
-    .auth-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; }
-    .input-field { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: #0a0a0a; color: white; outline: none; }
-    .btn-primary { width: 100%; padding: 12px; border-radius: 9999px; background: var(--accent); color: white; font-weight: bold; border: none; cursor: pointer; }
-    .btn-secondary { background: transparent; color: var(--subtext); border: none; cursor: pointer; font-size: 0.9rem; margin-top: 10px; }
 
-    .post-box { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; }
-    .avatar { width: 44px; height: 44px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; color: white; flex-shrink: 0; }
-    .post-input-container { flex: 1; }
-    textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; min-height: 80px; }
-    .post-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px; }
-    .post-btn { background: var(--accent); color: white; border: none; padding: 8px 20px; border-radius: 9999px; font-weight: bold; cursor: pointer; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+    body { background-color: var(--bg); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
     
-    .tweet { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; }
-    .tweet-content { flex: 1; }
-    .tweet-header { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
-    .tweet-author { font-weight: bold; }
-    .tweet-handle { color: var(--subtext); font-size: 0.9rem; }
-    .tweet-text { line-height: 1.4; margin-bottom: 12px; font-size: 0.98rem; }
-    .tweet-footer { display: flex; justify-content: space-between; max-width: 300px; color: var(--subtext); font-size: 0.9rem; }
-    .action-btn { cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
-    .action-btn:hover { color: var(--accent); }
+    .app-container {
+      width: 100%;
+      max-width: 480px;
+      display: flex;
+      flex-direction: column;
+      min-height: 100vh;
+      border-left: 1px solid var(--card-border);
+      border-right: 1px solid var(--card-border);
+      position: relative;
+      padding-bottom: 70px;
+      background: var(--bg);
+    }
 
-    nav { position: fixed; bottom: 0; width: 100%; max-width: 500px; background: rgba(0,0,0,0.95); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 12px 0; z-index: 100; }
-    .nav-item { color: var(--subtext); font-size: 1.3rem; text-decoration: none; cursor: pointer; }
-    .nav-item.active { color: var(--accent); }
+    /* Header */
+    header {
+      position: sticky;
+      top: 0;
+      background: rgba(9, 10, 15, 0.85);
+      backdrop-filter: blur(15px);
+      border-bottom: 1px solid var(--card-border);
+      padding: 14px 20px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      z-index: 100;
+    }
+    .logo {
+      font-size: 1.3rem;
+      font-weight: 800;
+      background: var(--accent-gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
 
-    .profile-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--border); }
-    .profile-avatar-lg { width: 80px; height: 80px; border-radius: 50%; background: #444; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; }
+    /* Auth Screen */
+    .auth-card {
+      margin: auto 20px;
+      padding: 30px 20px;
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 20px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      text-align: center;
+    }
+    .input-group { margin-bottom: 15px; text-align: right; }
+    .input-field {
+      width: 100%;
+      padding: 14px 16px;
+      border-radius: 12px;
+      border: 1px solid var(--card-border);
+      background: #181b26;
+      color: white;
+      outline: none;
+      font-size: 0.95rem;
+      transition: 0.3s;
+    }
+    .input-field:focus { border-color: var(--accent); }
+    .btn-main {
+      width: 100%;
+      padding: 14px;
+      border-radius: 12px;
+      background: var(--accent-gradient);
+      color: white;
+      font-weight: bold;
+      border: none;
+      cursor: pointer;
+      font-size: 1rem;
+      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3);
+      transition: 0.2s;
+    }
+    .btn-main:active { transform: scale(0.98); }
+
+    /* Stories Section */
+    .stories-container {
+      display: flex;
+      gap: 12px;
+      padding: 15px 20px;
+      overflow-x: auto;
+      border-bottom: 1px solid var(--card-border);
+      scrollbar-width: none;
+    }
+    .stories-container::-webkit-scrollbar { display: none; }
+    .story-item {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 6px;
+      font-size: 0.75rem;
+      color: var(--text-sub);
+    }
+    .story-ring {
+      width: 56px;
+      height: 56px;
+      border-radius: 50%;
+      padding: 2px;
+      background: var(--accent-gradient);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .story-avatar {
+      width: 100%;
+      height: 100%;
+      border-radius: 50%;
+      background: #25293a;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+      border: 2px solid var(--bg);
+    }
+
+    /* Post Creation Box */
+    .create-post {
+      padding: 16px;
+      background: var(--card-bg);
+      margin: 15px 16px;
+      border-radius: 16px;
+      border: 1px solid var(--card-border);
+    }
+    .create-post-top { display: flex; gap: 12px; }
+    .avatar {
+      width: 42px;
+      height: 42px;
+      border-radius: 50%;
+      background: #2a2e3f;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: bold;
+      color: white;
+      flex-shrink: 0;
+    }
+    textarea {
+      width: 100%;
+      background: transparent;
+      border: none;
+      color: white;
+      font-size: 1rem;
+      resize: none;
+      outline: none;
+      min-height: 60px;
+    }
+    .create-post-bottom {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-top: 10px;
+      padding-top: 10px;
+      border-top: 1px solid var(--card-border);
+    }
+    .media-btn { color: var(--accent); cursor: pointer; font-size: 1.1rem; }
+    .post-btn {
+      background: var(--accent-gradient);
+      color: white;
+      border: none;
+      padding: 8px 22px;
+      border-radius: 20px;
+      font-weight: bold;
+      cursor: pointer;
+    }
+
+    /* Post Feed */
+    .feed { display: flex; flex-direction: column; gap: 15px; padding: 0 16px 20px; }
+    .post-card {
+      background: var(--card-bg);
+      border: 1px solid var(--card-border);
+      border-radius: 16px;
+      padding: 16px;
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
+    }
+    .post-header { display: flex; gap: 10px; align-items: center; }
+    .user-info { display: flex; flex-direction: column; }
+    .user-name { font-weight: bold; font-size: 0.95rem; }
+    .user-handle { color: var(--text-sub); font-size: 0.8rem; }
+    .post-body { font-size: 0.95rem; line-height: 1.5; color: #e1e3e8; }
     
+    /* Post Actions */
+    .post-actions {
+      display: flex;
+      justify-content: space-between;
+      border-top: 1px solid var(--card-border);
+      padding-top: 10px;
+      color: var(--text-sub);
+      font-size: 0.85rem;
+    }
+    .action-item {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      cursor: pointer;
+      transition: 0.2s;
+    }
+    .action-item:hover, .action-item.active { color: var(--accent); }
+    .action-item.liked { color: #f43f5e; }
+
+    /* Comments Section */
+    .comments-list {
+      background: #181b26;
+      border-radius: 12px;
+      padding: 10px;
+      margin-top: 8px;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    .comment-item { font-size: 0.85rem; border-bottom: 1px solid #25293a; padding-bottom: 5px; }
+    .comment-item:last-child { border: none; }
+    .comment-author { font-weight: bold; color: var(--text-main); margin-left: 5px; }
+
+    .comment-input-box { display: flex; gap: 8px; margin-top: 8px; }
+    .comment-input {
+      flex: 1;
+      background: #181b26;
+      border: 1px solid var(--card-border);
+      border-radius: 8px;
+      padding: 6px 10px;
+      color: white;
+      font-size: 0.85rem;
+      outline: none;
+    }
+    .comment-btn {
+      background: var(--accent);
+      color: white;
+      border: none;
+      padding: 6px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 0.85rem;
+    }
+
+    /* Navigation */
+    nav {
+      position: fixed;
+      bottom: 0;
+      width: 100%;
+      max-width: 480px;
+      background: rgba(9, 10, 15, 0.95);
+      backdrop-filter: blur(15px);
+      border-top: 1px solid var(--card-border);
+      display: flex;
+      justify-content: space-around;
+      padding: 14px 0;
+      z-index: 100;
+    }
+    .nav-link { color: var(--text-sub); font-size: 1.3rem; text-decoration: none; cursor: pointer; transition: 0.2s; }
+    .nav-link.active { color: var(--accent); }
+
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-<div class="container">
-  
+<div class="app-container">
+
+  <!-- Header -->
   <header>
-    <div class="logo"><i class="fa-solid fa-feather"></i> كلمات</div>
+    <div class="logo"><i class="fa-solid fa-feather-pointed"></i> كلمات</div>
   </header>
 
   <!-- Auth Screen -->
-  <div id="authScreen" class="auth-container">
-    <h2 id="authTitle" class="auth-title">تسجيل الدخول إلى كلمات</h2>
-    <input type="email" id="emailInput" class="input-field" placeholder="البريد الإلكتروني">
-    <input type="password" id="passwordInput" class="input-field" placeholder="كلمة المرور">
-    <button id="authBtn" onclick="handleAuth()" class="btn-primary">تسجيل الدخول</button>
-    <button id="toggleAuthBtn" onclick="toggleAuthMode()" class="btn-secondary">ليس لديك حساب؟ إنشاء حساب جديد</button>
+  <div id="authScreen" style="display: flex; flex: 1; align-items: center;">
+    <div class="auth-card">
+      <h2 style="margin-bottom: 8px;">مرحباً بك في كلمات</h2>
+      <p style="color: var(--text-sub); font-size: 0.9rem; margin-bottom: 24px;">شارك أفكارك مع العالم بأناقة</p>
+      
+      <div class="input-group">
+        <input type="email" id="emailInput" class="input-field" placeholder="البريد الإلكتروني">
+      </div>
+      <div class="input-group">
+        <input type="password" id="passwordInput" class="input-field" placeholder="كلمة المرور">
+      </div>
+      <button onclick="handleAuth()" class="btn-main">دخول / تسجيل</button>
+    </div>
   </div>
 
-  <!-- App Content -->
+  <!-- Main App Content -->
   <div id="appScreen" class="hidden">
-    <div style="padding: 0 16px;">
-      <input type="text" class="search-bar" placeholder="بحث في كلمات...">
+    
+    <!-- Story Bar -->
+    <div class="stories-container">
+      <div class="story-item">
+        <div class="story-ring" style="background: #333;"><div class="story-avatar">+</div></div>
+        <span>قصتك</span>
+      </div>
+      <div class="story-item">
+        <div class="story-ring"><div class="story-avatar">أ</div></div>
+        <span>أحمد</span>
+      </div>
+      <div class="story-item">
+        <div class="story-ring"><div class="story-avatar">س</div></div>
+        <span>سارة</span>
+      </div>
+      <div class="story-item">
+        <div class="story-ring"><div class="story-avatar">م</div></div>
+        <span>محمد</span>
+      </div>
     </div>
 
     <!-- Home Tab -->
     <div id="homeSection">
-      <div class="post-box">
-        <div id="myAvatar" class="avatar">؟</div>
-        <div class="post-input-container">
-          <textarea id="tweetInput" placeholder="ماذا يدور في ذهنك؟"></textarea>
-          <div class="post-actions">
-            <span style="color:var(--accent); cursor:pointer;"><i class="fa-regular fa-image"></i></span>
-            <button onclick="createTweet()" class="post-btn">نشر</button>
-          </div>
+      <!-- Create Post Box -->
+      <div class="create-post">
+        <div class="create-post-top">
+          <div id="myAvatar" class="avatar">؟</div>
+          <textarea id="tweetInput" placeholder="ماذا يدور في ذهنك اليوم؟"></textarea>
+        </div>
+        <div class="create-post-bottom">
+          <i class="fa-regular fa-image media-btn"></i>
+          <button onclick="createTweet()" class="post-btn">نشر</button>
         </div>
       </div>
-      <div id="timeline"></div>
-    </div>
 
-    <!-- Notifications Tab -->
-    <div id="notificationsSection" class="hidden" style="padding: 20px; text-align: center; color: var(--subtext);">
-      <i class="fa-regular fa-bell fa-2x" style="margin-bottom:10px;"></i>
-      <p>لا توجد إشعارات جديدة حالياً.</p>
-    </div>
-
-    <!-- Friends Tab -->
-    <div id="friendsSection" class="hidden" style="padding: 20px; text-align: center; color: var(--subtext);">
-      <i class="fa-solid fa-user-group fa-2x" style="margin-bottom:10px;"></i>
-      <p>قائمة الأصدقاء ستظهر هنا.</p>
+      <!-- Feed -->
+      <div id="timeline" class="feed"></div>
     </div>
 
     <!-- Profile Tab -->
-    <div id="profileSection" class="hidden">
-      <div class="profile-header">
-        <div id="profileAvatar" class="profile-avatar-lg">ك</div>
-        <h3 id="profileName">اسم المستخدم</h3>
-        <p id="profileHandle" style="color:var(--subtext); margin-bottom:16px;">@username</p>
-        <button onclick="logout()" class="btn-primary" style="background:#e50914; max-width:200px;">تسجيل الخروج</button>
-      </div>
+    <div id="profileSection" class="hidden" style="padding: 30px 20px; text-align: center;">
+      <div class="avatar" id="profileAvatar" style="width:80px; height:80px; font-size:2rem; margin: 0 auto 15px;">ك</div>
+      <h3 id="profileName">اسم المستخدم</h3>
+      <p id="profileHandle" style="color:var(--text-sub); margin-bottom:20px;">@username</p>
+      <button onclick="logout()" class="btn-main" style="background:#dc2626; max-width:200px;">تسجيل الخروج</button>
     </div>
+
   </div>
 
-  <!-- Bottom Navigation Bar -->
+  <!-- Bottom Nav Bar -->
   <nav id="bottomNav" class="hidden">
-    <a class="nav-item active" id="navHome" onclick="navigateTo('home')"><i class="fa-solid fa-house"></i></a>
-    <a class="nav-item" id="navNotifications" onclick="navigateTo('notifications')"><i class="fa-regular fa-bell"></i></a>
-    <a class="nav-item" id="navFriends" onclick="navigateTo('friends')"><i class="fa-solid fa-user-group"></i></a>
-    <a class="nav-item" id="navProfile" onclick="navigateTo('profile')"><i class="fa-regular fa-user"></i></a>
+    <a class="nav-link active" id="navHome" onclick="navigateTo('home')"><i class="fa-solid fa-house"></i></a>
+    <a class="nav-link" id="navProfile" onclick="navigateTo('profile')"><i class="fa-regular fa-user"></i></a>
   </nav>
 
 </div>
 
 <script>
   let currentUser = localStorage.getItem('kalimat_user');
-  let isSignUpMode = false;
+
+  // Default Posts if Empty
+  const defaultPosts = [
+    {
+      id: 1,
+      author_name: 'سارة علي',
+      handle: 'sara_a',
+      content: 'تصميم التطبيق الجديد رائع جداً ومريح للعين! 🚀✨',
+      likes: 5,
+      comments: [{ author: 'أحمد', text: 'أتفق معكي تماماً!' }]
+    },
+    {
+      id: 2,
+      author_name: 'عمر خالد',
+      handle: 'omar_k',
+      content: 'صباح الخير جميعاً.. كلمة طيبة قد تغير يوم أحدهم بالكامل ❤️',
+      likes: 12,
+      comments: []
+    }
+  ];
 
   function checkUser() {
     if (currentUser) {
@@ -138,6 +392,10 @@
 
       const name = currentUser.split('@')[0];
       document.getElementById('myAvatar').innerText = name[0].toUpperCase();
+
+      if (!localStorage.getItem('kalimat_posts')) {
+        localStorage.setItem('kalimat_posts', JSON.stringify(defaultPosts));
+      }
       
       navigateTo('home');
     } else {
@@ -147,18 +405,9 @@
     }
   }
 
-  function toggleAuthMode() {
-    isSignUpMode = !isSignUpMode;
-    document.getElementById('authTitle').innerText = isSignUpMode ? 'إنشاء حساب جديد' : 'تسجيل الدخول إلى كلمات';
-    document.getElementById('authBtn').innerText = isSignUpMode ? 'إنشاء حساب' : 'تسجيل الدخول';
-    document.getElementById('toggleAuthBtn').innerText = isSignUpMode ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ إنشاء حساب جديد';
-  }
-
   function handleAuth() {
     const email = document.getElementById('emailInput').value.trim();
-    const password = document.getElementById('passwordInput').value.trim();
-    if (!email || !password) return alert('يرجى ملء جميع الحقول');
-
+    if (!email) return alert('يرجى كتابة البريد الإلكتروني');
     localStorage.setItem('kalimat_user', email);
     currentUser = email;
     checkUser();
@@ -172,27 +421,17 @@
 
   function navigateTo(screen) {
     document.getElementById('homeSection').classList.add('hidden');
-    document.getElementById('notificationsSection').classList.add('hidden');
-    document.getElementById('friendsSection').classList.add('hidden');
     document.getElementById('profileSection').classList.add('hidden');
-
-    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+    document.querySelectorAll('.nav-link').forEach(e => e.classList.remove('active'));
 
     if (screen === 'home') {
       document.getElementById('homeSection').classList.remove('hidden');
       document.getElementById('navHome').classList.add('active');
       loadTimeline();
-    } else if (screen === 'notifications') {
-      document.getElementById('notificationsSection').classList.remove('hidden');
-      document.getElementById('navNotifications').classList.add('active');
-    } else if (screen === 'friends') {
-      document.getElementById('friendsSection').classList.remove('hidden');
-      document.getElementById('navFriends').classList.add('active');
     } else if (screen === 'profile') {
       document.getElementById('profileSection').classList.remove('hidden');
       document.getElementById('navProfile').classList.add('active');
-      
-      const name = currentUser ? currentUser.split('@')[0] : 'مستخدم';
+      const name = currentUser.split('@')[0];
       document.getElementById('profileName').innerText = name;
       document.getElementById('profileHandle').innerText = `@${name}`;
       document.getElementById('profileAvatar').innerText = name[0].toUpperCase();
@@ -203,39 +442,98 @@
     const content = document.getElementById('tweetInput').value.trim();
     if (!content) return;
 
-    const username = currentUser ? currentUser.split('@')[0] : 'مستخدم';
+    const username = currentUser.split('@')[0];
     const posts = JSON.parse(localStorage.getItem('kalimat_posts') || '[]');
-    posts.unshift({ content, author_name: username, created_at: new Date().toISOString() });
-    localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+    
+    posts.unshift({
+      id: Date.now(),
+      author_name: username,
+      handle: username,
+      content: content,
+      likes: 0,
+      comments: []
+    });
 
+    localStorage.setItem('kalimat_posts', JSON.stringify(posts));
     document.getElementById('tweetInput').value = '';
     loadTimeline();
+  }
+
+  function toggleLike(index) {
+    const posts = JSON.parse(localStorage.getItem('kalimat_posts') || '[]');
+    if (!posts[index].isLiked) {
+      posts[index].likes += 1;
+      posts[index].isLiked = true;
+    } else {
+      posts[index].likes -= 1;
+      posts[index].isLiked = false;
+    }
+    localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+    loadTimeline();
+  }
+
+  function addComment(index) {
+    const input = document.getElementById(`comment-input-${index}`);
+    const text = input.value.trim();
+    if (!text) return;
+
+    const posts = JSON.parse(localStorage.getItem('kalimat_posts') || '[]');
+    const username = currentUser.split('@')[0];
+    
+    if (!posts[index].comments) posts[index].comments = [];
+    posts[index].comments.push({ author: username, text: text });
+
+    localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+    loadTimeline();
+  }
+
+  function toggleCommentsUI(index) {
+    const box = document.getElementById(`comments-box-${index}`);
+    box.classList.toggle('hidden');
   }
 
   function loadTimeline() {
     const timelineEl = document.getElementById('timeline');
     const posts = JSON.parse(localStorage.getItem('kalimat_posts') || '[]');
 
-    if (posts.length === 0) {
-      timelineEl.innerHTML = '<p style="text-align:center; padding:20px; color:var(--subtext);">لا توجد منشورات حتى الآن.</p>';
-      return;
-    }
-
-    timelineEl.innerHTML = posts.map(post => `
-      <div class="tweet">
-        <div class="avatar">${(post.author_name || 'م')[0].toUpperCase()}</div>
-        <div class="tweet-content">
-          <div class="tweet-header">
-            <span class="tweet-author">${post.author_name || 'مستخدم'}</span>
-            <span class="tweet-handle">@${post.author_name || 'user'}</span>
-          </div>
-          <div class="tweet-text">${post.content}</div>
-          <div class="tweet-footer">
-            <span class="action-btn"><i class="fa-regular fa-comment"></i> 0</span>
-            <span class="action-btn"><i class="fa-solid fa-retweet"></i> 0</span>
-            <span class="action-btn"><i class="fa-regular fa-heart"></i> 0</span>
+    timelineEl.innerHTML = posts.map((post, idx) => `
+      <div class="post-card">
+        <div class="post-header">
+          <div class="avatar">${post.author_name[0].toUpperCase()}</div>
+          <div class="user-info">
+            <span class="user-name">${post.author_name}</span>
+            <span class="user-handle">@${post.handle}</span>
           </div>
         </div>
+        <div class="post-body">${post.content}</div>
+        
+        <div class="post-actions">
+          <div class="action-item ${post.isLiked ? 'liked' : ''}" onclick="toggleLike(${idx})">
+            <i class="${post.isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
+            <span>${post.likes}</span>
+          </div>
+          <div class="action-item" onclick="toggleCommentsUI(${idx})">
+            <i class="fa-regular fa-comment"></i>
+            <span>${post.comments ? post.comments.length : 0}</span>
+          </div>
+          <div class="action-item"><i class="fa-solid fa-retweet"></i></div>
+        </div>
+
+        <!-- Comments UI -->
+        <div id="comments-box-${idx}" class="hidden">
+          <div class="comments-list">
+            ${(post.comments || []).map(c => `
+              <div class="comment-item">
+                <span class="comment-author">${c.author}:</span> ${c.text}
+              </div>
+            `).join('')}
+            <div class="comment-input-box">
+              <input type="text" id="comment-input-${idx}" class="comment-input" placeholder="اكتب تعليقاً...">
+              <button onclick="addComment(${idx})" class="comment-btn">إرسال</button>
+            </div>
+          </div>
+        </div>
+
       </div>
     `).join('');
   }

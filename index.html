@@ -3,532 +3,278 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>كلمات - Kalimat</title>
+  <title>كلمات</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
-      --bg-color: #000000;
-      --card-bg: #16181c;
-      --border-color: #2f3336;
-      --text-main: #e7e9ea;
-      --text-sub: #71767b;
-      --accent: #1d9bf0;
-      --like-color: #f91880;
-      --retweet-color: #00ba7c;
-      --toast-bg: #1d9bf0;
+      --bg: #000000;
+      --card: #16181c;
+      --text: #e7e9ea;
+      --subtext: #71767b;
+      --accent: #e91e63;
+      --border: #2f3336;
     }
-
-    body.light-mode {
-      --bg-color: #ffffff;
-      --card-bg: #f7f9f9;
-      --border-color: #eff3f4;
-      --text-main: #0f1419;
-      --text-sub: #536471;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; transition: 0.2s; }
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
+    .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; min-height: 100vh; border-left: 1px solid var(--border); border-right: 1px solid var(--border); position: relative; pb-16; }
     
-    .layout-container { width: 100%; max-width: 600px; min-height: 100vh; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding-bottom: 70px; background: var(--bg-color); position: relative; }
-
-    header { position: sticky; top: 0; background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; height: 53px; }
-    body.light-mode header { background-color: rgba(255, 255, 255, 0.75); }
+    /* Header */
+    header { position: sticky; top: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; z-index: 100; }
+    .logo { font-size: 1.2rem; font-weight: bold; color: var(--text); display: flex; align-items: center; gap: 8px; }
+    .search-bar { width: 100%; background: #202327; border: none; border-radius: 9999px; padding: 10px 16px; color: white; outline: none; margin: 10px 0; }
     
-    .header-left { display: flex; align-items: center; gap: 12px; }
-    .back-btn { background: transparent; border: none; color: var(--text-main); font-size: 1.1rem; cursor: pointer; display: none; padding: 6px 10px; border-radius: 50%; }
-    .brand-title { font-size: 1.2rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    .brand-title i { color: var(--accent); }
+    /* Auth Forms */
+    .auth-container { padding: 32px 20px; display: flex; flex-direction: column; gap: 16px; align-items: center; }
+    .auth-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; }
+    .input-field { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: #0a0a0a; color: white; }
+    .btn-primary { width: 100%; padding: 12px; border-radius: 9999px; background: var(--accent); color: white; font-weight: bold; border: none; cursor: pointer; }
+    .btn-secondary { background: transparent; color: var(--subtext); border: none; cursor: pointer; font-size: 0.9rem; margin-top: 10px; }
+
+    /* Feed & Post Box */
+    .post-box { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; }
+    .avatar { width: 44px; height: 44px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; color: white; flex-shrink: 0; }
+    .post-input-container { flex: 1; }
+    textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; min-height: 80px; }
+    .post-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); pt: 10px; margin-top: 10px; }
+    .post-btn { background: var(--accent); color: white; border: none; padding: 8px 20px; border-radius: 9999px; font-weight: bold; cursor: pointer; }
     
-    .header-actions { display: flex; align-items: center; gap: 10px; }
-    .theme-toggle-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    /* Posts Timeline */
+    .tweet { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; }
+    .tweet-content { flex: 1; }
+    .tweet-header { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+    .tweet-author { font-weight: bold; }
+    .tweet-handle { color: var(--subtext); font-size: 0.9rem; }
+    .tweet-text { line-height: 1.4; margin-bottom: 12px; font-size: 0.98rem; }
+    .tweet-footer { display: flex; justify-content: space-between; max-width: 300px; color: var(--subtext); font-size: 0.9rem; }
+    .action-btn { cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .action-btn:hover { color: var(--accent); }
 
-    .user-pill { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-main); background: var(--card-bg); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; }
-    .avatar-mini { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem; overflow: hidden; color: #fff; }
+    /* Navigation Bar */
+    nav { position: fixed; bottom: 0; width: 100%; max-width: 500px; background: rgba(0,0,0,0.95); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 12px 0; z-index: 100; }
+    .nav-item { color: var(--subtext); font-size: 1.3rem; text-decoration: none; cursor: pointer; }
+    .nav-item.active { color: var(--accent); }
 
-    /* Toast Notifications UI */
-    #toast-container { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 380px; pointer-events: none; }
-    .toast-card { pointer-events: auto; background: var(--accent); color: #ffffff; padding: 12px 16px; border-radius: 25px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: space-between; gap: 10px; animation: popupSlide 0.3s ease-out; }
-    .toast-card.success { background: var(--retweet-color); }
-    .toast-card.danger { background: var(--like-color); }
-    @keyframes popupSlide { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-
-    /* App Layout & Tabs */
-    .search-box { padding: 10px 16px; border-bottom: 1px solid var(--border-color); }
-    .search-input-wrapper { position: relative; }
-    .search-input-wrapper i { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
-    .search-input-wrapper input { width: 100%; padding: 10px 42px 10px 14px; border-radius: 20px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); outline: none; font-size: 0.9rem; }
-
-    .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 600px; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 12px 0; z-index: 100; }
-    body.light-mode .nav-bar { background-color: rgba(255, 255, 255, 0.85); }
-    .nav-item { color: var(--text-sub); font-size: 1.25rem; cursor: pointer; transition: 0.2s; }
-    .nav-item.active, .nav-item:hover { color: var(--accent); }
-
-    .tweet-box { padding: 14px 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
-    .avatar { width: 40px; height: 40px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; cursor: pointer; }
-    .tweet-input-area { flex-grow: 1; }
-    textarea { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1.05rem; resize: none; outline: none; min-height: 60px; }
-
-    .tweet-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; border-top: 1px solid var(--border-color); padding-top: 10px; }
-    .btn-tweet { background-color: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
-    .btn-tweet:hover { opacity: 0.9; }
-
-    /* Image Preview Styling */
-    .image-preview-container { position: relative; margin-top: 8px; display: inline-block; max-width: 100%; }
-    .image-preview-container img { max-height: 150px; border-radius: 12px; border: 1px solid var(--border-color); }
-    .remove-img-btn { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-    /* Post Card */
-    .post { padding: 14px 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; transition: background 0.15s; }
-    .post:hover { background: rgba(255,255,255,0.02); }
-    .post-main { flex-grow: 1; }
-    .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
-    .post-author { font-weight: 700; color: var(--text-main); font-size: 0.95rem; cursor: pointer; }
-    .post-time { color: var(--text-sub); font-size: 0.85rem; margin-right: 6px; }
-    .post-text { font-size: 0.95rem; line-height: 1.45; white-space: pre-wrap; word-break: break-word; color: var(--text-main); margin-top: 4px; }
-    .post-img { width: 100%; max-height: 320px; border-radius: 14px; margin-top: 10px; border: 1px solid var(--border-color); object-fit: cover; }
+    /* Profile View */
+    .profile-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--border); }
+    .profile-avatar-lg { width: 80px; height: 80px; border-radius: 50%; background: #444; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; }
     
-    /* Interactive Actions Bar */
-    .post-footer { display: flex; justify-content: space-between; max-width: 420px; margin-top: 12px; color: var(--text-sub); font-size: 0.85rem; }
-    .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 12px; border-radius: 20px; transition: 0.2s; }
-    .action-btn:hover { background: rgba(29, 155, 240, 0.1); color: var(--accent); }
-    .action-btn.liked { color: var(--like-color); }
-    .action-btn.liked:hover { background: rgba(249, 24, 128, 0.1); }
-
-    /* Comments Section */
-    .comments-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color); display: none; }
-    .comment-item { background: var(--card-bg); padding: 8px 12px; border-radius: 12px; margin-bottom: 6px; font-size: 0.85rem; border: 1px solid var(--border-color); }
-    .comment-author { font-weight: bold; color: var(--accent); margin-bottom: 2px; }
-    .comment-input-box { display: flex; gap: 8px; margin-top: 8px; }
-    .comment-input-box input { flex-grow: 1; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 18px; padding: 8px 14px; color: var(--text-main); font-size: 0.85rem; outline: none; }
-
-    /* Notifications List Item Styling */
-    .notif-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border-color); transition: background 0.2s; }
-    .notif-card:hover { background: var(--card-bg); }
-    .notif-icon-comment { color: var(--accent); font-size: 1.2rem; }
-
-    .auth-container { padding: 30px 20px; text-align: center; }
-    .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-top: 15px; text-align: right; }
-    .input-field { width: 100%; padding: 12px; margin: 6px 0 14px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); outline: none; }
-
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <!-- Floating Toast Notifications Container -->
-  <div id="toast-container"></div>
+<div class="container">
+  
+  <!-- Header -->
+  <header>
+    <div class="logo"><i class="fa-solid fa-feather"></i> كلمات</div>
+    <div id="userHeaderBadge" class="avatar hidden" style="width:32px; height:32px; font-size:0.8rem;"></div>
+  </header>
 
-  <div class="layout-container">
-    <header>
-      <div class="header-left">
-        <button id="backBtn" class="back-btn" onclick="navigateBack()"><i class="fa-solid fa-arrow-right"></i></button>
-        <div class="brand-title" onclick="navigateTo('home')"><i class="fa-solid fa-feather-pointed"></i> كلمات</div>
-      </div>
-      <div class="header-actions">
-        <button class="theme-toggle-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
-        <div id="userInfo" class="user-pill hidden" onclick="navigateTo('profile', getMyName())">
-          <span id="userPillName">المستخدم</span>
-          <div class="avatar-mini" id="userPillAvatar">ك</div>
-        </div>
-      </div>
-    </header>
+  <!-- Auth Screen -->
+  <div id="authScreen" class="auth-container">
+    <h2 id="authTitle" class="auth-title">تسجيل الدخول إلى كلمات</h2>
+    <input type="email" id="emailInput" class="input-field" placeholder="البريد الإلكتروني">
+    <input type="password" id="passwordInput" class="input-field" placeholder="كلمة المرور">
+    <button id="authBtn" onclick="handleAuth()" class="btn-primary">تسجيل الدخول</button>
+    <button id="toggleAuthBtn" onclick="toggleAuthMode()" class="btn-secondary">ليس لديك حساب؟ إنشاء حساب جديد</button>
+  </div>
 
-    <!-- Auth Screen -->
-    <div id="authScreen" class="auth-container">
-      <h2 style="font-size: 1.5rem; margin-bottom: 6px;">منصة كلمات</h2>
-      <p style="color: var(--text-sub); font-size: 0.9rem;">تواصل بحرية مع مجتمعك</p>
-
-      <div class="auth-card">
-        <label style="font-size: 0.85rem; color: var(--text-sub);">البريد الإلكتروني</label>
-        <input type="email" id="authEmail" class="input-field" placeholder="example@mail.com">
-
-        <label style="font-size: 0.85rem; color: var(--text-sub);">كلمة السر</label>
-        <input type="password" id="authPass" class="input-field" placeholder="••••••••">
-
-        <button class="btn-tweet" style="width: 100%; padding: 12px; margin-top: 10px;" onclick="submitAuth('login')">تسجيل الدخول</button>
-        <button class="btn-tweet" style="width: 100%; padding: 12px; margin-top: 8px; background: transparent; border: 1px solid var(--border-color); color: var(--text-main);" onclick="submitAuth('register')">إنشاء حساب جديد</button>
-      </div>
+  <!-- App Content -->
+  <div id="appScreen" class="hidden" style="padding-bottom: 60px;">
+    <div style="padding: 0 16px;">
+      <input type="text" class="search-bar" placeholder="بحث في كلمات...">
     </div>
 
-    <!-- Main App Screen -->
-    <div id="appScreen" class="hidden">
-      
-      <div class="search-box" id="searchBoxArea">
-        <div class="search-input-wrapper">
-          <i class="fa-solid fa-magnifying-glass"></i>
-          <input type="text" id="searchInput" placeholder="بحث في كلمات..." oninput="handleSearch()">
-        </div>
-      </div>
-
-      <!-- Tweet Box -->
-      <div class="tweet-box" id="homeTweetBox">
-        <div class="avatar" id="myAvatar" onclick="navigateTo('profile', getMyName())">ك</div>
-        <div class="tweet-input-area">
-          <textarea id="tweetContent" placeholder="ماذا يدور في أفكارك اليوم؟"></textarea>
-          
-          <!-- معاينة الصورة المرفقة -->
-          <div id="imagePreviewArea" class="image-preview-container hidden">
-            <img id="imagePreviewImg" src="" alt="معاينة">
-            <button class="remove-img-btn" onclick="clearSelectedImage()"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-
-          <div class="tweet-actions">
-            <!-- مدخل اختيار ملفات الصور من الهاتف -->
-            <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
-            <i class="fa-regular fa-image" style="color: var(--accent); font-size: 1.2rem; cursor: pointer;" onclick="document.getElementById('imageInput').click()"></i>
-            <button class="btn-tweet" onclick="publishTweet()">نشر</button>
+    <!-- Home Tab -->
+    <div id="homeSection">
+      <div class="post-box">
+        <div id="myAvatar" class="avatar">؟</div>
+        <div class="post-input-container">
+          <textarea id="tweetInput" placeholder="ماذا يدور في ذهنك؟"></textarea>
+          <div class="post-actions">
+            <span style="color:var(--accent); cursor:pointer;"><i class="fa-regular fa-image"></i></span>
+            <button onclick="createTweet()" class="post-btn">نشر</button>
           </div>
         </div>
       </div>
-
-      <!-- Feed / Timeline Section -->
-      <div id="timelineSection">
-        <div id="timeline">
-          <div style="text-align: center; padding: 40px; color: var(--text-sub);">جاري تحميل المنشورات...</div>
-        </div>
-      </div>
-
-      <!-- Notifications Screen -->
-      <div id="notificationsSection" class="hidden">
-        <div style="padding: 16px; font-weight: bold; border-bottom: 1px solid var(--border-color);"><i class="fa-solid fa-bell"></i> الإشعارات</div>
-        <div id="notificationsList">
-          <div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد إشعارات جديدة.</div>
-        </div>
-      </div>
-
-      <!-- Friends List Screen -->
-      <div id="friendsSection" class="hidden">
-        <div style="padding: 16px; font-weight: bold; border-bottom: 1px solid var(--border-color);"><i class="fa-solid fa-user-group"></i> الأصدقاء والشبكة</div>
-        <div id="friendsList" style="padding: 20px; text-align: center; color: var(--text-sub);">قائمة الأصدقاء تظهر هنا.</div>
-      </div>
-
-      <!-- Profile View Section -->
-      <div id="profileSection" class="hidden" style="padding: 20px; text-align: center;">
-        <div class="avatar" style="width: 70px; height: 70px; font-size: 1.8rem; margin: 0 auto 10px;" id="profileAvatar">ك</div>
-        <h3 id="profileName" style="color: var(--text-main);">الاسم</h3>
-        <p id="profileHandle" style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 15px;">@user</p>
-        <button class="btn-tweet" onclick="logout()" style="background: var(--like-color);">تسجيل الخروج</button>
-      </div>
-
+      <div id="timeline"></div>
     </div>
 
-    <!-- Navigation Bar -->
-    <div class="nav-bar hidden" id="bottomNav">
-      <div class="nav-item active" id="navHome" onclick="navigateTo('home')"><i class="fa-solid fa-house"></i></div>
-      <div class="nav-item" id="navFriends" onclick="navigateTo('friends')"><i class="fa-solid fa-user-group"></i></div>
-      <div class="nav-item" id="navNotifications" onclick="navigateTo('notifications')"><i class="fa-solid fa-bell"></i></div>
-      <div class="nav-item" id="navProfile" onclick="navigateTo('profile', getMyName())"><i class="fa-regular fa-user"></i></div>
+    <!-- Notifications Tab -->
+    <div id="notificationsSection" class="hidden" style="padding: 20px; text-align: center; color: var(--subtext);">
+      <i class="fa-regular fa-bell fa-2x" style="margin-bottom:10px;"></i>
+      <p>لا توجد إشعارات جديدة حالياً.</p>
+    </div>
+
+    <!-- Friends Tab -->
+    <div id="friendsSection" class="hidden" style="padding: 20px; text-align: center; color: var(--subtext);">
+      <i class="fa-solid fa-user-group fa-2x" style="margin-bottom:10px;"></i>
+      <p>قائمة الأصدقاء ستظهر هنا.</p>
+    </div>
+
+    <!-- Profile Tab -->
+    <div id="profileSection" class="hidden">
+      <div class="profile-header">
+        <div id="profileAvatar" class="profile-avatar-lg">ك</div>
+        <h3 id="profileName">اسم المستخدم</h3>
+        <p id="profileHandle" style="color:var(--subtext); margin-bottom:16px;">@username</p>
+        <button onclick="logout()" class="btn-primary" style="background:#e50914; max-width:200px;">تسجيل الخروج</button>
+      </div>
+      <div id="myTweets"></div>
     </div>
   </div>
 
-  <script>
-    const SUPABASE_URL = 'https://qrnbfjvutzkmoannmujk.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_Q4uNpSCbSEPo5-TaWzuFqQ_yts_mf6p';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  <!-- Bottom Navigation Bar -->
+  <nav id="bottomNav" class="hidden">
+    <a class="nav-item active" id="navHome" onclick="navigateTo('home')"><i class="fa-solid fa-house"></i></a>
+    <a class="nav-item" id="navNotifications" onclick="navigateTo('notifications')"><i class="fa-regular fa-bell"></i></a>
+    <a class="nav-item" id="navFriends" onclick="navigateTo('friends')"><i class="fa-solid fa-user-group"></i></a>
+    <a class="nav-item" id="navProfile" onclick="navigateTo('profile')"><i class="fa-regular fa-user"></i></a>
+  </nav>
 
-    let currentUser = null;
-    let selectedImageUrl = '';
-    let likedPosts = JSON.parse(localStorage.getItem('kalimat_likes') || '{}');
+</div>
 
-    function showToast(message, type = 'info', icon = 'fa-info-circle') {
-      const container = document.getElementById('toast-container');
-      const toast = document.createElement('div');
-      toast.className = `toast-card ${type}`;
-      toast.innerHTML = `<span><i class="fa-solid ${icon}"></i> ${message}</span>`;
-      container.appendChild(toast);
+<script>
+  // Supabase Configuration
+  const SUPABASE_URL = "https://aahryawjiyrtstjylcjy.supabase.co";
+  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhaHJ5YXdqaXlydHN0anktY2p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzNTY5NjcsImV4cCI6MjA1NjkzMjk2N30.5Mv0q2P5f12y9a-T2_R4Q2J_u1_Xy4V5aX2Z3b4c5d6";
+  const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-      setTimeout(() => { toast.remove(); }, 3200);
-    }
+  let currentUser = null;
+  let isSignUpMode = false;
 
-    function toggleTheme() {
-      document.body.classList.toggle('light-mode');
-      const isLight = document.body.classList.contains('light-mode');
-      document.getElementById('themeIcon').className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-      showToast(isLight ? 'تم تفعيل الوضع الفاتح' : 'تم تفعيل الوضع الداكن', 'info', 'fa-palette');
-    }
+  async function checkUser() {
+    const { data: { user } } = await _supabase.auth.getUser();
+    currentUser = user;
 
-    async function checkUser() {
-      const { data: { user } } = await _supabase.auth.getUser();
-      currentUser = user;
+    if (user) {
+      document.getElementById('authScreen').classList.add('hidden');
+      document.getElementById('appScreen').classList.remove('hidden');
+      document.getElementById('bottomNav').classList.remove('hidden');
 
-      if (user) {
-        document.getElementById('authScreen').classList.add('hidden');
-        document.getElementById('appScreen').classList.remove('hidden');
-        document.getElementById('bottomNav').classList.remove('hidden');
-
-        updateUserDisplay();
-        navigateTo('home');
-      } else {
-        document.getElementById('authScreen').classList.remove('hidden');
-        document.getElementById('appScreen').classList.add('hidden');
-        document.getElementById('bottomNav').classList.add('hidden');
-      }
-    }
-
-    function getMyName() {
-      return currentUser?.user_metadata?.full_name || currentUser?.email?.split('@')[0] || 'User';
-    }
-
-    function updateUserDisplay() {
-      if (!currentUser) return;
-      const name = getMyName();
-      document.getElementById('userPillName').innerText = name;
-      document.getElementById('userInfo').classList.remove('hidden');
-      document.getElementById('myAvatar').innerText = name[0].toUpperCase();
-    }
-
-    async function submitAuth(mode) {
-      const email = document.getElementById('authEmail').value.trim();
-      const password = document.getElementById('authPass').value.trim();
-
-      if (!email || !password) return showToast('يرجى كتابة البريد وكلمة السر', 'danger', 'fa-exclamation-circle');
-
-      if (mode === 'register') {
-        const { error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: email.split('@')[0] } } });
-        if (error) showToast(error.message, 'danger', 'fa-times-circle');
-        else { showToast('تم إنشاء الحساب بنجاح!', 'success', 'fa-check-circle'); checkUser(); }
-      } else {
-        const { error } = await _supabase.auth.signInWithPassword({ email, password });
-        if (error) showToast('خطأ في بيانات الدخول', 'danger', 'fa-times-circle');
-        else { showToast('مرحباً بك مجدداً!', 'success', 'fa-check-circle'); checkUser(); }
-      }
-    }
-
-    async function logout() {
-      await _supabase.auth.signOut();
-      showToast('تم تسجيل الخروج', 'info', 'fa-sign-out-alt');
-      checkUser();
-    }
-
-    function navigateTo(screen, param = null) {
-      document.getElementById('homeTweetBox').classList.add('hidden');
-      document.getElementById('timelineSection').classList.add('hidden');
-      document.getElementById('notificationsSection').classList.add('hidden');
-      document.getElementById('friendsSection').classList.add('hidden');
-      document.getElementById('profileSection').classList.add('hidden');
-
-      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
-
-      if (screen === 'home') {
-        document.getElementById('homeTweetBox').classList.remove('hidden');
-        document.getElementById('timelineSection').classList.remove('hidden');
-        document.getElementById('navHome').classList.add('active');
-        loadTimeline();
-      } else if (screen === 'notifications') {
-        document.getElementById('notificationsSection').classList.remove('hidden');
-        document.getElementById('navNotifications').classList.add('active');
-        loadNotifications();
-      } else if (screen === 'friends') {
-        document.getElementById('friendsSection').classList.remove('hidden');
-        document.getElementById('navFriends').classList.add('active');
-      } else if (screen === 'profile') {
-        document.getElementById('profileSection').classList.remove('hidden');
-        document.getElementById('navProfile').classList.add('active');
-        document.getElementById('profileName').innerText = param || getMyName();
-        document.getElementById('profileHandle').innerText = `@${param || getMyName()}`;
-        document.getElementById('profileAvatar').innerText = (param || getMyName())[0].toUpperCase();
-      }
-    }
-
-    function handleImageUpload(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        selectedImageUrl = e.target.result;
-        document.getElementById('imagePreviewImg').src = selectedImageUrl;
-        document.getElementById('imagePreviewArea').classList.remove('hidden');
-        showToast('تم إرفاق الصورة من الهاتف', 'success', 'fa-image');
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function clearSelectedImage() {
-      selectedImageUrl = '';
-      document.getElementById('imageInput').value = '';
-      document.getElementById('imagePreviewImg').src = '';
-      document.getElementById('imagePreviewArea').classList.add('hidden');
-    }
-
-    async function publishTweet() {
-      const content = document.getElementById('tweetContent').value.trim();
-      if (!content && !selectedImageUrl) return showToast('اكتب نص المنشور أولاً', 'danger', 'fa-pen');
-
-      const name = getMyName();
-      const { error } = await _supabase.from('posts').insert([{ content, author_name: name, image_url: selectedImageUrl, likes_count: 0 }]);
-
-      if (error) {
-        showToast('فشل النشر: تحقق من الإتصال', 'danger', 'fa-exclamation-triangle');
-      } else {
-        showToast('تم نشر منشورك بنجاح!', 'success', 'fa-paper-plane');
-        document.getElementById('tweetContent').value = '';
-        clearSelectedImage();
-        loadTimeline();
-      }
-    }
-
-    async function loadTimeline(searchQuery = '') {
-      const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
-      const timeline = document.getElementById('timeline');
-
-      if (error || !posts || posts.length === 0) {
-        timeline.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد منشورات حتى الآن. كن أول من ينشر!</div>`;
-        return;
-      }
-
-      timeline.innerHTML = '';
-      for (const post of posts) {
-        if (searchQuery) {
-          const textMatch = (post.content || '').toLowerCase().includes(searchQuery.toLowerCase());
-          const authorMatch = (post.author_name || '').toLowerCase().includes(searchQuery.toLowerCase());
-          if (!textMatch && !authorMatch) continue;
-        }
-
-        const { data: comments } = await _supabase.from('comments').select('*').eq('post_id', post.id);
-        const isLiked = !!likedPosts[post.id];
-        const displayLikes = post.likes_count || 0;
-
-        const postElement = document.createElement('div');
-        postElement.className = 'post';
-        postElement.innerHTML = `
-          <div class="avatar" onclick="navigateTo('profile', '${post.author_name}')">${post.author_name ? post.author_name[0].toUpperCase() : '؟'}</div>
-          <div class="post-main">
-            <div class="post-header">
-              <span class="post-author" onclick="navigateTo('profile', '${post.author_name}')">${post.author_name}</span>
-              <span class="post-time">• ${new Date(post.created_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}</span>
-            </div>
-            <div class="post-text">${post.content || ''}</div>
-            ${post.image_url ? `<img src="${post.image_url}" class="post-img">` : ''}
-            
-            <div class="post-footer">
-              <div class="action-btn" onclick="toggleComments(${post.id})">
-                <i class="fa-regular fa-comment"></i> <span>${comments ? comments.length : 0}</span>
-              </div>
-              <div class="action-btn ${isLiked ? 'liked' : ''}" id="like-btn-${post.id}" onclick="toggleLike(${post.id}, ${displayLikes})">
-                <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i> <span id="like-count-${post.id}">${displayLikes}</span>
-              </div>
-              <div class="action-btn" onclick="sharePost('${(post.content || '').replace(/'/g, "\\'")}')">
-                <i class="fa-solid fa-arrow-up-from-bracket"></i>
-              </div>
-            </div>
-
-            <div class="comments-section" id="comments-${post.id}">
-              <div id="comments-list-${post.id}">
-                ${(comments || []).map(c => `
-                  <div class="comment-item">
-                    <div class="comment-author">${c.author_name}</div>
-                    <div>${c.content}</div>
-                  </div>
-                `).join('')}
-              </div>
-              <div class="comment-input-box">
-                <input type="text" id="comment-input-${post.id}" placeholder="اكتب رداً...">
-                <button class="btn-tweet" style="padding: 6px 12px; font-size: 0.8rem;" onclick="addComment(${post.id}, '${post.author_name}')">رد</button>
-              </div>
-            </div>
-          </div>
-        `;
-        timeline.appendChild(postElement);
-      }
-    }
-
-    async function toggleLike(postId, currentLikes) {
-      const btn = document.getElementById(`like-btn-${postId}`);
-      const countSpan = document.getElementById(`like-count-${postId}`);
-
-      let newCount = currentLikes;
-      if (likedPosts[postId]) {
-        delete likedPosts[postId];
-        newCount = Math.max(0, currentLikes - 1);
-        btn.classList.remove('liked');
-        btn.querySelector('i').className = 'fa-regular fa-heart';
-      } else {
-        likedPosts[postId] = true;
-        newCount = currentLikes + 1;
-        btn.classList.add('liked');
-        btn.querySelector('i').className = 'fa-solid fa-heart';
-        showToast('أعجبك المنشور', 'danger', 'fa-heart');
-      }
-
-      countSpan.innerText = newCount;
-      localStorage.setItem('kalimat_likes', JSON.stringify(likedPosts));
-      await _supabase.from('posts').update({ likes_count: newCount }).eq('id', postId);
-    }
-
-    function toggleComments(postId) {
-      const sec = document.getElementById(`comments-${postId}`);
-      sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
-    }
-
-    async function addComment(postId, postAuthor) {
-      const input = document.getElementById(`comment-input-${postId}`);
-      const content = input.value.trim();
-      if (!content) return;
-
-      const name = getMyName();
-      const { error } = await _supabase.from('comments').insert([{ post_id: postId, author_name: name, content }]);
+      const name = user.email.split('@')[0];
+      const initial = name[0].toUpperCase();
+      document.getElementById('myAvatar').innerText = initial;
       
-      if (!error) {
-        showToast('تم نشر الرد بنجاح', 'success', 'fa-comment');
-        input.value = '';
-        if (postAuthor !== name) {
-          await _supabase.from('notifications').insert([{
-            user_name: postAuthor,
-            sender_name: name,
-            type: 'علّق على منشورك',
-            content: content
-          }]);
-        }
-        loadTimeline();
-      }
+      // التوجيه الافتراضي والمباشر للصفحة الرئيسية
+      navigateTo('home');
+    } else {
+      document.getElementById('authScreen').classList.remove('hidden');
+      document.getElementById('appScreen').classList.add('hidden');
+      document.getElementById('bottomNav').classList.add('hidden');
+    }
+  }
+
+  function toggleAuthMode() {
+    isSignUpMode = !isSignUpMode;
+    document.getElementById('authTitle').innerText = isSignUpMode ? 'إنشاء حساب جديد' : 'تسجيل الدخول إلى كلمات';
+    document.getElementById('authBtn').innerText = isSignUpMode ? 'إنشاء حساب' : 'تسجيل الدخول';
+    document.getElementById('toggleAuthBtn').innerText = isSignUpMode ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ إنشاء حساب جديد';
+  }
+
+  async function handleAuth() {
+    const email = document.getElementById('emailInput').value.trim();
+    const password = document.getElementById('passwordInput').value.trim();
+    if (!email || !password) return alert('يرجى ملء جميع الحقول');
+
+    if (isSignUpMode) {
+      const { error } = await _supabase.auth.signUp({ email, password });
+      if (error) alert(error.message);
+      else alert('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.');
+    } else {
+      const { error } = await _supabase.auth.signInWithPassword({ email, password });
+      if (error) alert(error.message);
+      else checkUser();
+    }
+  }
+
+  async function logout() {
+    await _supabase.auth.signOut();
+    checkUser();
+  }
+
+  function navigateTo(screen) {
+    document.getElementById('homeSection').classList.add('hidden');
+    document.getElementById('notificationsSection').classList.add('hidden');
+    document.getElementById('friendsSection').classList.add('hidden');
+    document.getElementById('profileSection').classList.add('hidden');
+
+    document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+    if (screen === 'home') {
+      document.getElementById('homeSection').classList.remove('hidden');
+      document.getElementById('navHome').classList.add('active');
+      loadTimeline();
+    } else if (screen === 'notifications') {
+      document.getElementById('notificationsSection').classList.remove('hidden');
+      document.getElementById('navNotifications').classList.add('active');
+    } else if (screen === 'friends') {
+      document.getElementById('friendsSection').classList.remove('hidden');
+      document.getElementById('navFriends').classList.add('active');
+    } else if (screen === 'profile') {
+      document.getElementById('profileSection').classList.remove('hidden');
+      document.getElementById('navProfile').classList.add('active');
+      
+      const name = currentUser ? currentUser.email.split('@')[0] : 'مستخدم';
+      document.getElementById('profileName').innerText = name;
+      document.getElementById('profileHandle').innerText = `@${name}`;
+      document.getElementById('profileAvatar').innerText = name[0].toUpperCase();
+    }
+  }
+
+  async function createTweet() {
+    const content = document.getElementById('tweetInput').value.trim();
+    if (!content) return;
+
+    const username = currentUser.email.split('@')[0];
+    const { error } = await _supabase.from('tweets').insert([{ content, author: username, user_id: currentUser.id }]);
+    if (error) {
+      alert('خطأ أثناء النشر: ' + error.message);
+    } else {
+      document.getElementById('tweetInput').value = '';
+      loadTimeline();
+    }
+  }
+
+  async function loadTimeline() {
+    const timelineEl = document.getElementById('timeline');
+    timelineEl.innerHTML = '<p style="text-align:center; padding:20px; color:var(--subtext);">جاري تحميل المنشورات...</p>';
+
+    const { data: tweets, error } = await _supabase.from('tweets').select('*').order('created_at', { ascending: false });
+
+    if (error) {
+      timelineEl.innerHTML = '<p style="text-align:center; padding:20px; color:red;">تعذر تحميل المنشورات.</p>';
+      return;
     }
 
-    async function loadNotifications() {
-      const myName = getMyName();
-      const { data: notifs } = await _supabase.from('notifications').select('*').eq('user_name', myName).order('created_at', { ascending: false });
+    if (!tweets || tweets.length === 0) {
+      timelineEl.innerHTML = '<p style="text-align:center; padding:20px; color:var(--subtext);">لا توجد منشورات حتى الآن.</p>';
+      return;
+    }
 
-      const container = document.getElementById('notificationsList');
-      if (!notifs || notifs.length === 0) {
-        container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد إشعارات جديدة.</div>`;
-        return;
-      }
-
-      container.innerHTML = notifs.map(n => `
-        <div class="notif-card">
-          <div class="notif-icon-comment"><i class="fa-solid fa-comment"></i></div>
-          <div>
-            <strong style="color: var(--accent);">${n.sender_name}</strong> ${n.type}
-            <div style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">"${n.content || ''}"</div>
+    timelineEl.innerHTML = tweets.map(tweet => `
+      <div class="tweet">
+        <div class="avatar">${(tweet.author || 'م')[0].toUpperCase()}</div>
+        <div class="tweet-content">
+          <div class="tweet-header">
+            <span class="tweet-author">${tweet.author || 'مستخدم'}</span>
+            <span class="tweet-handle">@${tweet.author || 'user'}</span>
+          </div>
+          <div class="tweet-text">${tweet.content}</div>
+          <div class="tweet-footer">
+            <span class="action-btn"><i class="fa-regular fa-comment"></i> 0</span>
+            <span class="action-btn"><i class="fa-solid fa-retweet"></i> 0</span>
+            <span class="action-btn"><i class="fa-regular fa-heart"></i> 0</span>
           </div>
         </div>
-      `).join('');
-    }
+      </div>
+    `).join('');
+  }
 
-    function sharePost(text) {
-      if (navigator.share) {
-        navigator.share({ title: 'كلمات', text: text, url: window.location.href });
-      } else {
-        navigator.clipboard.writeText(text);
-        showToast('تم نسخ نص المنشور إلى الحافظة!', 'info', 'fa-copy');
-      }
-    }
-
-    function handleSearch() {
-      const q = document.getElementById('searchInput').value.trim();
-      loadTimeline(q);
-    }
-
-    checkUser();
-
-    window.addEventListener('DOMContentLoaded', () => {
-      setTimeout(() => {
-        if (typeof navigateTo === 'function' && currentUser) {
-          navigateTo('home');
-        }
-      }, 300);
-    });
-  </script>
+  // Initializing App
+  checkUser();
+</script>
 </body>
 </html>

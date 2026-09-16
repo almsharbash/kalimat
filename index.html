@@ -46,7 +46,7 @@
     .user-pill { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-main); background: var(--card-bg); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; }
     .avatar-mini { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem; overflow: hidden; color: #fff; }
 
-    /* Toast Notifications UI (Twitter/Facebook Popups) */
+    /* Toast Notifications UI */
     #toast-container { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 380px; pointer-events: none; }
     .toast-card { pointer-events: auto; background: var(--accent); color: #ffffff; padding: 12px 16px; border-radius: 25px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: space-between; gap: 10px; animation: popupSlide 0.3s ease-out; }
     .toast-card.success { background: var(--retweet-color); }
@@ -73,7 +73,12 @@
     .btn-tweet { background-color: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
     .btn-tweet:hover { opacity: 0.9; }
 
-    /* Post Card (Twitter Card Design) */
+    /* Image Preview Styling */
+    .image-preview-container { position: relative; margin-top: 8px; display: inline-block; max-width: 100%; }
+    .image-preview-container img { max-height: 150px; border-radius: 12px; border: 1px solid var(--border-color); }
+    .remove-img-btn { position: absolute; top: 4px; right: 4px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+
+    /* Post Card */
     .post { padding: 14px 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; transition: background 0.15s; }
     .post:hover { background: rgba(255,255,255,0.02); }
     .post-main { flex-grow: 1; }
@@ -89,7 +94,6 @@
     .action-btn:hover { background: rgba(29, 155, 240, 0.1); color: var(--accent); }
     .action-btn.liked { color: var(--like-color); }
     .action-btn.liked:hover { background: rgba(249, 24, 128, 0.1); }
-    .action-btn.reposted { color: var(--retweet-color); }
 
     /* Comments Section */
     .comments-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color); display: none; }
@@ -101,7 +105,6 @@
     /* Notifications List Item Styling */
     .notif-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border-color); transition: background 0.2s; }
     .notif-card:hover { background: var(--card-bg); }
-    .notif-icon-like { color: var(--like-color); font-size: 1.2rem; }
     .notif-icon-comment { color: var(--accent); font-size: 1.2rem; }
 
     .auth-container { padding: 30px 20px; text-align: center; }
@@ -163,8 +166,17 @@
         <div class="avatar" id="myAvatar" onclick="navigateTo('profile', getMyName())">ك</div>
         <div class="tweet-input-area">
           <textarea id="tweetContent" placeholder="ماذا يدور في أفكارك اليوم؟"></textarea>
+          
+          <!-- معاينة الصورة المرفقة -->
+          <div id="imagePreviewArea" class="image-preview-container hidden">
+            <img id="imagePreviewImg" src="" alt="معاينة">
+            <button class="remove-img-btn" onclick="clearSelectedImage()"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+
           <div class="tweet-actions">
-            <i class="fa-regular fa-image" style="color: var(--accent); font-size: 1.2rem; cursor: pointer;" onclick="promptImageUrl()"></i>
+            <!-- مدخل اختيار ملفات الصور من الهاتف -->
+            <input type="file" id="imageInput" accept="image/*" style="display: none;" onchange="handleImageUpload(event)">
+            <i class="fa-regular fa-image" style="color: var(--accent); font-size: 1.2rem; cursor: pointer;" onclick="document.getElementById('imageInput').click()"></i>
             <button class="btn-tweet" onclick="publishTweet()">نشر</button>
           </div>
         </div>
@@ -320,12 +332,26 @@
       }
     }
 
-    function promptImageUrl() {
-      const url = prompt('أدخل رابط الصورة (URL):');
-      if (url) {
-        selectedImageUrl = url;
-        showToast('تم إرفاق الصورة', 'success', 'fa-image');
-      }
+    // رفع واختيار الصور المباشر من معرض الهاتف
+    function handleImageUpload(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        selectedImageUrl = e.target.result;
+        document.getElementById('imagePreviewImg').src = selectedImageUrl;
+        document.getElementById('imagePreviewArea').classList.remove('hidden');
+        showToast('تم إرفاق الصورة من الهاتف', 'success', 'fa-image');
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearSelectedImage() {
+      selectedImageUrl = '';
+      document.getElementById('imageInput').value = '';
+      document.getElementById('imagePreviewImg').src = '';
+      document.getElementById('imagePreviewArea').classList.add('hidden');
     }
 
     async function publishTweet() {
@@ -340,7 +366,7 @@
       } else {
         showToast('تم نشر منشورك بنجاح!', 'success', 'fa-paper-plane');
         document.getElementById('tweetContent').value = '';
-        selectedImageUrl = '';
+        clearSelectedImage();
         loadTimeline();
       }
     }
@@ -499,4 +525,4 @@
     checkUser();
   </script>
 </body>
-  </html>
+</html>

@@ -39,6 +39,10 @@
 
     .btn-primary { background: var(--accent); color: #fff; border: none; padding: 12px 20px; border-radius: 25px; font-weight: bold; font-size: 0.95rem; cursor: pointer; width: 100%; transition: background 0.2s; }
     .btn-secondary { background: transparent; color: var(--accent); border: 1px solid var(--accent); padding: 10px 20px; border-radius: 25px; font-weight: bold; font-size: 0.9rem; cursor: pointer; width: 100%; margin-top: 10px; }
+    
+    /* Follow Button Styling */
+    .btn-follow { background: #fff; color: #000; border: none; padding: 4px 12px; border-radius: 16px; font-size: 0.8rem; font-weight: bold; cursor: pointer; transition: 0.2s; }
+    .btn-follow.following { background: transparent; color: var(--text-main); border: 1px solid var(--border-color); }
 
     /* Composer */
     .composer { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
@@ -64,7 +68,8 @@
     /* Posts */
     .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
     .post-content { flex-grow: 1; }
-    .post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .post-user-info { display: flex; align-items: center; gap: 8px; }
     .post-author { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
     .post-handle { color: var(--text-sub); font-size: 0.85rem; }
     .post-text { font-size: 0.95rem; line-height: 1.5; color: #e7e9ea; white-space: pre-wrap; word-break: break-word; }
@@ -86,7 +91,9 @@
     .profile-header { padding: 20px 16px; border-bottom: 1px solid var(--border-color); text-align: center; }
     .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #1d9bf0, #7928ca); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; margin: 0 auto 12px; overflow: hidden; }
     .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
-    .profile-bio { font-size: 0.9rem; color: #ccc; margin: 8px 0 16px; }
+    .profile-bio { font-size: 0.9rem; color: #ccc; margin: 8px 0 12px; }
+    .profile-stats { display: flex; justify-content: center; gap: 20px; font-size: 0.85rem; color: var(--text-sub); margin-bottom: 16px; }
+    .profile-stats span { color: var(--text-main); font-weight: bold; }
 
     /* Direct Messages View */
     .chat-container { padding: 16px; }
@@ -170,6 +177,11 @@
         <p id="profileHandle" style="color:var(--text-sub);">@user</p>
         <p id="profileBio" class="profile-bio">مرحباً بك في ملفي الشخصي علي منصة كلمات!</p>
         
+        <div class="profile-stats">
+          <div><span id="followingCount">0</span> يُتابع</div>
+          <div><span id="followersCount">0</span> متابِع</div>
+        </div>
+
         <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 15px;">
           <button class="btn-primary" style="width:auto; padding:6px 16px;" onclick="showEditProfileModal()">تعديل الملف الشخصي</button>
           <button class="btn-secondary" style="width:auto; padding:6px 16px;" onclick="logout()">تسجيل الخروج</button>
@@ -230,6 +242,7 @@
     let isSignUp = false;
     let activeUser = localStorage.getItem('kalimat_user') || null;
     let userBio = localStorage.getItem('kalimat_bio') || 'مرحباً بك في ملفي الشخصي علي منصة كلمات!';
+    let followingUsers = JSON.parse(localStorage.getItem('kalimat_following') || '[]');
 
     function init() {
       if (activeUser) {
@@ -265,9 +278,30 @@
       document.getElementById('profileName').innerText = activeUser;
       document.getElementById('profileHandle').innerText = '@' + activeUser;
       document.getElementById('profileBio').innerText = userBio;
+      
+      updateFollowStats();
 
       switchTab('homeSection', document.querySelector('.nav-link'));
       loadPosts();
+    }
+
+    function updateFollowStats() {
+      document.getElementById('followingCount').innerText = followingUsers.length;
+    }
+
+    function toggleFollow(authorName) {
+      if (!authorName || authorName === activeUser) return;
+
+      const index = followingUsers.indexOf(authorName);
+      if (index > -1) {
+        followingUsers.splice(index, 1);
+      } else {
+        followingUsers.push(authorName);
+      }
+
+      localStorage.setItem('kalimat_following', JSON.stringify(followingUsers));
+      updateFollowStats();
+      renderPosts(localPosts);
     }
 
     function updateAvatarDisplay() {
@@ -456,13 +490,23 @@
       container.innerHTML = list.map(p => {
         const initial = p.author_name ? p.author_name[0].toUpperCase() : 'U';
         const commentsList = p.comments || [];
+        const isFollowing = followingUsers.includes(p.author_name);
+        const isMe = p.author_name === activeUser;
+
         return `
           <div class="post">
-            <div class="avatar">${customAvatarData && p.author_name === activeUser ? `<img src="${customAvatarData}">` : initial}</div>
+            <div class="avatar">${customAvatarData && isMe ? `<img src="${customAvatarData}">` : initial}</div>
             <div class="post-content">
               <div class="post-header">
-                <span class="post-author">${p.author_name}</span>
-                <span class="post-handle">@${p.author_name}</span>
+                <div class="post-user-info">
+                  <span class="post-author">${p.author_name}</span>
+                  <span class="post-handle">@${p.author_name}</span>
+                </div>
+                ${!isMe ? `
+                  <button class="btn-follow ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${p.author_name}')">
+                    ${isFollowing ? 'تتابعه' : 'متابعة'}
+                  </button>
+                ` : ''}
               </div>
               <div class="post-text">${p.content}</div>
               ${p.image_url ? `<img src="${p.image_url}" class="post-image">` : ''}

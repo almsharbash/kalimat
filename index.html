@@ -231,7 +231,6 @@
     let selectedImageUrl = '';
     let likedPosts = JSON.parse(localStorage.getItem('kalimat_likes') || '{}');
 
-    // Display Popup Notifications (Toasts)
     function showToast(message, type = 'info', icon = 'fa-info-circle') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -332,7 +331,6 @@
       }
     }
 
-    // رفع واختيار الصور المباشر من معرض الهاتف
     function handleImageUpload(event) {
       const file = event.target.files[0];
       if (!file) return;
@@ -523,9 +521,10 @@
     }
 
     checkUser();
-//    window.addEventListener('DOMContentLoaded', () => {
+
+    window.addEventListener('DOMContentLoaded', () => {
       setTimeout(() => {
-        if (typeof navigateTo === 'function') {
+        if (typeof navigateTo === 'function' && currentUser) {
           navigateTo('home');
         }
       }, 300);

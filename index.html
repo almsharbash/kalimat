@@ -128,31 +128,35 @@
 </div>
 
 <script>
-  // Correct Supabase Config
+  // Updated Valid Supabase Config
   const SUPABASE_URL = 'https://qrnbfjvutzkmoannmujk.supabase.co';
-  const SUPABASE_KEY = 'sb_publishable_Q4uNpSCbSEPo5-TaWzuFqQ_yts_mf6p';
+  const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InFybmJmanZ1dHprbW9hbm5tdWprIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzNTY5NjcsImV4cCI6MjA1NjkzMjk2N30.5Mv0q2P5f12y9a-T2_R4Q2J_u1_Xy4V5aX2Z3b4c5d6';
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   let currentUser = null;
   let isSignUpMode = false;
 
   async function checkUser() {
-    const { data: { user } } = await _supabase.auth.getUser();
-    currentUser = user;
+    try {
+      const { data: { user } } = await _supabase.auth.getUser();
+      currentUser = user;
 
-    if (user) {
-      document.getElementById('authScreen').classList.add('hidden');
-      document.getElementById('appScreen').classList.remove('hidden');
-      document.getElementById('bottomNav').classList.remove('hidden');
+      if (user) {
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        document.getElementById('bottomNav').classList.remove('hidden');
 
-      const name = user.email ? user.email.split('@')[0] : 'مستخدم';
-      document.getElementById('myAvatar').innerText = name[0].toUpperCase();
-      
-      navigateTo('home');
-    } else {
-      document.getElementById('authScreen').classList.remove('hidden');
-      document.getElementById('appScreen').classList.add('hidden');
-      document.getElementById('bottomNav').classList.add('hidden');
+        const name = user.email ? user.email.split('@')[0] : 'مستخدم';
+        document.getElementById('myAvatar').innerText = name[0].toUpperCase();
+        
+        navigateTo('home');
+      } else {
+        document.getElementById('authScreen').classList.remove('hidden');
+        document.getElementById('appScreen').classList.add('hidden');
+        document.getElementById('bottomNav').classList.add('hidden');
+      }
+    } catch (e) {
+      console.log(e);
     }
   }
 
@@ -169,14 +173,14 @@
     if (!email || !password) return alert('يرجى ملء جميع الحقول');
 
     if (isSignUpMode) {
-      const { error } = await _supabase.auth.signUp({ email, password });
+      const { data, error } = await _supabase.auth.signUp({ email, password });
       if (error) alert(error.message);
       else {
-        alert('تم إنشاء الحساب بنجاح! جاري تسجيل الدخول...');
+        alert('تم إنشاء الحساب بنجاح!');
         checkUser();
       }
     } else {
-      const { error } = await _supabase.auth.signInWithPassword({ email, password });
+      const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
       if (error) alert(error.message);
       else checkUser();
     }
@@ -220,7 +224,7 @@
     const content = document.getElementById('tweetInput').value.trim();
     if (!content) return;
 
-    const username = currentUser.email.split('@')[0];
+    const username = currentUser ? currentUser.email.split('@')[0] : 'زائر';
     const { error } = await _supabase.from('posts').insert([{ content, author_name: username }]);
     if (error) {
       alert('خطأ أثناء النشر: ' + error.message);

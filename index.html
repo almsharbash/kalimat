@@ -10,52 +10,111 @@
     :root {
       --bg-color: #000000;
       --card-bg: #16181c;
+      --hover-bg: #1d1f23;
       --border-color: #2f3336;
       --text-main: #f7f9f9;
       --text-sub: #71767b;
       --accent: #1d9bf0;
+      --accent-hover: #1a8cd8;
+      --like-color: #f91880;
     }
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
-    .app-container { width: 100%; max-width: 600px; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); padding: 16px; }
-    header { font-size: 1.4rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
-    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
-    .input-box { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid var(--border-color); border-radius: 8px; color: #fff; outline: none; font-size: 0.95rem; }
-    .btn { background: var(--accent); color: #fff; border: none; padding: 12px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; font-size: 0.95rem; }
-    .post { border-bottom: 1px solid var(--border-color); padding: 14px 0; }
-    .post-author { font-weight: bold; color: var(--accent); font-size: 0.95rem; margin-bottom: 4px; }
-    .post-text { font-size: 1rem; line-height: 1.4; white-space: pre-wrap; }
+    
+    .app-container { width: 100%; max-width: 600px; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 70px; }
+
+    /* Header */
+    header { sticky: top; top: 0; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+    .brand { font-size: 1.3rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
+    .brand i { color: var(--accent); }
+    .user-pill { font-size: 0.85rem; background: var(--card-bg); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 20px; color: var(--accent); font-weight: 600; }
+
+    /* Auth Screen */
+    .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; margin: 40px 16px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+    .auth-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
+    .auth-sub { color: var(--text-sub); font-size: 0.9rem; margin-bottom: 20px; }
+    
+    .input-box { width: 100%; padding: 14px; margin-bottom: 12px; background: #000; border: 1px solid var(--border-color); border-radius: 10px; color: #fff; outline: none; font-size: 0.95rem; transition: border 0.2s; }
+    .input-box:focus { border-color: var(--accent); }
+
+    .btn-primary { background: var(--accent); color: #fff; border: none; padding: 12px 20px; border-radius: 25px; font-weight: bold; font-size: 0.95rem; cursor: pointer; width: 100%; transition: background 0.2s; }
+    .btn-primary:hover { background: var(--accent-hover); }
+
+    /* Tweet Composer */
+    .composer { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
+    .avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #1d9bf0, #7928ca); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 1.1rem; flex-shrink: 0; }
+    .composer-input-wrap { flex-grow: 1; }
+    textarea { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1.05rem; resize: none; outline: none; min-height: 80px; }
+    .composer-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 8px; }
+    .action-icons { color: var(--accent); display: flex; gap: 16px; font-size: 1.1rem; }
+
+    /* Feed Posts */
+    .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; transition: background 0.2s; cursor: pointer; }
+    .post:hover { background: var(--hover-bg); }
+    .post-content { flex-grow: 1; }
+    .post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .post-author { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
+    .post-handle { color: var(--text-sub); font-size: 0.85rem; }
+    .post-text { font-size: 0.95rem; line-height: 1.5; color: #e7e9ea; white-space: pre-wrap; word-break: break-word; }
+    .post-footer { display: flex; justify-content: space-between; max-width: 300px; margin-top: 12px; color: var(--text-sub); font-size: 0.85rem; }
+    .post-action { display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .post-action:hover { color: var(--accent); }
+    .post-action.like:hover { color: var(--like-color); }
+
+    /* Bottom Nav Bar */
+    .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 600px; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 14px 0; z-index: 10; }
+    .nav-link { color: var(--text-sub); font-size: 1.3rem; cursor: pointer; transition: color 0.2s; }
+    .nav-link.active, .nav-link:hover { color: var(--accent); }
+
     .hidden { display: none !important; }
-    .status-msg { font-size: 0.85rem; color: #e5a100; margin-top: 8px; text-align: center; }
   </style>
 </head>
 <body>
 
   <div class="app-container">
     <header>
-      <div><i class="fa-solid fa-feather-pointed"></i> كلمات</div>
-      <span id="userBadge" style="font-size: 0.85rem; color: var(--text-sub);"></span>
+      <div class="brand"><i class="fa-solid fa-feather-pointed"></i> كلمات</div>
+      <div id="userBadge" class="user-pill hidden"></div>
     </header>
 
-    <!-- شاشة الدخول -->
-    <div id="authSection" class="card">
-      <h3 style="margin-bottom: 12px;">تسجيل الدخول / تجربة المنصة</h3>
-      <input type="text" id="username" class="input-box" placeholder="الاسم المستعار (مثال: Rim)">
-      <input type="email" id="email" class="input-box" placeholder="البريد الإلكتروني">
-      <input type="password" id="password" class="input-box" placeholder="كلمة المرور">
+    <!-- شاشة تسجيل الدخول -->
+    <div id="authSection" class="auth-card">
+      <div class="brand" style="justify-content: center; font-size: 2rem; margin-bottom: 12px;"><i class="fa-solid fa-feather-pointed"></i></div>
+      <h2 class="auth-title">ماذا يحدث الآن؟</h2>
+      <p class="auth-sub">انضم إلى منصة كلمات اليوم وشارك أفكارك مع العالم.</p>
       
-      <button class="btn" onclick="loginDirectly()">دخول مباشر إلى المنصة</button>
-      <div id="status" class="status-msg"></div>
+      <input type="text" id="username" class="input-box" placeholder="اسم المستخدم (مثال: Rim)">
+      <input type="email" id="email" class="input-box" placeholder="البريد الإلكتروني">
+      <button class="btn-primary" onclick="loginDirectly()">الدخول للمنصة</button>
     </div>
 
     <!-- شاشة التايم لاين والنشر -->
     <div id="mainSection" class="hidden">
-      <div class="card">
-        <textarea id="postInput" class="input-box" rows="3" placeholder="ماذا يدور في أفكارك اليوم؟"></textarea>
-        <button class="btn" onclick="addPost()">نشر الآن</button>
+      <div class="composer">
+        <div class="avatar" id="myAvatar">ك</div>
+        <div class="composer-input-wrap">
+          <textarea id="postInput" placeholder="ماذا يدور في أفكارك؟"></textarea>
+          <div class="composer-actions">
+            <div class="action-icons">
+              <i class="fa-regular fa-image"></i>
+              <i class="fa-solid fa-list-ul"></i>
+              <i class="fa-regular fa-face-smile"></i>
+            </div>
+            <button class="btn-primary" style="width: auto; padding: 8px 18px;" onclick="addPost()">نشر</button>
+          </div>
+        </div>
       </div>
+
       <div id="postsList"></div>
-      <button class="btn" style="background: #333; margin-top: 20px;" onclick="logout()">تسجيل الخروج</button>
+    </div>
+
+    <!-- شريط التنقل السفلي -->
+    <div id="navBar" class="nav-bar hidden">
+      <div class="nav-link active"><i class="fa-solid fa-house"></i></div>
+      <div class="nav-link"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <div class="nav-link"><i class="fa-regular fa-bell"></i></div>
+      <div class="nav-link" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
     </div>
   </div>
 
@@ -83,7 +142,13 @@
     function showApp() {
       document.getElementById('authSection').classList.add('hidden');
       document.getElementById('mainSection').classList.remove('hidden');
-      document.getElementById('userBadge').innerText = activeUser;
+      document.getElementById('navBar').classList.remove('hidden');
+      
+      const badge = document.getElementById('userBadge');
+      badge.innerText = '@' + activeUser;
+      badge.classList.remove('hidden');
+
+      document.getElementById('myAvatar').innerText = activeUser[0].toUpperCase();
       loadPosts();
     }
 
@@ -92,29 +157,26 @@
       activeUser = null;
       document.getElementById('authSection').classList.remove('hidden');
       document.getElementById('mainSection').classList.add('hidden');
-      document.getElementById('userBadge').innerText = '';
+      document.getElementById('navBar').classList.add('hidden');
+      document.getElementById('userBadge').classList.add('hidden');
     }
 
     async function addPost() {
       const text = document.getElementById('postInput').value.trim();
       if (!text) return;
 
-      // حفظ المنشور في السيرفر
       try {
         await _supabase.from('posts').insert([{ content: text, author_name: activeUser }]);
-      } catch (e) {
-        console.log('سيعمل الحفظ محلياً إذا تعثر السيرفر');
-      }
+      } catch (e) {}
 
-      // حفظ محلي فوري لضمان الاستجابة
-      localPosts.unshift({ author_name: activeUser, content: text });
+      localPosts.unshift({ author_name: activeUser, content: text, created_at: new Date() });
       document.getElementById('postInput').value = '';
       renderPosts(localPosts);
     }
 
     async function loadPosts() {
       const container = document.getElementById('postsList');
-      container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-sub);">جاري التحميل...</p>';
+      container.innerHTML = '<p style="text-align:center; padding:30px; color:var(--text-sub);">جاري تحميل المنشورات...</p>';
 
       try {
         const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
@@ -124,7 +186,9 @@
       } catch (e) {}
 
       if (localPosts.length === 0) {
-        localPosts = [{ author_name: 'منصة كلمات', content: 'مرحباً بك في المنصة! اكتب أول منشور لك الآن.' }];
+        localPosts = [
+          { author_name: 'منصة كلمات', content: 'أهلاً بك في الشكل الجديد لمنصة كلمات! جرب نشر أفكارك الآن.' }
+        ];
       }
 
       renderPosts(localPosts);
@@ -132,12 +196,27 @@
 
     function renderPosts(list) {
       const container = document.getElementById('postsList');
-      container.innerHTML = list.map(p => `
-        <div class="post">
-          <div class="post-author">${p.author_name || 'مستخدم'}</div>
-          <div class="post-text">${p.content}</div>
-        </div>
-      `).join('');
+      container.innerHTML = list.map(p => {
+        const initial = p.author_name ? p.author_name[0].toUpperCase() : '؟';
+        return `
+          <div class="post">
+            <div class="avatar">${initial}</div>
+            <div class="post-content">
+              <div class="post-header">
+                <span class="post-author">${p.author_name || 'مستخدم'}</span>
+                <span class="post-handle">@${p.author_name || 'user'}</span>
+              </div>
+              <div class="post-text">${p.content}</div>
+              <div class="post-footer">
+                <div class="post-action"><i class="fa-regular fa-comment"></i> 0</div>
+                <div class="post-action"><i class="fa-solid fa-retweet"></i> 0</div>
+                <div class="post-action like"><i class="fa-regular fa-heart"></i> 0</div>
+                <div class="post-action"><i class="fa-regular fa-bookmark"></i></div>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
     }
 
     init();

@@ -14,17 +14,15 @@
       --text-main: #f7f9f9;
       --text-sub: #71767b;
       --accent: #1d9bf0;
-      --accent-hover: #1a8cd8;
       --like-color: #f91880;
-      --retweet-color: #00ba7c;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
     .layout-container { width: 100%; max-width: 600px; min-height: 100vh; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding-bottom: 70px; }
 
-    header { position: sticky; top: 0; background-color: rgba(0, 0, 0, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
-    .brand-title { font-size: 1.3rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; }
+    header { position: sticky; top: 0; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; }
+    .brand-title { font-size: 1.3rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; cursor: pointer; }
     .brand-title i { color: var(--accent); }
     
     .user-pill { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-main); background: var(--card-bg); padding: 4px 12px 4px 6px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; }
@@ -35,7 +33,7 @@
     .nav-item.active, .nav-item:hover { color: var(--accent); }
 
     .tweet-box { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
-    .avatar { width: 44px; height: 44px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; }
+    .avatar { width: 44px; height: 44px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; cursor: pointer; }
     .tweet-input-area { flex-grow: 1; }
     textarea { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1.1rem; resize: none; outline: none; min-height: 70px; }
     
@@ -50,8 +48,9 @@
     .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
     .post-main { flex-grow: 1; }
     .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-    .post-author-info { display: flex; align-items: center; gap: 6px; }
+    .post-author-info { display: flex; align-items: center; gap: 6px; cursor: pointer; }
     .post-author { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
+    .post-author:hover { text-decoration: underline; }
     .post-time { color: var(--text-sub); font-size: 0.85rem; }
     .post-text { font-size: 0.98rem; line-height: 1.5; white-space: pre-wrap; word-break: break-word; }
     .post-img { width: 100%; max-height: 380px; border-radius: 14px; margin-top: 10px; border: 1px solid var(--border-color); object-fit: cover; }
@@ -63,9 +62,16 @@
 
     .comments-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color); display: none; }
     .comment-item { background: var(--card-bg); padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.88rem; }
-    .comment-author { font-weight: bold; color: var(--accent); margin-bottom: 2px; }
+    .comment-author { font-weight: bold; color: var(--accent); margin-bottom: 2px; cursor: pointer; }
     .comment-input-box { display: flex; gap: 8px; margin-top: 8px; }
     .comment-input-box input { flex-grow: 1; background: #000; border: 1px solid var(--border-color); border-radius: 18px; padding: 8px 14px; color: #fff; font-size: 0.85rem; outline: none; }
+
+    /* Profile View Header & Header Style */
+    .profile-header-card { background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 20px; text-align: center; }
+    .profile-big-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--accent); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; overflow: hidden; border: 3px solid var(--border-color); }
+    .profile-name { font-size: 1.3rem; font-weight: bold; color: var(--text-main); }
+    .profile-handle { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 10px; }
+    .back-to-home-btn { background: transparent; border: 1px solid var(--border-color); color: var(--accent); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 10px; }
 
     .auth-container { padding: 40px 20px; text-align: center; }
     .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 24px; border-radius: 16px; margin-top: 20px; text-align: right; }
@@ -82,8 +88,8 @@
 
   <div class="layout-container">
     <header>
-      <div class="brand-title"><i class="fa-solid fa-feather-pointed"></i> كلمات</div>
-      <div id="userInfo" class="user-pill hidden" onclick="openSettings()">
+      <div class="brand-title" onclick="showHomeScreen()"><i class="fa-solid fa-feather-pointed"></i> كلمات</div>
+      <div id="userInfo" class="user-pill hidden" onclick="openMyProfile()">
         <span id="userPillName">المستخدم</span>
         <div class="avatar-mini" id="userPillAvatar">ك</div>
       </div>
@@ -112,8 +118,17 @@
     </div>
 
     <div id="appScreen" class="hidden">
-      <div class="tweet-box">
-        <div class="avatar" id="myAvatar">ك</div>
+      <!-- Profile Display Section -->
+      <div id="profileViewSection" class="profile-header-card hidden">
+        <div class="profile-big-avatar" id="viewAvatar">ك</div>
+        <div class="profile-name" id="viewName">الاسم</div>
+        <div class="profile-handle" id="viewHandle">@user</div>
+        <button class="back-to-home-btn" onclick="showHomeScreen()"><i class="fa-solid fa-arrow-right"></i> العودة للرئيسية</button>
+      </div>
+
+      <!-- Tweet Creation Section -->
+      <div class="tweet-box" id="homeTweetBox">
+        <div class="avatar" id="myAvatar" onclick="openMyProfile()">ك</div>
         <div class="tweet-input-area">
           <textarea id="tweetContent" placeholder="ماذا يدور في أفكارك اليوم؟"></textarea>
 
@@ -156,8 +171,8 @@
     </div>
 
     <div class="nav-bar hidden" id="bottomNav">
-      <div class="nav-item active"><i class="fa-solid fa-house"></i></div>
-      <div class="nav-item" onclick="alert('قسم البحث قادم قريباً!')"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <div class="nav-item active" onclick="showHomeScreen()"><i class="fa-solid fa-house"></i></div>
+      <div class="nav-item" onclick="openMyProfile()"><i class="fa-regular fa-user"></i></div>
       <div class="nav-item" onclick="openSettings()"><i class="fa-solid fa-gear"></i></div>
       <div class="nav-item" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
     </div>
@@ -172,6 +187,7 @@
     let currentUser = null;
     let currentBase64Image = '';
     let likedPosts = JSON.parse(localStorage.getItem('kalimat_likes') || '{}');
+    let currentFilterAuthor = null;
 
     function toggleAuthMode() {
       isSignUp = !isSignUp;
@@ -190,7 +206,7 @@
         document.getElementById('bottomNav').classList.remove('hidden');
 
         updateUserDisplay();
-        loadTimeline();
+        showHomeScreen();
       } else {
         document.getElementById('authScreen').classList.remove('hidden');
         document.getElementById('appScreen').classList.add('hidden');
@@ -293,12 +309,42 @@
       if (!error) loadTimeline();
     }
 
+    function showHomeScreen() {
+      currentFilterAuthor = null;
+      document.getElementById('profileViewSection').classList.add('hidden');
+      document.getElementById('homeTweetBox').classList.remove('hidden');
+      loadTimeline();
+    }
+
+    function openUserProfile(authorName) {
+      currentFilterAuthor = authorName;
+      document.getElementById('profileViewSection').classList.remove('hidden');
+      document.getElementById('homeTweetBox').classList.add('hidden');
+      
+      document.getElementById('viewName').innerText = authorName;
+      document.getElementById('viewHandle').innerText = `@${authorName}`;
+      document.getElementById('viewAvatar').innerText = authorName ? authorName[0].toUpperCase() : '؟';
+      
+      loadTimeline();
+    }
+
+    function openMyProfile() {
+      const meta = currentUser?.user_metadata || {};
+      const name = meta.full_name || currentUser?.email?.split('@')[0];
+      openUserProfile(name);
+    }
+
     async function loadTimeline() {
-      const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
+      let query = _supabase.from('posts').select('*').order('created_at', { ascending: false });
+      if (currentFilterAuthor) {
+        query = query.eq('author_name', currentFilterAuthor);
+      }
+
+      const { data: posts, error } = await query;
       const timeline = document.getElementById('timeline');
 
       if (error || !posts || posts.length === 0) {
-        timeline.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد منشورات حتى الآن. كن أول من ينشر!</div>`;
+        timeline.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد منشورات للعبور إليها هنا.</div>`;
         return;
       }
 
@@ -311,10 +357,10 @@
         const postElement = document.createElement('div');
         postElement.className = 'post';
         postElement.innerHTML = `
-          <div class="avatar">${post.author_name ? post.author_name[0].toUpperCase() : '؟'}</div>
+          <div class="avatar" onclick="openUserProfile('${post.author_name}')">${post.author_name ? post.author_name[0].toUpperCase() : '؟'}</div>
           <div class="post-main">
             <div class="post-header">
-              <div class="post-author-info">
+              <div class="post-author-info" onclick="openUserProfile('${post.author_name}')">
                 <span class="post-author">${post.author_name}</span>
                 <span class="post-time">• ${new Date(post.created_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}</span>
               </div>
@@ -341,7 +387,7 @@
               <div id="comments-list-${post.id}">
                 ${(comments || []).map(c => `
                   <div class="comment-item">
-                    <div class="comment-author">${c.author_name}</div>
+                    <div class="comment-author" onclick="openUserProfile('${c.author_name}')">${c.author_name}</div>
                     <div>${c.content}</div>
                   </div>
                 `).join('')}
@@ -374,7 +420,6 @@
         countSpan.innerText = currentCount + 1;
       }
       localStorage.setItem('kalimat_likes', JSON.stringify(likedPosts));
-      _supabase.from('posts').rpc('increment_likes', { row_id: postId }).then(() => {}).catch(() => {});
     }
 
     function toggleComments(postId) {
@@ -438,4 +483,4 @@
     checkUser();
   </script>
 </body>
-  </html>
+          </html>

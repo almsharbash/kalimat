@@ -8,14 +8,15 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --bg-color: #000000;
-      --card-bg: #16181c;
+      --bg-color: #0f1419;
+      --card-bg: #1e2732;
       --border-color: #2f3336;
       --text-main: #f7f9f9;
-      --text-sub: #71767b;
+      --text-sub: #8b98a5;
       --accent: #1d9bf0;
       --like-color: #f91880;
       --danger-color: #f4212e;
+      --success-color: #00ba7c;
     }
 
     body.light-mode {
@@ -27,24 +28,34 @@
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
+    body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s; }
     
     .layout-container { width: 100%; max-width: 650px; min-height: 100vh; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding-bottom: 70px; background: var(--bg-color); position: relative; }
 
-    header { position: sticky; top: 0; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; height: 53px; }
+    header { position: sticky; top: 0; background-color: rgba(15, 20, 25, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; height: 53px; }
     body.light-mode header { background-color: rgba(255, 255, 255, 0.85); }
     
     .header-left { display: flex; align-items: center; gap: 12px; }
-    .back-btn { background: transparent; border: none; color: var(--text-main); font-size: 1.2rem; cursor: pointer; display: none; padding: 4px 8px; border-radius: 50%; }
+    .back-btn { background: transparent; border: none; color: var(--text-main); font-size: 1.2rem; cursor: pointer; display: none; padding: 6px 10px; border-radius: 50%; transition: background 0.2s; }
     .back-btn:hover { background: var(--card-bg); }
     .brand-title { font-size: 1.2rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; cursor: pointer; }
     .brand-title i { color: var(--accent); }
     
     .header-actions { display: flex; align-items: center; gap: 10px; }
-    .theme-toggle-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
+    .theme-toggle-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
 
     .user-pill { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-main); background: var(--card-bg); padding: 4px 12px 4px 6px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; }
     .avatar-mini { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; overflow: hidden; color: #fff; }
+
+    /* Floating Toast Notifications Container */
+    #toast-container { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: 90%; max-width: 400px; }
+    .toast { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); border-right: 4px solid var(--accent); padding: 12px 16px; border-radius: 12px; font-size: 0.9rem; box-shadow: 0 8px 24px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 12px; pointer-events: auto; animation: slideUp 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards; }
+    .toast.success { border-right-color: var(--success-color); }
+    .toast.danger { border-right-color: var(--danger-color); }
+    .toast i { font-size: 1.1rem; color: var(--accent); }
+
+    @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
 
     /* Clean Auth Tabs UI */
     .auth-container { padding: 30px 20px; text-align: center; }
@@ -60,9 +71,9 @@
     .search-input-wrapper i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
     .search-input-wrapper input { width: 100%; padding: 10px 40px 10px 12px; border-radius: 20px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); outline: none; font-size: 0.9rem; }
 
-    .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 650px; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 12px 0; z-index: 100; }
+    .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 650px; background-color: rgba(15, 20, 25, 0.85); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 12px 0; z-index: 100; }
     body.light-mode .nav-bar { background-color: rgba(255, 255, 255, 0.85); }
-    .nav-item { color: var(--text-sub); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
+    .nav-item { color: var(--text-sub); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; position: relative; }
     .nav-item.active, .nav-item:hover { color: var(--accent); }
 
     .tweet-box { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
@@ -76,11 +87,13 @@
 
     .tweet-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; }
     .media-btn { color: var(--accent); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; gap: 6px; }
-    .btn-tweet { background-color: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; }
+    .btn-tweet { background-color: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
+    .btn-tweet:hover { opacity: 0.9; }
     .btn-action-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
     .btn-danger { background: transparent; border: 1px solid var(--danger-color); color: var(--danger-color); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
 
-    .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
+    .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; transition: background 0.2s; }
+    .post:hover { background: rgba(255,255,255,0.01); }
     .post-main { flex-grow: 1; }
     .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
     .post-author-info { display: flex; align-items: center; gap: 6px; cursor: pointer; }
@@ -90,8 +103,17 @@
     .post-text { font-size: 0.95rem; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
     .post-img { width: 100%; max-height: 350px; border-radius: 12px; margin-top: 10px; border: 1px solid var(--border-color); object-fit: cover; }
     .post-footer { display: flex; justify-content: space-between; max-width: 400px; margin-top: 10px; color: var(--text-sub); font-size: 0.85rem; }
-    .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 12px; user-select: none; }
+    .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 10px; border-radius: 20px; transition: 0.2s; }
+    .action-btn:hover { background: rgba(29, 155, 240, 0.1); color: var(--accent); }
     .action-btn.liked { color: var(--like-color); }
+    .action-btn.liked:hover { background: rgba(249, 24, 128, 0.1); }
+
+    /* Notifications List Item Styling (Twitter/Facebook style) */
+    .notif-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border-color); transition: background 0.2s; }
+    .notif-card:hover { background: var(--card-bg); }
+    .notif-icon-box { font-size: 1.2rem; margin-top: 2px; }
+    .notif-icon-like { color: var(--like-color); }
+    .notif-icon-comment { color: var(--accent); }
 
     .comments-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color); display: none; }
     .comment-item { background: var(--card-bg); padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; font-size: 0.85rem; }
@@ -124,6 +146,9 @@
 </head>
 <body>
 
+  <!-- Toast Notification Container -->
+  <div id="toast-container"></div>
+
   <div class="layout-container">
     <header>
       <div class="header-left">
@@ -139,7 +164,7 @@
       </div>
     </header>
 
-    <!-- Authentication Screen -->
+    <!-- Auth Screen -->
     <div id="authScreen" class="auth-container">
       <h2 style="font-size: 1.6rem; margin-bottom: 6px;">مرحباً بك في منصة كلمات</h2>
       <p style="color: var(--text-sub); font-size: 0.9rem;">تواصل وشارك أفكارك بكل حرية</p>
@@ -165,10 +190,9 @@
       </div>
     </div>
 
-    <!-- Main Application Screen -->
+    <!-- App Screen -->
     <div id="appScreen" class="hidden">
       
-      <!-- Search Bar -->
       <div class="search-box" id="searchBoxArea">
         <div class="search-input-wrapper">
           <i class="fa-solid fa-magnifying-glass"></i>
@@ -176,7 +200,6 @@
         </div>
       </div>
 
-      <!-- User Profile Header -->
       <div id="profileViewSection" class="profile-header-card hidden">
         <div class="profile-big-avatar" id="viewAvatar">ك</div>
         <div class="profile-name" id="viewName">الاسم</div>
@@ -186,7 +209,6 @@
         <div class="profile-controls" id="profileControls"></div>
       </div>
 
-      <!-- Tweet Box -->
       <div class="tweet-box" id="homeTweetBox">
         <div class="avatar" id="myAvatar" onclick="navigateTo('profile', getMyName())">ك</div>
         <div class="tweet-input-area">
@@ -208,20 +230,17 @@
         </div>
       </div>
 
-      <!-- Timeline View -->
       <div id="timelineSection">
         <div id="timeline">
           <div style="text-align: center; padding: 40px; color: var(--text-sub);">جاري تحميل المنشورات...</div>
         </div>
       </div>
 
-      <!-- Friends View Screen -->
       <div id="friendsSection" class="hidden">
         <div style="padding: 16px; font-weight: bold; border-bottom: 1px solid var(--border-color);"><i class="fa-solid fa-users"></i> قائمة المتابَعين (الأصدقاء)</div>
         <div id="friendsList"></div>
       </div>
 
-      <!-- Notifications Screen -->
       <div id="notificationsSection" class="hidden">
         <div style="padding: 16px; font-weight: bold; border-bottom: 1px solid var(--border-color);"><i class="fa-solid fa-bell"></i> الإشعارات</div>
         <div id="notificationsList">
@@ -229,7 +248,6 @@
         </div>
       </div>
 
-      <!-- Direct Messaging Screen -->
       <div id="chatSection" class="chat-container hidden">
         <div class="chat-header">
           <span id="chatTargetTitle">دردشة خاصة</span>
@@ -241,9 +259,8 @@
         </div>
       </div>
 
-      <!-- Settings Section View -->
       <div id="settingsSection" class="section-card hidden">
-        <h3 style="font-size: 1.1rem; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;"><i class="fa-solid fa-gear"></i> إعدادات الملف الشخصي الحساب</h3>
+        <h3 style="font-size: 1.1rem; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;"><i class="fa-solid fa-gear"></i> إعدادات الملف الشخصي</h3>
         
         <label style="font-size: 0.85rem; color: var(--text-sub);">الاسم المستعار</label>
         <input type="text" id="editDisplayName" class="input-field" placeholder="اسمك الظاهر">
@@ -257,21 +274,20 @@
         <label style="font-size: 0.85rem; color: var(--text-sub);">البريد الإلكتروني</label>
         <input type="email" id="editEmail" class="input-field" placeholder="البريد الإلكتروني">
 
-        <label style="font-size: 0.85rem; color: var(--text-sub);">كلمة المرور الجديدة (اختياري)</label>
+        <label style="font-size: 0.85rem; color: var(--text-sub);">كلمة المرور الجديدة</label>
         <input type="password" id="editPassword" class="input-field" placeholder="أدخل كلمة مرور جديدة للتمكين">
 
-        <label style="font-size: 0.85rem; color: var(--text-sub);">رقم الهاتف (اختياري)</label>
+        <label style="font-size: 0.85rem; color: var(--text-sub);">رقم الهاتف</label>
         <input type="text" id="editPhone" class="input-field" placeholder="+961 ...">
 
-        <label style="font-size: 0.85rem; color: var(--text-sub);">العنوان / البلد (اختياري)</label>
-        <input type="text" id="editAddress" class="input-field" placeholder="بيروت، لبنان">
+        <label style="font-size: 0.85rem; color: var(--text-sub);">العنوان / البلد</label>
+        <input type="text" id="editAddress" class="input-field" placeholder="لبنان">
 
         <button class="btn-tweet" style="width: 100%; padding: 12px; margin-top: 10px;" onclick="saveProfileSettings()">حفظ والتحديث</button>
       </div>
 
     </div>
 
-    <!-- Bottom Navigation Bar -->
     <div class="nav-bar hidden" id="bottomNav">
       <div class="nav-item active" id="navHome" onclick="navigateTo('home')"><i class="fa-solid fa-house"></i></div>
       <div class="nav-item" id="navFriends" onclick="navigateTo('friends')"><i class="fa-solid fa-user-group"></i></div>
@@ -295,14 +311,25 @@
     let blockedUserList = [];
     let followingUserList = [];
 
-    // Navigation Stack for Smooth Back Button Support
     let navHistory = [];
     let currentView = { name: 'home', param: null };
+
+    // Toast Notification System
+    function showToast(message, type = 'info', iconClass = 'fa-circle-info') {
+      const container = document.getElementById('toast-container');
+      const toast = document.createElement('div');
+      toast.className = `toast ${type}`;
+      toast.innerHTML = `<i class="fa-solid ${iconClass}"></i><span>${message}</span>`;
+      container.appendChild(toast);
+
+      setTimeout(() => { toast.remove(); }, 3000);
+    }
 
     function toggleTheme() {
       document.body.classList.toggle('light-mode');
       const icon = document.getElementById('themeIcon');
       icon.className = document.body.classList.contains('light-mode') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      showToast(document.body.classList.contains('light-mode') ? 'تم تفعيل الوضع الفاتح' : 'تم تفعيل الوضع الداكن', 'info', 'fa-palette');
     }
 
     function switchAuthTab(mode) {
@@ -372,20 +399,25 @@
       const password = document.getElementById('authPass').value.trim();
       const name = document.getElementById('regName').value.trim();
 
-      if (!email || !password) return alert('يرجى كتابة البريد الإلكتروني وكلمة المرور');
+      if (!email || !password) return showToast('يرجى ملء كافة البيانات', 'danger', 'fa-triangle-exclamation');
 
       if (authMode === 'register') {
         const { error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: name || 'عضو كلمات' } } });
-        if (error) alert(error.message); else checkUser();
+        if (error) showToast(error.message, 'danger', 'fa-circle-xmark');
+        else { showToast('تم إنشاء الحساب بنجاح!', 'success', 'fa-circle-check'); checkUser(); }
       } else {
         const { error } = await _supabase.auth.signInWithPassword({ email, password });
-        if (error) alert('خطأ في إدخال بيانات الدخول'); else checkUser();
+        if (error) showToast('خطأ في إدخال بيانات الدخول', 'danger', 'fa-circle-xmark');
+        else { showToast('مرحباً بك مجدداً!', 'success', 'fa-hand-wave'); checkUser(); }
       }
     }
 
-    async function logout() { await _supabase.auth.signOut(); checkUser(); }
+    async function logout() { 
+      await _supabase.auth.signOut(); 
+      showToast('تم تسجيل الخروج', 'info', 'fa-right-from-bracket');
+      checkUser(); 
+    }
 
-    /* Router and Navigation Engine */
     function navigateTo(screen, param = null, isReset = false) {
       if (!isReset && currentView.name !== screen) {
         navHistory.push({ ...currentView });
@@ -394,7 +426,6 @@
 
       document.getElementById('backBtn').style.display = navHistory.length > 0 ? 'inline-block' : 'none';
 
-      // Hide all content areas
       document.getElementById('profileViewSection').classList.add('hidden');
       document.getElementById('homeTweetBox').classList.add('hidden');
       document.getElementById('timelineSection').classList.add('hidden');
@@ -403,7 +434,6 @@
       document.getElementById('chatSection').classList.add('hidden');
       document.getElementById('settingsSection').classList.add('hidden');
 
-      // Update Nav Highlights
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
       if (screen === 'home') {
@@ -467,13 +497,14 @@
 
     async function publishTweet() {
       const content = document.getElementById('tweetContent').value.trim();
-      if (!content && !currentBase64Image) return;
+      if (!content && !currentBase64Image) return showToast('اكتب شيئاً لنشره!', 'danger', 'fa-pen');
 
       const name = getMyName();
       const { error } = await _supabase.from('posts').insert([{ content, author_name: name, image_url: currentBase64Image, likes_count: 0 }]);
 
-      if (error) alert('خطأ أثناء النشر');
+      if (error) showToast('خطأ أثناء النشر', 'danger', 'fa-circle-exclamation');
       else {
+        showToast('تم نشر منشورك بنجاح!', 'success', 'fa-paper-plane');
         document.getElementById('tweetContent').value = '';
         clearSelectedImage();
         loadTimeline();
@@ -569,6 +600,7 @@
         newCount = currentLikes + 1;
         btn.classList.add('liked');
         btn.querySelector('i').className = 'fa-solid fa-heart';
+        showToast('أعجبك المنشور', 'success', 'fa-heart');
       }
 
       countSpan.innerText = newCount;
@@ -590,6 +622,7 @@
       const { error } = await _supabase.from('comments').insert([{ post_id: postId, author_name: name, content }]);
       
       if (!error) {
+        showToast('تمت إضافة الرد', 'success', 'fa-comment');
         input.value = '';
         if (postAuthor !== name) {
           await _supabase.from('notifications').insert([{
@@ -617,12 +650,17 @@
       }
 
       container.innerHTML = notifs.map(n => `
-        <div class="list-item">
-          <div>
-            <strong style="color: var(--accent); cursor: pointer;" onclick="navigateTo('profile', '${n.sender_name}')">${n.sender_name}</strong> ${n.type}
-            <div style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">"${n.content || ''}"</div>
+        <div class="notif-card">
+          <div class="notif-icon-box ${n.type.includes('علّق') ? 'notif-icon-comment' : 'notif-icon-like'}">
+            <i class="fa-solid ${n.type.includes('علّق') ? 'fa-comment' : 'fa-heart'}"></i>
           </div>
-          <span style="font-size: 0.75rem; color: var(--text-sub);">${new Date(n.created_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}</span>
+          <div style="flex-grow: 1;">
+            <div>
+              <strong style="color: var(--accent); cursor: pointer;" onclick="navigateTo('profile', '${n.sender_name}')">${n.sender_name}</strong> ${n.type}
+            </div>
+            <div style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">"${n.content || ''}"</div>
+            <span style="font-size: 0.75rem; color: var(--text-sub); margin-top: 6px; display: block;">${new Date(n.created_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}</span>
+          </div>
         </div>
       `).join('');
     }
@@ -726,6 +764,7 @@
       const { error } = await _supabase.from('direct_messages').insert([{ sender_name: myName, receiver_name: activeChatUser, content: content }]);
 
       if (!error) {
+        showToast('تم إرسال الرسالة', 'success', 'fa-paper-plane');
         input.value = '';
         loadDirectMessages();
       }
@@ -757,11 +796,11 @@
       const { data, error } = await _supabase.auth.updateUser(updatePayload);
 
       if (error) {
-        alert('حدث خطأ: ' + error.message);
+        showToast(error.message, 'danger', 'fa-circle-exclamation');
       } else {
         currentUser = data.user;
         updateUserDisplay();
-        alert('تم حفظ البيانات بنجاح!');
+        showToast('تم حفظ التعديلات بنجاح', 'success', 'fa-floppy-disk');
         navigateTo('profile', getMyName());
       }
     }
@@ -772,8 +811,10 @@
 
       if (isFollowing) {
         await _supabase.from('follows').delete().eq('follower_name', myName).eq('following_name', targetUser);
+        showToast(`أغيت متابعة ${targetUser}`, 'info', 'fa-user-minus');
       } else {
         await _supabase.from('follows').insert([{ follower_name: myName, following_name: targetUser }]);
+        showToast(`بدأت بمتابعة ${targetUser}`, 'success', 'fa-user-plus');
       }
       await fetchBlocksAndFollows();
       renderUserProfile(targetUser);
@@ -785,8 +826,10 @@
 
       if (isBlocked) {
         await _supabase.from('blocks').delete().eq('blocker_name', myName).eq('blocked_name', targetUser);
+        showToast(`تم إلغاء حظر ${targetUser}`, 'info', 'fa-user-check');
       } else {
         await _supabase.from('blocks').insert([{ blocker_name: myName, blocked_name: targetUser }]);
+        showToast(`تم حظر ${targetUser}`, 'danger', 'fa-user-slash');
       }
       await fetchBlocksAndFollows();
       renderUserProfile(targetUser);
@@ -804,11 +847,11 @@
         navigator.share({ title: 'كلمات', text: text, url: window.location.href });
       } else {
         navigator.clipboard.writeText(text);
-        alert('تم نسخ النص!');
+        showToast('تم نسخ رابط المنشور!', 'info', 'fa-copy');
       }
     }
 
     checkUser();
   </script>
 </body>
-  </html>
+                                                                                                       </html>

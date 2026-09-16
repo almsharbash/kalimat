@@ -15,6 +15,7 @@
       --text-sub: #71767b;
       --accent: #1d9bf0;
       --like-color: #f91880;
+      --danger-color: #f4212e;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -29,7 +30,7 @@
     .avatar-mini { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; overflow: hidden; }
 
     .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 600px; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 12px 0; z-index: 100; }
-    .nav-item { color: var(--text-sub); font-size: 1.3rem; cursor: pointer; transition: color 0.2s; }
+    .nav-item { color: var(--text-sub); font-size: 1.3rem; cursor: pointer; transition: color 0.2s; position: relative; }
     .nav-item.active, .nav-item:hover { color: var(--accent); }
 
     .tweet-box { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
@@ -44,6 +45,8 @@
     .tweet-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; }
     .media-btn { color: var(--accent); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; gap: 6px; }
     .btn-tweet { background-color: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 0.95rem; cursor: pointer; }
+    .btn-action-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
+    .btn-danger { background: transparent; border: 1px solid var(--danger-color); color: var(--danger-color); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
 
     .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
     .post-main { flex-grow: 1; }
@@ -58,7 +61,6 @@
     .post-footer { display: flex; justify-content: space-between; max-width: 420px; margin-top: 12px; color: var(--text-sub); font-size: 0.85rem; }
     .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 12px; user-select: none; }
     .action-btn.liked { color: var(--like-color); }
-    .action-btn.liked i { font-weight: 900; }
 
     .comments-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color); display: none; }
     .comment-item { background: var(--card-bg); padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.88rem; }
@@ -66,12 +68,19 @@
     .comment-input-box { display: flex; gap: 8px; margin-top: 8px; }
     .comment-input-box input { flex-grow: 1; background: #000; border: 1px solid var(--border-color); border-radius: 18px; padding: 8px 14px; color: #fff; font-size: 0.85rem; outline: none; }
 
-    /* Profile View Header & Header Style */
     .profile-header-card { background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 20px; text-align: center; }
     .profile-big-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--accent); margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; overflow: hidden; border: 3px solid var(--border-color); }
     .profile-name { font-size: 1.3rem; font-weight: bold; color: var(--text-main); }
-    .profile-handle { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 10px; }
-    .back-to-home-btn { background: transparent; border: 1px solid var(--border-color); color: var(--accent); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; margin-top: 10px; }
+    .profile-handle { font-size: 0.9rem; color: var(--text-sub); margin-bottom: 12px; }
+    .profile-controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; margin-top: 10px; }
+
+    .chat-container { display: flex; flex-direction: column; height: calc(100vh - 130px); }
+    .chat-messages { flex-grow: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .chat-bubble { max-width: 75%; padding: 10px 14px; border-radius: 16px; font-size: 0.9rem; word-break: break-word; }
+    .chat-bubble.me { background: var(--accent); color: white; align-self: flex-start; border-bottom-right-radius: 2px; }
+    .chat-bubble.other { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); align-self: flex-end; border-bottom-left-radius: 2px; }
+    .chat-input-bar { padding: 12px; border-top: 1px solid var(--border-color); display: flex; gap: 8px; background: #000; }
+    .chat-input-bar input { flex-grow: 1; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 10px 16px; color: white; outline: none; }
 
     .auth-container { padding: 40px 20px; text-align: center; }
     .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 24px; border-radius: 16px; margin-top: 20px; text-align: right; }
@@ -118,15 +127,13 @@
     </div>
 
     <div id="appScreen" class="hidden">
-      <!-- Profile Display Section -->
       <div id="profileViewSection" class="profile-header-card hidden">
         <div class="profile-big-avatar" id="viewAvatar">ك</div>
         <div class="profile-name" id="viewName">الاسم</div>
         <div class="profile-handle" id="viewHandle">@user</div>
-        <button class="back-to-home-btn" onclick="showHomeScreen()"><i class="fa-solid fa-arrow-right"></i> العودة للرئيسية</button>
+        <div class="profile-controls" id="profileControls"></div>
       </div>
 
-      <!-- Tweet Creation Section -->
       <div class="tweet-box" id="homeTweetBox">
         <div class="avatar" id="myAvatar" onclick="openMyProfile()">ك</div>
         <div class="tweet-input-area">
@@ -151,6 +158,18 @@
       <div id="timeline">
         <div style="text-align: center; padding: 40px; color: var(--text-sub);">جاري تحميل الأفكار...</div>
       </div>
+
+      <div id="chatSection" class="chat-container hidden">
+        <div style="padding: 12px; border-bottom: 1px solid var(--border-color); font-weight: bold; display: flex; justify-content: space-between; align-items: center;">
+          <span id="chatTargetTitle">دردشة جديدة</span>
+          <button class="btn-action-outline" onclick="showHomeScreen()">إغلاق</button>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-bar">
+          <input type="text" id="chatInputText" placeholder="اكتب رسالة خاصة...">
+          <button class="btn-tweet" onclick="sendDirectMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
     </div>
 
     <div id="settingsModal" class="modal-overlay hidden">
@@ -159,13 +178,10 @@
           <h3 style="font-size: 1.1rem;"><i class="fa-solid fa-gear"></i> إعدادات الحساب</h3>
           <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeSettings()"></i>
         </div>
-        
         <label style="font-size: 0.85rem; color: var(--text-sub);">تعديل الاسم المستعار</label>
         <input type="text" id="editDisplayName" class="input-field" placeholder="اسمك الظاهر">
-        
         <label style="font-size: 0.85rem; color: var(--text-sub);">رابط الصورة الشخصية المباشر</label>
         <input type="text" id="editAvatarUrl" class="input-field" placeholder="https://i.ibb.co/example.jpg">
-        
         <button class="btn-tweet" style="width: 100%; padding: 10px;" onclick="saveProfileSettings()">حفظ التغييرات</button>
       </div>
     </div>
@@ -188,6 +204,9 @@
     let currentBase64Image = '';
     let likedPosts = JSON.parse(localStorage.getItem('kalimat_likes') || '{}');
     let currentFilterAuthor = null;
+    let activeChatUser = null;
+    let blockedUserList = [];
+    let followingUserList = [];
 
     function toggleAuthMode() {
       isSignUp = !isSignUp;
@@ -205,6 +224,7 @@
         document.getElementById('appScreen').classList.remove('hidden');
         document.getElementById('bottomNav').classList.remove('hidden');
 
+        await fetchBlocksAndFollows();
         updateUserDisplay();
         showHomeScreen();
       } else {
@@ -214,11 +234,26 @@
       }
     }
 
+    async function fetchBlocksAndFollows() {
+      if (!currentUser) return;
+      const myName = getMyName();
+      
+      const { data: blocks } = await _supabase.from('blocks').select('blocked_name').eq('blocker_name', myName);
+      blockedUserList = (blocks || []).map(b => b.blocked_name);
+
+      const { data: follows } = await _supabase.from('follows').select('following_name').eq('follower_name', myName);
+      followingUserList = (follows || []).map(f => f.following_name);
+    }
+
+    function getMyName() {
+      const meta = currentUser?.user_metadata || {};
+      return meta.full_name || currentUser?.email?.split('@')[0] || 'User';
+    }
+
     function updateUserDisplay() {
       if (!currentUser) return;
-      const meta = currentUser.user_metadata || {};
-      const name = meta.full_name || currentUser.email.split('@')[0];
-      const avatarUrl = meta.avatar_url;
+      const name = getMyName();
+      const avatarUrl = currentUser.user_metadata?.avatar_url;
 
       document.getElementById('userPillName').innerText = name;
       document.getElementById('userInfo').classList.remove('hidden');
@@ -279,9 +314,7 @@
       const content = document.getElementById('tweetContent').value.trim();
       if (!content && !currentBase64Image) return;
 
-      const meta = currentUser?.user_metadata || {};
-      const name = meta.full_name || currentUser?.email?.split('@')[0];
-
+      const name = getMyName();
       const { error } = await _supabase.from('posts').insert([{ 
         content, 
         author_name: name, 
@@ -297,8 +330,7 @@
     }
 
     async function handleRetweet(content, author) {
-      const meta = currentUser?.user_metadata || {};
-      const myName = meta.full_name || currentUser?.email?.split('@')[0];
+      const myName = getMyName();
       const retweetContent = `أعاد نشر 🔄 (@${author}):\n"${content}"`;
 
       const { error } = await _supabase.from('posts').insert([{ 
@@ -312,26 +344,130 @@
     function showHomeScreen() {
       currentFilterAuthor = null;
       document.getElementById('profileViewSection').classList.add('hidden');
+      document.getElementById('chatSection').classList.add('hidden');
       document.getElementById('homeTweetBox').classList.remove('hidden');
+      document.getElementById('timeline').classList.remove('hidden');
       loadTimeline();
     }
 
-    function openUserProfile(authorName) {
+    async function openUserProfile(authorName) {
       currentFilterAuthor = authorName;
+      const myName = getMyName();
+      
       document.getElementById('profileViewSection').classList.remove('hidden');
       document.getElementById('homeTweetBox').classList.add('hidden');
+      document.getElementById('chatSection').classList.add('hidden');
+      document.getElementById('timeline').classList.remove('hidden');
       
       document.getElementById('viewName').innerText = authorName;
       document.getElementById('viewHandle').innerText = `@${authorName}`;
       document.getElementById('viewAvatar').innerText = authorName ? authorName[0].toUpperCase() : '؟';
       
+      const controls = document.getElementById('profileControls');
+      controls.innerHTML = '';
+
+      if (authorName !== myName) {
+        const isFollowing = followingUserList.includes(authorName);
+        const isBlocked = blockedUserList.includes(authorName);
+
+        controls.innerHTML = `
+          <button class="${isFollowing ? 'btn-action-outline' : 'btn-tweet'}" onclick="toggleFollowUser('${authorName}')">
+            ${isFollowing ? 'إلغاء المتابعة' : 'متابعة'}
+          </button>
+          <button class="btn-action-outline" onclick="openDirectChat('${authorName}')">
+            <i class="fa-regular fa-envelope"></i> رسالة خاصة
+          </button>
+          <button class="btn-danger" onclick="toggleBlockUser('${authorName}')">
+            ${isBlocked ? 'إلغاء الحظر' : 'حظر'}
+          </button>
+        `;
+      } else {
+        controls.innerHTML = `<button class="btn-action-outline" onclick="openSettings()">تعديل الملف الشخصي</button>`;
+      }
+
       loadTimeline();
     }
 
     function openMyProfile() {
-      const meta = currentUser?.user_metadata || {};
-      const name = meta.full_name || currentUser?.email?.split('@')[0];
-      openUserProfile(name);
+      openUserProfile(getMyName());
+    }
+
+    async function toggleFollowUser(targetUser) {
+      const myName = getMyName();
+      const isFollowing = followingUserList.includes(targetUser);
+
+      if (isFollowing) {
+        await _supabase.from('follows').delete().eq('follower_name', myName).eq('following_name', targetUser);
+      } else {
+        await _supabase.from('follows').insert([{ follower_name: myName, following_name: targetUser }]);
+      }
+      await fetchBlocksAndFollows();
+      openUserProfile(targetUser);
+    }
+
+    async function toggleBlockUser(targetUser) {
+      const myName = getMyName();
+      const isBlocked = blockedUserList.includes(targetUser);
+
+      if (isBlocked) {
+        await _supabase.from('blocks').delete().eq('blocker_name', myName).eq('blocked_name', targetUser);
+      } else {
+        await _supabase.from('blocks').insert([{ blocker_name: myName, blocked_name: targetUser }]);
+      }
+      await fetchBlocksAndFollows();
+      openUserProfile(targetUser);
+    }
+
+    async function openDirectChat(targetUser) {
+      activeChatUser = targetUser;
+      document.getElementById('profileViewSection').classList.add('hidden');
+      document.getElementById('homeTweetBox').classList.add('hidden');
+      document.getElementById('timeline').classList.add('hidden');
+      document.getElementById('chatSection').classList.remove('hidden');
+      
+      document.getElementById('chatTargetTitle').innerText = `المحادثة مع @${targetUser}`;
+      loadDirectMessages();
+    }
+
+    async function loadDirectMessages() {
+      if (!activeChatUser) return;
+      const myName = getMyName();
+
+      const { data: messages } = await _supabase.from('direct_messages')
+        .select('*')
+        .or(`and(sender_name.eq.${myName},receiver_name.eq.${activeChatUser}),and(sender_name.eq.${activeChatUser},receiver_name.eq.${myName})`)
+        .order('created_at', { ascending: true });
+
+      const chatContainer = document.getElementById('chatMessages');
+      chatContainer.innerHTML = '';
+
+      (messages || []).forEach(msg => {
+        const isMe = msg.sender_name === myName;
+        const bubble = document.createElement('div');
+        bubble.className = `chat-bubble ${isMe ? 'me' : 'other'}`;
+        bubble.innerText = msg.content;
+        chatContainer.appendChild(bubble);
+      });
+
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    async function sendDirectMessage() {
+      const input = document.getElementById('chatInputText');
+      const content = input.value.trim();
+      if (!content || !activeChatUser) return;
+
+      const myName = getMyName();
+      const { error } = await _supabase.from('direct_messages').insert([{
+        sender_name: myName,
+        receiver_name: activeChatUser,
+        content: content
+      }]);
+
+      if (!error) {
+        input.value = '';
+        loadDirectMessages();
+      }
     }
 
     async function loadTimeline() {
@@ -344,12 +480,14 @@
       const timeline = document.getElementById('timeline');
 
       if (error || !posts || posts.length === 0) {
-        timeline.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد منشورات للعبور إليها هنا.</div>`;
+        timeline.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد منشورات متاحة حالياً.</div>`;
         return;
       }
 
       timeline.innerHTML = '';
       for (const post of posts) {
+        if (blockedUserList.includes(post.author_name)) continue;
+
         const { data: comments } = await _supabase.from('comments').select('*').eq('post_id', post.id).order('created_at', { ascending: true });
         const isLiked = !!likedPosts[post.id];
         const likesCount = (post.likes_count || 0) + (isLiked ? 1 : 0);
@@ -432,9 +570,7 @@
       const content = input.value.trim();
       if (!content) return;
 
-      const meta = currentUser?.user_metadata || {};
-      const name = meta.full_name || currentUser?.email?.split('@')[0];
-
+      const name = getMyName();
       const { error } = await _supabase.from('comments').insert([{ post_id: postId, author_name: name, content }]);
       if (!error) {
         input.value = '';
@@ -483,4 +619,4 @@
     checkUser();
   </script>
 </body>
-          </html>
+  </html>

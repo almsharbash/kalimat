@@ -8,145 +8,112 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --bg-color: #0f1419;
-      --card-bg: #1e2732;
+      --bg-color: #000000;
+      --card-bg: #16181c;
       --border-color: #2f3336;
-      --text-main: #f7f9f9;
-      --text-sub: #8b98a5;
+      --text-main: #e7e9ea;
+      --text-sub: #71767b;
       --accent: #1d9bf0;
       --like-color: #f91880;
-      --danger-color: #f4212e;
-      --success-color: #00ba7c;
+      --retweet-color: #00ba7c;
+      --toast-bg: #1d9bf0;
     }
 
     body.light-mode {
       --bg-color: #ffffff;
       --card-bg: #f7f9f9;
-      --border-color: #e1e8ed;
+      --border-color: #eff3f4;
       --text-main: #0f1419;
       --text-sub: #536471;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; transition: background-color 0.3s; }
+    body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; transition: 0.2s; }
     
-    .layout-container { width: 100%; max-width: 650px; min-height: 100vh; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding-bottom: 70px; background: var(--bg-color); position: relative; }
+    .layout-container { width: 100%; max-width: 600px; min-height: 100vh; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding-bottom: 70px; background: var(--bg-color); position: relative; }
 
-    header { position: sticky; top: 0; background-color: rgba(15, 20, 25, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; height: 53px; }
-    body.light-mode header { background-color: rgba(255, 255, 255, 0.85); }
+    header { position: sticky; top: 0; background-color: rgba(0, 0, 0, 0.75); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 10px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; height: 53px; }
+    body.light-mode header { background-color: rgba(255, 255, 255, 0.75); }
     
     .header-left { display: flex; align-items: center; gap: 12px; }
-    .back-btn { background: transparent; border: none; color: var(--text-main); font-size: 1.2rem; cursor: pointer; display: none; padding: 6px 10px; border-radius: 50%; transition: background 0.2s; }
-    .back-btn:hover { background: var(--card-bg); }
+    .back-btn { background: transparent; border: none; color: var(--text-main); font-size: 1.1rem; cursor: pointer; display: none; padding: 6px 10px; border-radius: 50%; }
     .brand-title { font-size: 1.2rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; cursor: pointer; }
     .brand-title i { color: var(--accent); }
     
     .header-actions { display: flex; align-items: center; gap: 10px; }
-    .theme-toggle-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; transition: 0.2s; }
+    .theme-toggle-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-    .user-pill { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-main); background: var(--card-bg); padding: 4px 12px 4px 6px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; }
-    .avatar-mini { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; overflow: hidden; color: #fff; }
+    .user-pill { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-main); background: var(--card-bg); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; }
+    .avatar-mini { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem; overflow: hidden; color: #fff; }
 
-    /* Floating Toast Notifications Container */
-    #toast-container { position: fixed; bottom: 80px; left: 50%; transform: translateX(-50%); z-index: 1000; display: flex; flex-direction: column; gap: 8px; pointer-events: none; width: 90%; max-width: 400px; }
-    .toast { background: var(--card-bg); color: var(--text-main); border: 1px solid var(--border-color); border-right: 4px solid var(--accent); padding: 12px 16px; border-radius: 12px; font-size: 0.9rem; box-shadow: 0 8px 24px rgba(0,0,0,0.3); display: flex; align-items: center; gap: 12px; pointer-events: auto; animation: slideUp 0.3s ease-out, fadeOut 0.3s ease-in 2.7s forwards; }
-    .toast.success { border-right-color: var(--success-color); }
-    .toast.danger { border-right-color: var(--danger-color); }
-    .toast i { font-size: 1.1rem; color: var(--accent); }
+    /* Toast Notifications UI (Twitter/Facebook Popups) */
+    #toast-container { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 380px; pointer-events: none; }
+    .toast-card { pointer-events: auto; background: var(--accent); color: #ffffff; padding: 12px 16px; border-radius: 25px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: space-between; gap: 10px; animation: popupSlide 0.3s ease-out; }
+    .toast-card.success { background: var(--retweet-color); }
+    .toast-card.danger { background: var(--like-color); }
+    @keyframes popupSlide { from { transform: translateY(-20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
 
-    @keyframes slideUp { from { transform: translateY(100%); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-    @keyframes fadeOut { from { opacity: 1; } to { opacity: 0; } }
-
-    /* Clean Auth Tabs UI */
-    .auth-container { padding: 30px 20px; text-align: center; }
-    .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-top: 15px; text-align: right; }
-    .auth-tabs { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; }
-    .auth-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: bold; color: var(--text-sub); border-bottom: 2px solid transparent; }
-    .auth-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-    .input-field { width: 100%; padding: 12px; margin: 6px 0 14px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); outline: none; font-size: 0.95rem; }
-
+    /* App Layout & Tabs */
     .search-box { padding: 10px 16px; border-bottom: 1px solid var(--border-color); }
     .search-input-wrapper { position: relative; }
-    .search-input-wrapper i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
-    .search-input-wrapper input { width: 100%; padding: 10px 40px 10px 12px; border-radius: 20px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); outline: none; font-size: 0.9rem; }
+    .search-input-wrapper i { position: absolute; right: 14px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
+    .search-input-wrapper input { width: 100%; padding: 10px 42px 10px 14px; border-radius: 20px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); outline: none; font-size: 0.9rem; }
 
-    .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 650px; background-color: rgba(15, 20, 25, 0.85); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 12px 0; z-index: 100; }
+    .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 600px; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 12px 0; z-index: 100; }
     body.light-mode .nav-bar { background-color: rgba(255, 255, 255, 0.85); }
-    .nav-item { color: var(--text-sub); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; position: relative; }
+    .nav-item { color: var(--text-sub); font-size: 1.25rem; cursor: pointer; transition: 0.2s; }
     .nav-item.active, .nav-item:hover { color: var(--accent); }
 
-    .tweet-box { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
+    .tweet-box { padding: 14px 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
     .avatar { width: 40px; height: 40px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; cursor: pointer; }
     .tweet-input-area { flex-grow: 1; }
-    textarea { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1rem; resize: none; outline: none; min-height: 70px; }
-    
-    .img-preview-container { position: relative; display: inline-block; margin-top: 8px; }
-    .img-preview { max-width: 100%; max-height: 250px; border-radius: 12px; display: none; border: 1px solid var(--border-color); object-fit: cover; }
-    .remove-img-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: none; }
+    textarea { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1.05rem; resize: none; outline: none; min-height: 60px; }
 
-    .tweet-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; }
-    .media-btn { color: var(--accent); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; gap: 6px; }
+    .tweet-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; border-top: 1px solid var(--border-color); padding-top: 10px; }
     .btn-tweet { background-color: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
     .btn-tweet:hover { opacity: 0.9; }
-    .btn-action-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
-    .btn-danger { background: transparent; border: 1px solid var(--danger-color); color: var(--danger-color); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
 
-    .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; transition: background 0.2s; }
-    .post:hover { background: rgba(255,255,255,0.01); }
+    /* Post Card (Twitter Card Design) */
+    .post { padding: 14px 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; transition: background 0.15s; }
+    .post:hover { background: rgba(255,255,255,0.02); }
     .post-main { flex-grow: 1; }
-    .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-    .post-author-info { display: flex; align-items: center; gap: 6px; cursor: pointer; }
-    .post-author { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
-    .post-author:hover { text-decoration: underline; }
-    .post-time { color: var(--text-sub); font-size: 0.85rem; }
-    .post-text { font-size: 0.95rem; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
-    .post-img { width: 100%; max-height: 350px; border-radius: 12px; margin-top: 10px; border: 1px solid var(--border-color); object-fit: cover; }
-    .post-footer { display: flex; justify-content: space-between; max-width: 400px; margin-top: 10px; color: var(--text-sub); font-size: 0.85rem; }
-    .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 10px; border-radius: 20px; transition: 0.2s; }
+    .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 4px; }
+    .post-author { font-weight: 700; color: var(--text-main); font-size: 0.95rem; cursor: pointer; }
+    .post-time { color: var(--text-sub); font-size: 0.85rem; margin-right: 6px; }
+    .post-text { font-size: 0.95rem; line-height: 1.45; white-space: pre-wrap; word-break: break-word; color: var(--text-main); margin-top: 4px; }
+    .post-img { width: 100%; max-height: 320px; border-radius: 14px; margin-top: 10px; border: 1px solid var(--border-color); object-fit: cover; }
+    
+    /* Interactive Actions Bar */
+    .post-footer { display: flex; justify-content: space-between; max-width: 420px; margin-top: 12px; color: var(--text-sub); font-size: 0.85rem; }
+    .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 12px; border-radius: 20px; transition: 0.2s; }
     .action-btn:hover { background: rgba(29, 155, 240, 0.1); color: var(--accent); }
     .action-btn.liked { color: var(--like-color); }
     .action-btn.liked:hover { background: rgba(249, 24, 128, 0.1); }
+    .action-btn.reposted { color: var(--retweet-color); }
 
-    /* Notifications List Item Styling (Twitter/Facebook style) */
+    /* Comments Section */
+    .comments-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color); display: none; }
+    .comment-item { background: var(--card-bg); padding: 8px 12px; border-radius: 12px; margin-bottom: 6px; font-size: 0.85rem; border: 1px solid var(--border-color); }
+    .comment-author { font-weight: bold; color: var(--accent); margin-bottom: 2px; }
+    .comment-input-box { display: flex; gap: 8px; margin-top: 8px; }
+    .comment-input-box input { flex-grow: 1; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 18px; padding: 8px 14px; color: var(--text-main); font-size: 0.85rem; outline: none; }
+
+    /* Notifications List Item Styling */
     .notif-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border-color); transition: background 0.2s; }
     .notif-card:hover { background: var(--card-bg); }
-    .notif-icon-box { font-size: 1.2rem; margin-top: 2px; }
-    .notif-icon-like { color: var(--like-color); }
-    .notif-icon-comment { color: var(--accent); }
+    .notif-icon-like { color: var(--like-color); font-size: 1.2rem; }
+    .notif-icon-comment { color: var(--accent); font-size: 1.2rem; }
 
-    .comments-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color); display: none; }
-    .comment-item { background: var(--card-bg); padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; font-size: 0.85rem; }
-    .comment-author { font-weight: bold; color: var(--accent); margin-bottom: 2px; cursor: pointer; }
-    .comment-input-box { display: flex; gap: 8px; margin-top: 8px; }
-    .comment-input-box input { flex-grow: 1; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 18px; padding: 6px 12px; color: var(--text-main); font-size: 0.85rem; outline: none; }
-
-    .profile-header-card { background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 20px 16px; text-align: center; }
-    .profile-big-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--accent); margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; overflow: hidden; border: 3px solid var(--border-color); color: #fff; }
-    .profile-name { font-size: 1.2rem; font-weight: bold; color: var(--text-main); }
-    .profile-handle { font-size: 0.85rem; color: var(--text-sub); margin-bottom: 8px; }
-    .profile-bio { font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px; padding: 0 10px; line-height: 1.4; }
-    .profile-meta { font-size: 0.8rem; color: var(--text-sub); display: flex; justify-content: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
-    .profile-controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
-
-    .chat-container { display: flex; flex-direction: column; height: calc(100vh - 120px); }
-    .chat-header { padding: 12px 16px; border-bottom: 1px solid var(--border-color); font-weight: bold; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); }
-    .chat-messages { flex-grow: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
-    .chat-bubble { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 0.9rem; word-break: break-word; line-height: 1.4; }
-    .chat-bubble.me { background: var(--accent); color: white; align-self: flex-start; border-bottom-right-radius: 4px; }
-    .chat-bubble.other { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); align-self: flex-end; border-bottom-left-radius: 4px; }
-    .chat-input-bar { padding: 12px 16px; border-top: 1px solid var(--border-color); display: flex; gap: 8px; background: var(--bg-color); }
-    .chat-input-bar input { flex-grow: 1; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 10px 14px; color: var(--text-main); outline: none; font-size: 0.9rem; }
-
-    .section-card { padding: 20px 16px; }
-    .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
+    .auth-container { padding: 30px 20px; text-align: center; }
+    .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-top: 15px; text-align: right; }
+    .input-field { width: 100%; padding: 12px; margin: 6px 0 14px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); outline: none; }
 
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <!-- Toast Notification Container -->
+  <!-- Floating Toast Notifications Container -->
   <div id="toast-container"></div>
 
   <div class="layout-container">
@@ -166,31 +133,22 @@
 
     <!-- Auth Screen -->
     <div id="authScreen" class="auth-container">
-      <h2 style="font-size: 1.6rem; margin-bottom: 6px;">مرحباً بك في منصة كلمات</h2>
-      <p style="color: var(--text-sub); font-size: 0.9rem;">تواصل وشارك أفكارك بكل حرية</p>
+      <h2 style="font-size: 1.5rem; margin-bottom: 6px;">منصة كلمات</h2>
+      <p style="color: var(--text-sub); font-size: 0.9rem;">تواصل بحرية مع مجتمعك</p>
 
       <div class="auth-card">
-        <div class="auth-tabs">
-          <div id="tabLogin" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</div>
-          <div id="tabRegister" class="auth-tab" onclick="switchAuthTab('register')">إنشاء حساب جديد</div>
-        </div>
-
-        <div id="registerNameGroup" class="hidden">
-          <label style="font-size: 0.85rem; color: var(--text-sub);">الاسم المستعار</label>
-          <input type="text" id="regName" class="input-field" placeholder="أدخل اسمك الكامل">
-        </div>
-
         <label style="font-size: 0.85rem; color: var(--text-sub);">البريد الإلكتروني</label>
         <input type="email" id="authEmail" class="input-field" placeholder="example@mail.com">
 
         <label style="font-size: 0.85rem; color: var(--text-sub);">كلمة السر</label>
         <input type="password" id="authPass" class="input-field" placeholder="••••••••">
 
-        <button class="btn-tweet" style="width: 100%; padding: 12px; margin-top: 10px;" id="authSubmitBtn" onclick="submitAuth()">تسجيل الدخول</button>
+        <button class="btn-tweet" style="width: 100%; padding: 12px; margin-top: 10px;" onclick="submitAuth('login')">تسجيل الدخول</button>
+        <button class="btn-tweet" style="width: 100%; padding: 12px; margin-top: 8px; background: transparent; border: 1px solid var(--border-color); color: var(--text-main);" onclick="submitAuth('register')">إنشاء حساب جديد</button>
       </div>
     </div>
 
-    <!-- App Screen -->
+    <!-- Main App Screen -->
     <div id="appScreen" class="hidden">
       
       <div class="search-box" id="searchBoxArea">
@@ -200,101 +158,55 @@
         </div>
       </div>
 
-      <div id="profileViewSection" class="profile-header-card hidden">
-        <div class="profile-big-avatar" id="viewAvatar">ك</div>
-        <div class="profile-name" id="viewName">الاسم</div>
-        <div class="profile-handle" id="viewHandle">@user</div>
-        <div class="profile-bio" id="viewBio">لا توجد نبذة شخصية بعد.</div>
-        <div class="profile-meta" id="viewMeta"></div>
-        <div class="profile-controls" id="profileControls"></div>
-      </div>
-
+      <!-- Tweet Box -->
       <div class="tweet-box" id="homeTweetBox">
         <div class="avatar" id="myAvatar" onclick="navigateTo('profile', getMyName())">ك</div>
         <div class="tweet-input-area">
           <textarea id="tweetContent" placeholder="ماذا يدور في أفكارك اليوم؟"></textarea>
-
-          <div class="img-preview-container">
-            <img id="imgPreview" class="img-preview" src="">
-            <button class="remove-img-btn" id="removeImgBtn" onclick="clearSelectedImage()"><i class="fa-solid fa-xmark"></i></button>
-          </div>
-          
           <div class="tweet-actions">
-            <label class="media-btn">
-              <i class="fa-regular fa-image"></i>
-              <span style="font-size: 0.85rem;">صورة</span>
-              <input type="file" id="imageFileInput" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
-            </label>
+            <i class="fa-regular fa-image" style="color: var(--accent); font-size: 1.2rem; cursor: pointer;" onclick="promptImageUrl()"></i>
             <button class="btn-tweet" onclick="publishTweet()">نشر</button>
           </div>
         </div>
       </div>
 
+      <!-- Feed / Timeline Section -->
       <div id="timelineSection">
         <div id="timeline">
           <div style="text-align: center; padding: 40px; color: var(--text-sub);">جاري تحميل المنشورات...</div>
         </div>
       </div>
 
-      <div id="friendsSection" class="hidden">
-        <div style="padding: 16px; font-weight: bold; border-bottom: 1px solid var(--border-color);"><i class="fa-solid fa-users"></i> قائمة المتابَعين (الأصدقاء)</div>
-        <div id="friendsList"></div>
-      </div>
-
+      <!-- Notifications Screen -->
       <div id="notificationsSection" class="hidden">
         <div style="padding: 16px; font-weight: bold; border-bottom: 1px solid var(--border-color);"><i class="fa-solid fa-bell"></i> الإشعارات</div>
         <div id="notificationsList">
-          <div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد إشعارات حالياً.</div>
+          <div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد إشعارات جديدة.</div>
         </div>
       </div>
 
-      <div id="chatSection" class="chat-container hidden">
-        <div class="chat-header">
-          <span id="chatTargetTitle">دردشة خاصة</span>
-        </div>
-        <div class="chat-messages" id="chatMessages"></div>
-        <div class="chat-input-bar">
-          <input type="text" id="chatInputText" placeholder="اكتب رسالتك المباشرة...">
-          <button class="btn-tweet" onclick="sendDirectMessage()"><i class="fa-solid fa-paper-plane"></i></button>
-        </div>
+      <!-- Friends List Screen -->
+      <div id="friendsSection" class="hidden">
+        <div style="padding: 16px; font-weight: bold; border-bottom: 1px solid var(--border-color);"><i class="fa-solid fa-user-group"></i> الأصدقاء والشبكة</div>
+        <div id="friendsList" style="padding: 20px; text-align: center; color: var(--text-sub);">قائمة الأصدقاء تظهر هنا.</div>
       </div>
 
-      <div id="settingsSection" class="section-card hidden">
-        <h3 style="font-size: 1.1rem; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;"><i class="fa-solid fa-gear"></i> إعدادات الملف الشخصي</h3>
-        
-        <label style="font-size: 0.85rem; color: var(--text-sub);">الاسم المستعار</label>
-        <input type="text" id="editDisplayName" class="input-field" placeholder="اسمك الظاهر">
-
-        <label style="font-size: 0.85rem; color: var(--text-sub);">النبذة الشخصية (Bio)</label>
-        <textarea id="editBio" class="input-field" style="height: 60px;" placeholder="اكتب نبذة قصيرة عن نفسك..."></textarea>
-        
-        <label style="font-size: 0.85rem; color: var(--text-sub);">رابط الصورة الشخصية</label>
-        <input type="text" id="editAvatarUrl" class="input-field" placeholder="https://i.ibb.co/example.jpg">
-
-        <label style="font-size: 0.85rem; color: var(--text-sub);">البريد الإلكتروني</label>
-        <input type="email" id="editEmail" class="input-field" placeholder="البريد الإلكتروني">
-
-        <label style="font-size: 0.85rem; color: var(--text-sub);">كلمة المرور الجديدة</label>
-        <input type="password" id="editPassword" class="input-field" placeholder="أدخل كلمة مرور جديدة للتمكين">
-
-        <label style="font-size: 0.85rem; color: var(--text-sub);">رقم الهاتف</label>
-        <input type="text" id="editPhone" class="input-field" placeholder="+961 ...">
-
-        <label style="font-size: 0.85rem; color: var(--text-sub);">العنوان / البلد</label>
-        <input type="text" id="editAddress" class="input-field" placeholder="لبنان">
-
-        <button class="btn-tweet" style="width: 100%; padding: 12px; margin-top: 10px;" onclick="saveProfileSettings()">حفظ والتحديث</button>
+      <!-- Profile View Section -->
+      <div id="profileSection" class="hidden" style="padding: 20px; text-align: center;">
+        <div class="avatar" style="width: 70px; height: 70px; font-size: 1.8rem; margin: 0 auto 10px;" id="profileAvatar">ك</div>
+        <h3 id="profileName" style="color: var(--text-main);">الاسم</h3>
+        <p id="profileHandle" style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 15px;">@user</p>
+        <button class="btn-tweet" onclick="logout()" style="background: var(--like-color);">تسجيل الخروج</button>
       </div>
 
     </div>
 
+    <!-- Navigation Bar -->
     <div class="nav-bar hidden" id="bottomNav">
       <div class="nav-item active" id="navHome" onclick="navigateTo('home')"><i class="fa-solid fa-house"></i></div>
       <div class="nav-item" id="navFriends" onclick="navigateTo('friends')"><i class="fa-solid fa-user-group"></i></div>
       <div class="nav-item" id="navNotifications" onclick="navigateTo('notifications')"><i class="fa-solid fa-bell"></i></div>
       <div class="nav-item" id="navProfile" onclick="navigateTo('profile', getMyName())"><i class="fa-regular fa-user"></i></div>
-      <div class="nav-item" id="navSettings" onclick="navigateTo('settings')"><i class="fa-solid fa-gear"></i></div>
-      <div class="nav-item" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
     </div>
   </div>
 
@@ -303,41 +215,26 @@
     const SUPABASE_KEY = 'sb_publishable_Q4uNpSCbSEPo5-TaWzuFqQ_yts_mf6p';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let authMode = 'login';
     let currentUser = null;
-    let currentBase64Image = '';
+    let selectedImageUrl = '';
     let likedPosts = JSON.parse(localStorage.getItem('kalimat_likes') || '{}');
-    let activeChatUser = null;
-    let blockedUserList = [];
-    let followingUserList = [];
 
-    let navHistory = [];
-    let currentView = { name: 'home', param: null };
-
-    // Toast Notification System
-    function showToast(message, type = 'info', iconClass = 'fa-circle-info') {
+    // Display Popup Notifications (Toasts)
+    function showToast(message, type = 'info', icon = 'fa-info-circle') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
-      toast.className = `toast ${type}`;
-      toast.innerHTML = `<i class="fa-solid ${iconClass}"></i><span>${message}</span>`;
+      toast.className = `toast-card ${type}`;
+      toast.innerHTML = `<span><i class="fa-solid ${icon}"></i> ${message}</span>`;
       container.appendChild(toast);
 
-      setTimeout(() => { toast.remove(); }, 3000);
+      setTimeout(() => { toast.remove(); }, 3200);
     }
 
     function toggleTheme() {
       document.body.classList.toggle('light-mode');
-      const icon = document.getElementById('themeIcon');
-      icon.className = document.body.classList.contains('light-mode') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-      showToast(document.body.classList.contains('light-mode') ? 'تم تفعيل الوضع الفاتح' : 'تم تفعيل الوضع الداكن', 'info', 'fa-palette');
-    }
-
-    function switchAuthTab(mode) {
-      authMode = mode;
-      document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
-      document.getElementById('tabRegister').classList.toggle('active', mode === 'register');
-      document.getElementById('registerNameGroup').classList.toggle('hidden', mode === 'login');
-      document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب جديد';
+      const isLight = document.body.classList.contains('light-mode');
+      document.getElementById('themeIcon').className = isLight ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+      showToast(isLight ? 'تم تفعيل الوضع الفاتح' : 'تم تفعيل الوضع الداكن', 'info', 'fa-palette');
     }
 
     async function checkUser() {
@@ -349,9 +246,8 @@
         document.getElementById('appScreen').classList.remove('hidden');
         document.getElementById('bottomNav').classList.remove('hidden');
 
-        await fetchBlocksAndFollows();
         updateUserDisplay();
-        navigateTo('home', null, true);
+        navigateTo('home');
       } else {
         document.getElementById('authScreen').classList.remove('hidden');
         document.getElementById('appScreen').classList.add('hidden');
@@ -363,76 +259,43 @@
       return currentUser?.user_metadata?.full_name || currentUser?.email?.split('@')[0] || 'User';
     }
 
-    async function fetchBlocksAndFollows() {
-      if (!currentUser) return;
-      const myName = getMyName();
-      
-      const { data: blocks } = await _supabase.from('blocks').select('blocked_name').eq('blocker_name', myName);
-      blockedUserList = (blocks || []).map(b => b.blocked_name);
-
-      const { data: follows } = await _supabase.from('follows').select('following_name').eq('follower_name', myName);
-      followingUserList = (follows || []).map(f => f.following_name);
-    }
-
     function updateUserDisplay() {
       if (!currentUser) return;
       const name = getMyName();
-      const avatarUrl = currentUser.user_metadata?.avatar_url;
-
       document.getElementById('userPillName').innerText = name;
       document.getElementById('userInfo').classList.remove('hidden');
-
-      const avatarBox = document.getElementById('myAvatar');
-      const pillAvatar = document.getElementById('userPillAvatar');
-
-      if (avatarUrl) {
-        avatarBox.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;">`;
-        pillAvatar.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;">`;
-      } else {
-        avatarBox.innerText = name[0].toUpperCase();
-        pillAvatar.innerText = name[0].toUpperCase();
-      }
+      document.getElementById('myAvatar').innerText = name[0].toUpperCase();
     }
 
-    async function submitAuth() {
+    async function submitAuth(mode) {
       const email = document.getElementById('authEmail').value.trim();
       const password = document.getElementById('authPass').value.trim();
-      const name = document.getElementById('regName').value.trim();
 
-      if (!email || !password) return showToast('يرجى ملء كافة البيانات', 'danger', 'fa-triangle-exclamation');
+      if (!email || !password) return showToast('يرجى كتابة البريد وكلمة السر', 'danger', 'fa-exclamation-circle');
 
-      if (authMode === 'register') {
-        const { error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: name || 'عضو كلمات' } } });
-        if (error) showToast(error.message, 'danger', 'fa-circle-xmark');
-        else { showToast('تم إنشاء الحساب بنجاح!', 'success', 'fa-circle-check'); checkUser(); }
+      if (mode === 'register') {
+        const { error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: email.split('@')[0] } } });
+        if (error) showToast(error.message, 'danger', 'fa-times-circle');
+        else { showToast('تم إنشاء الحساب بنجاح!', 'success', 'fa-check-circle'); checkUser(); }
       } else {
         const { error } = await _supabase.auth.signInWithPassword({ email, password });
-        if (error) showToast('خطأ في إدخال بيانات الدخول', 'danger', 'fa-circle-xmark');
-        else { showToast('مرحباً بك مجدداً!', 'success', 'fa-hand-wave'); checkUser(); }
+        if (error) showToast('خطأ في بيانات الدخول', 'danger', 'fa-times-circle');
+        else { showToast('مرحباً بك مجدداً!', 'success', 'fa-check-circle'); checkUser(); }
       }
     }
 
-    async function logout() { 
-      await _supabase.auth.signOut(); 
-      showToast('تم تسجيل الخروج', 'info', 'fa-right-from-bracket');
-      checkUser(); 
+    async function logout() {
+      await _supabase.auth.signOut();
+      showToast('تم تسجيل الخروج', 'info', 'fa-sign-out-alt');
+      checkUser();
     }
 
-    function navigateTo(screen, param = null, isReset = false) {
-      if (!isReset && currentView.name !== screen) {
-        navHistory.push({ ...currentView });
-      }
-      currentView = { name: screen, param: param };
-
-      document.getElementById('backBtn').style.display = navHistory.length > 0 ? 'inline-block' : 'none';
-
-      document.getElementById('profileViewSection').classList.add('hidden');
+    function navigateTo(screen, param = null) {
       document.getElementById('homeTweetBox').classList.add('hidden');
       document.getElementById('timelineSection').classList.add('hidden');
-      document.getElementById('friendsSection').classList.add('hidden');
       document.getElementById('notificationsSection').classList.add('hidden');
-      document.getElementById('chatSection').classList.add('hidden');
-      document.getElementById('settingsSection').classList.add('hidden');
+      document.getElementById('friendsSection').classList.add('hidden');
+      document.getElementById('profileSection').classList.add('hidden');
 
       document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
 
@@ -441,103 +304,67 @@
         document.getElementById('timelineSection').classList.remove('hidden');
         document.getElementById('navHome').classList.add('active');
         loadTimeline();
-      } else if (screen === 'profile') {
-        document.getElementById('profileViewSection').classList.remove('hidden');
-        document.getElementById('timelineSection').classList.remove('hidden');
-        document.getElementById('navProfile').classList.add('active');
-        renderUserProfile(param || getMyName());
-      } else if (screen === 'friends') {
-        document.getElementById('friendsSection').classList.remove('hidden');
-        document.getElementById('navFriends').classList.add('active');
-        renderFriendsList();
       } else if (screen === 'notifications') {
         document.getElementById('notificationsSection').classList.remove('hidden');
         document.getElementById('navNotifications').classList.add('active');
         loadNotifications();
-      } else if (screen === 'chat') {
-        document.getElementById('chatSection').classList.remove('hidden');
-        openChatView(param);
-      } else if (screen === 'settings') {
-        document.getElementById('settingsSection').classList.remove('hidden');
-        document.getElementById('navSettings').classList.add('active');
-        populateSettings();
+      } else if (screen === 'friends') {
+        document.getElementById('friendsSection').classList.remove('hidden');
+        document.getElementById('navFriends').classList.add('active');
+      } else if (screen === 'profile') {
+        document.getElementById('profileSection').classList.remove('hidden');
+        document.getElementById('navProfile').classList.add('active');
+        document.getElementById('profileName').innerText = param || getMyName();
+        document.getElementById('profileHandle').innerText = `@${param || getMyName()}`;
+        document.getElementById('profileAvatar').innerText = (param || getMyName())[0].toUpperCase();
       }
     }
 
-    function navigateBack() {
-      if (navHistory.length > 0) {
-        const prev = navHistory.pop();
-        currentView = prev;
-        navigateTo(prev.name, prev.param, true);
-        document.getElementById('backBtn').style.display = navHistory.length > 0 ? 'inline-block' : 'none';
+    function promptImageUrl() {
+      const url = prompt('أدخل رابط الصورة (URL):');
+      if (url) {
+        selectedImageUrl = url;
+        showToast('تم إرفاق الصورة', 'success', 'fa-image');
       }
-    }
-
-    function handleImageSelect(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-
-      const reader = new FileReader();
-      reader.onload = function(e) {
-        currentBase64Image = e.target.result;
-        const img = document.getElementById('imgPreview');
-        img.src = currentBase64Image;
-        img.style.display = 'block';
-        document.getElementById('removeImgBtn').style.display = 'block';
-      };
-      reader.readAsDataURL(file);
-    }
-
-    function clearSelectedImage() {
-      currentBase64Image = '';
-      document.getElementById('imgPreview').style.display = 'none';
-      document.getElementById('removeImgBtn').style.display = 'none';
-      document.getElementById('imageFileInput').value = '';
     }
 
     async function publishTweet() {
       const content = document.getElementById('tweetContent').value.trim();
-      if (!content && !currentBase64Image) return showToast('اكتب شيئاً لنشره!', 'danger', 'fa-pen');
+      if (!content && !selectedImageUrl) return showToast('اكتب نص المنشور أولاً', 'danger', 'fa-pen');
 
       const name = getMyName();
-      const { error } = await _supabase.from('posts').insert([{ content, author_name: name, image_url: currentBase64Image, likes_count: 0 }]);
+      const { error } = await _supabase.from('posts').insert([{ content, author_name: name, image_url: selectedImageUrl, likes_count: 0 }]);
 
-      if (error) showToast('خطأ أثناء النشر', 'danger', 'fa-circle-exclamation');
-      else {
+      if (error) {
+        showToast('فشل النشر: تحقق من الإتصال', 'danger', 'fa-exclamation-triangle');
+      } else {
         showToast('تم نشر منشورك بنجاح!', 'success', 'fa-paper-plane');
         document.getElementById('tweetContent').value = '';
-        clearSelectedImage();
+        selectedImageUrl = '';
         loadTimeline();
       }
     }
 
     async function loadTimeline(searchQuery = '') {
-      let query = _supabase.from('posts').select('*').order('created_at', { ascending: false });
-      if (currentView.name === 'profile' && currentView.param) {
-        query = query.eq('author_name', currentView.param);
-      }
-
-      const { data: posts, error } = await query;
+      const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
       const timeline = document.getElementById('timeline');
 
       if (error || !posts || posts.length === 0) {
-        timeline.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد منشورات متاحة حالياً.</div>`;
+        timeline.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد منشورات حتى الآن. كن أول من ينشر!</div>`;
         return;
       }
 
       timeline.innerHTML = '';
       for (const post of posts) {
-        if (blockedUserList.includes(post.author_name)) continue;
-
         if (searchQuery) {
           const textMatch = (post.content || '').toLowerCase().includes(searchQuery.toLowerCase());
           const authorMatch = (post.author_name || '').toLowerCase().includes(searchQuery.toLowerCase());
           if (!textMatch && !authorMatch) continue;
         }
 
-        const { data: comments } = await _supabase.from('comments').select('*').eq('post_id', post.id).order('created_at', { ascending: true });
+        const { data: comments } = await _supabase.from('comments').select('*').eq('post_id', post.id);
         const isLiked = !!likedPosts[post.id];
-        const displayLikes = (post.likes_count || 0);
+        const displayLikes = post.likes_count || 0;
 
         const postElement = document.createElement('div');
         postElement.className = 'post';
@@ -545,10 +372,8 @@
           <div class="avatar" onclick="navigateTo('profile', '${post.author_name}')">${post.author_name ? post.author_name[0].toUpperCase() : '؟'}</div>
           <div class="post-main">
             <div class="post-header">
-              <div class="post-author-info" onclick="navigateTo('profile', '${post.author_name}')">
-                <span class="post-author">${post.author_name}</span>
-                <span class="post-time">• ${new Date(post.created_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}</span>
-              </div>
+              <span class="post-author" onclick="navigateTo('profile', '${post.author_name}')">${post.author_name}</span>
+              <span class="post-time">• ${new Date(post.created_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}</span>
             </div>
             <div class="post-text">${post.content || ''}</div>
             ${post.image_url ? `<img src="${post.image_url}" class="post-img">` : ''}
@@ -561,7 +386,7 @@
                 <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i> <span id="like-count-${post.id}">${displayLikes}</span>
               </div>
               <div class="action-btn" onclick="sharePost('${(post.content || '').replace(/'/g, "\\'")}')">
-                <i class="fa-solid fa-share-nodes"></i>
+                <i class="fa-solid fa-arrow-up-from-bracket"></i>
               </div>
             </div>
 
@@ -569,14 +394,14 @@
               <div id="comments-list-${post.id}">
                 ${(comments || []).map(c => `
                   <div class="comment-item">
-                    <div class="comment-author" onclick="navigateTo('profile', '${c.author_name}')">${c.author_name}</div>
+                    <div class="comment-author">${c.author_name}</div>
                     <div>${c.content}</div>
                   </div>
                 `).join('')}
               </div>
               <div class="comment-input-box">
                 <input type="text" id="comment-input-${post.id}" placeholder="اكتب رداً...">
-                <button class="btn-tweet" style="padding: 6px 14px; font-size: 0.8rem;" onclick="addComment(${post.id}, '${post.author_name}')">رد</button>
+                <button class="btn-tweet" style="padding: 6px 12px; font-size: 0.8rem;" onclick="addComment(${post.id}, '${post.author_name}')">رد</button>
               </div>
             </div>
           </div>
@@ -600,7 +425,7 @@
         newCount = currentLikes + 1;
         btn.classList.add('liked');
         btn.querySelector('i').className = 'fa-solid fa-heart';
-        showToast('أعجبك المنشور', 'success', 'fa-heart');
+        showToast('أعجبك المنشور', 'danger', 'fa-heart');
       }
 
       countSpan.innerText = newCount;
@@ -622,7 +447,7 @@
       const { error } = await _supabase.from('comments').insert([{ post_id: postId, author_name: name, content }]);
       
       if (!error) {
-        showToast('تمت إضافة الرد', 'success', 'fa-comment');
+        showToast('تم نشر الرد بنجاح', 'success', 'fa-comment');
         input.value = '';
         if (postAuthor !== name) {
           await _supabase.from('notifications').insert([{
@@ -638,10 +463,7 @@
 
     async function loadNotifications() {
       const myName = getMyName();
-      const { data: notifs } = await _supabase.from('notifications')
-        .select('*')
-        .eq('user_name', myName)
-        .order('created_at', { ascending: false });
+      const { data: notifs } = await _supabase.from('notifications').select('*').eq('user_name', myName).order('created_at', { ascending: false });
 
       const container = document.getElementById('notificationsList');
       if (!notifs || notifs.length === 0) {
@@ -651,195 +473,13 @@
 
       container.innerHTML = notifs.map(n => `
         <div class="notif-card">
-          <div class="notif-icon-box ${n.type.includes('علّق') ? 'notif-icon-comment' : 'notif-icon-like'}">
-            <i class="fa-solid ${n.type.includes('علّق') ? 'fa-comment' : 'fa-heart'}"></i>
-          </div>
-          <div style="flex-grow: 1;">
-            <div>
-              <strong style="color: var(--accent); cursor: pointer;" onclick="navigateTo('profile', '${n.sender_name}')">${n.sender_name}</strong> ${n.type}
-            </div>
+          <div class="notif-icon-comment"><i class="fa-solid fa-comment"></i></div>
+          <div>
+            <strong style="color: var(--accent);">${n.sender_name}</strong> ${n.type}
             <div style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">"${n.content || ''}"</div>
-            <span style="font-size: 0.75rem; color: var(--text-sub); margin-top: 6px; display: block;">${new Date(n.created_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}</span>
           </div>
         </div>
       `).join('');
-    }
-
-    function renderUserProfile(authorName) {
-      const myName = getMyName();
-      document.getElementById('viewName').innerText = authorName;
-      document.getElementById('viewHandle').innerText = `@${authorName}`;
-      document.getElementById('viewAvatar').innerText = authorName ? authorName[0].toUpperCase() : '؟';
-      
-      const meta = currentUser?.user_metadata || {};
-      if (authorName === myName) {
-        document.getElementById('viewBio').innerText = meta.bio || 'لا توجد نبذة شخصية بعد.';
-        let metaText = '';
-        if (meta.address) metaText += `📍 ${meta.address} `;
-        if (meta.phone) metaText += `📞 ${meta.phone}`;
-        document.getElementById('viewMeta').innerText = metaText;
-      } else {
-        document.getElementById('viewBio').innerText = 'عضو في منصة كلمات';
-        document.getElementById('viewMeta').innerText = '';
-      }
-
-      const controls = document.getElementById('profileControls');
-      controls.innerHTML = '';
-
-      if (authorName !== myName) {
-        const isFollowing = followingUserList.includes(authorName);
-        const isBlocked = blockedUserList.includes(authorName);
-
-        controls.innerHTML = `
-          <button class="${isFollowing ? 'btn-action-outline' : 'btn-tweet'}" onclick="toggleFollowUser('${authorName}')">
-            ${isFollowing ? 'إلغاء المتابعة' : 'متابعة'}
-          </button>
-          <button class="btn-action-outline" onclick="navigateTo('chat', '${authorName}')">
-            <i class="fa-regular fa-envelope"></i> رسالة خاصّة
-          </button>
-          <button class="btn-danger" onclick="toggleBlockUser('${authorName}')">
-            ${isBlocked ? 'إلغاء الحظر' : 'حظر'}
-          </button>
-        `;
-      } else {
-        controls.innerHTML = `<button class="btn-action-outline" onclick="navigateTo('settings')"><i class="fa-solid fa-pen-to-square"></i> تعديل البروفايل</button>`;
-      }
-
-      loadTimeline();
-    }
-
-    function renderFriendsList() {
-      const container = document.getElementById('friendsList');
-      if (followingUserList.length === 0) {
-        container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">أنت لا تتابع أي شخص حالياً.</div>`;
-        return;
-      }
-
-      container.innerHTML = followingUserList.map(name => `
-        <div class="list-item">
-          <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="navigateTo('profile', '${name}')">
-            <div class="avatar-mini">${name[0].toUpperCase()}</div>
-            <span style="font-weight: bold;">${name}</span>
-          </div>
-          <button class="btn-action-outline" onclick="navigateTo('chat', '${name}')"><i class="fa-regular fa-envelope"></i> رسالة</button>
-        </div>
-      `).join('');
-    }
-
-    async function openChatView(targetUser) {
-      activeChatUser = targetUser;
-      document.getElementById('chatTargetTitle').innerText = `المحادثة مع @${targetUser}`;
-      loadDirectMessages();
-    }
-
-    async function loadDirectMessages() {
-      if (!activeChatUser) return;
-      const myName = getMyName();
-
-      const { data: messages } = await _supabase.from('direct_messages')
-        .select('*')
-        .or(`and(sender_name.eq.${myName},receiver_name.eq.${activeChatUser}),and(sender_name.eq.${activeChatUser},receiver_name.eq.${myName})`)
-        .order('created_at', { ascending: true });
-
-      const chatContainer = document.getElementById('chatMessages');
-      chatContainer.innerHTML = '';
-
-      (messages || []).forEach(msg => {
-        const isMe = msg.sender_name === myName;
-        const bubble = document.createElement('div');
-        bubble.className = `chat-bubble ${isMe ? 'me' : 'other'}`;
-        bubble.innerText = msg.content;
-        chatContainer.appendChild(bubble);
-      });
-
-      chatContainer.scrollTop = chatContainer.scrollHeight;
-    }
-
-    async function sendDirectMessage() {
-      const input = document.getElementById('chatInputText');
-      const content = input.value.trim();
-      if (!content || !activeChatUser) return;
-
-      const myName = getMyName();
-      const { error } = await _supabase.from('direct_messages').insert([{ sender_name: myName, receiver_name: activeChatUser, content: content }]);
-
-      if (!error) {
-        showToast('تم إرسال الرسالة', 'success', 'fa-paper-plane');
-        input.value = '';
-        loadDirectMessages();
-      }
-    }
-
-    function populateSettings() {
-      const meta = currentUser?.user_metadata || {};
-      document.getElementById('editDisplayName').value = meta.full_name || '';
-      document.getElementById('editBio').value = meta.bio || '';
-      document.getElementById('editAvatarUrl').value = meta.avatar_url || '';
-      document.getElementById('editEmail').value = currentUser?.email || '';
-      document.getElementById('editPhone').value = meta.phone || '';
-      document.getElementById('editAddress').value = meta.address || '';
-    }
-
-    async function saveProfileSettings() {
-      const newName = document.getElementById('editDisplayName').value.trim();
-      const newBio = document.getElementById('editBio').value.trim();
-      const newAvatar = document.getElementById('editAvatarUrl').value.trim();
-      const newEmail = document.getElementById('editEmail').value.trim();
-      const newPassword = document.getElementById('editPassword').value.trim();
-      const newPhone = document.getElementById('editPhone').value.trim();
-      const newAddress = document.getElementById('editAddress').value.trim();
-
-      const updatePayload = { data: { full_name: newName, bio: newBio, avatar_url: newAvatar, phone: newPhone, address: newAddress } };
-      if (newEmail && newEmail !== currentUser.email) updatePayload.email = newEmail;
-      if (newPassword) updatePayload.password = newPassword;
-
-      const { data, error } = await _supabase.auth.updateUser(updatePayload);
-
-      if (error) {
-        showToast(error.message, 'danger', 'fa-circle-exclamation');
-      } else {
-        currentUser = data.user;
-        updateUserDisplay();
-        showToast('تم حفظ التعديلات بنجاح', 'success', 'fa-floppy-disk');
-        navigateTo('profile', getMyName());
-      }
-    }
-
-    async function toggleFollowUser(targetUser) {
-      const myName = getMyName();
-      const isFollowing = followingUserList.includes(targetUser);
-
-      if (isFollowing) {
-        await _supabase.from('follows').delete().eq('follower_name', myName).eq('following_name', targetUser);
-        showToast(`أغيت متابعة ${targetUser}`, 'info', 'fa-user-minus');
-      } else {
-        await _supabase.from('follows').insert([{ follower_name: myName, following_name: targetUser }]);
-        showToast(`بدأت بمتابعة ${targetUser}`, 'success', 'fa-user-plus');
-      }
-      await fetchBlocksAndFollows();
-      renderUserProfile(targetUser);
-    }
-
-    async function toggleBlockUser(targetUser) {
-      const myName = getMyName();
-      const isBlocked = blockedUserList.includes(targetUser);
-
-      if (isBlocked) {
-        await _supabase.from('blocks').delete().eq('blocker_name', myName).eq('blocked_name', targetUser);
-        showToast(`تم إلغاء حظر ${targetUser}`, 'info', 'fa-user-check');
-      } else {
-        await _supabase.from('blocks').insert([{ blocker_name: myName, blocked_name: targetUser }]);
-        showToast(`تم حظر ${targetUser}`, 'danger', 'fa-user-slash');
-      }
-      await fetchBlocksAndFollows();
-      renderUserProfile(targetUser);
-    }
-
-    function handleSearch() {
-      const q = document.getElementById('searchInput').value.trim();
-      if (currentView.name === 'home' || currentView.name === 'profile') {
-        loadTimeline(q);
-      }
     }
 
     function sharePost(text) {
@@ -847,11 +487,16 @@
         navigator.share({ title: 'كلمات', text: text, url: window.location.href });
       } else {
         navigator.clipboard.writeText(text);
-        showToast('تم نسخ رابط المنشور!', 'info', 'fa-copy');
+        showToast('تم نسخ نص المنشور إلى الحافظة!', 'info', 'fa-copy');
       }
+    }
+
+    function handleSearch() {
+      const q = document.getElementById('searchInput').value.trim();
+      loadTimeline(q);
     }
 
     checkUser();
   </script>
 </body>
-                                                                                                       </html>
+  </html>

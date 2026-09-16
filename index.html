@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>كلمات - Kalimat</title>
+  <title>Kalimat App</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
@@ -24,49 +24,56 @@
     
     .app-container { width: 100%; max-width: 600px; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; min-height: 100vh; padding-bottom: 70px; }
 
-    /* Header */
-    header { sticky: top; top: 0; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
+    header { position: sticky; top: 0; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 10; }
     .brand { font-size: 1.3rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 10px; }
     .brand i { color: var(--accent); }
     .user-pill { font-size: 0.85rem; background: var(--card-bg); border: 1px solid var(--border-color); padding: 6px 14px; border-radius: 20px; color: var(--accent); font-weight: 600; }
 
-    /* Auth Screen */
-    .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; margin: 40px 16px; text-align: center; box-shadow: 0 8px 24px rgba(0,0,0,0.5); }
+    .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; padding: 24px; margin: 40px 16px; text-align: center; }
     .auth-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
     .auth-sub { color: var(--text-sub); font-size: 0.9rem; margin-bottom: 20px; }
     
-    .input-box { width: 100%; padding: 14px; margin-bottom: 12px; background: #000; border: 1px solid var(--border-color); border-radius: 10px; color: #fff; outline: none; font-size: 0.95rem; transition: border 0.2s; }
+    .input-box { width: 100%; padding: 14px; margin-bottom: 12px; background: #000; border: 1px solid var(--border-color); border-radius: 10px; color: #fff; outline: none; font-size: 0.95rem; }
     .input-box:focus { border-color: var(--accent); }
 
-    .btn-primary { background: var(--accent); color: #fff; border: none; padding: 12px 20px; border-radius: 25px; font-weight: bold; font-size: 0.95rem; cursor: pointer; width: 100%; transition: background 0.2s; }
-    .btn-primary:hover { background: var(--accent-hover); }
+    .btn-primary { background: var(--accent); color: #fff; border: none; padding: 12px 20px; border-radius: 25px; font-weight: bold; font-size: 0.95rem; cursor: pointer; width: 100%; }
 
-    /* Tweet Composer */
     .composer { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
     .avatar { width: 42px; height: 42px; border-radius: 50%; background: linear-gradient(135deg, #1d9bf0, #7928ca); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 1.1rem; flex-shrink: 0; }
     .composer-input-wrap { flex-grow: 1; }
-    textarea { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1.05rem; resize: none; outline: none; min-height: 80px; }
-    .composer-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 8px; }
-    .action-icons { color: var(--accent); display: flex; gap: 16px; font-size: 1.1rem; }
+    textarea { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1.05rem; resize: none; outline: none; min-height: 70px; }
+    
+    .image-preview-box { margin-top: 8px; position: relative; display: inline-block; }
+    .image-preview-box img { max-width: 100%; max-height: 200px; border-radius: 12px; border: 1px solid var(--border-color); }
+    .remove-img-btn { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; }
 
-    /* Feed Posts */
-    .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; transition: background 0.2s; cursor: pointer; }
-    .post:hover { background: var(--hover-bg); }
+    .composer-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 8px; }
+    .action-icons { color: var(--accent); display: flex; gap: 18px; font-size: 1.2rem; align-items: center; }
+    .action-icons label { cursor: pointer; }
+
+    .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
     .post-content { flex-grow: 1; }
     .post-header { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
     .post-author { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
     .post-handle { color: var(--text-sub); font-size: 0.85rem; }
     .post-text { font-size: 0.95rem; line-height: 1.5; color: #e7e9ea; white-space: pre-wrap; word-break: break-word; }
-    .post-footer { display: flex; justify-content: space-between; max-width: 300px; margin-top: 12px; color: var(--text-sub); font-size: 0.85rem; }
-    .post-action { display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
+    .post-image { width: 100%; max-height: 300px; object-fit: cover; border-radius: 12px; margin-top: 10px; border: 1px solid var(--border-color); }
+    
+    .post-footer { display: flex; justify-content: space-between; max-width: 300px; margin-top: 12px; color: var(--text-sub); font-size: 0.9rem; }
+    .post-action { display: flex; align-items: center; gap: 6px; cursor: pointer; transition: color 0.2s; }
     .post-action:hover { color: var(--accent); }
-    .post-action.like:hover { color: var(--like-color); }
+    .post-action.liked { color: var(--like-color); }
+    .post-action.liked i { font-weight: 900; }
 
-    /* Bottom Nav Bar */
+    .profile-header { padding: 20px 16px; border-bottom: 1px solid var(--border-color); text-align: center; }
+    .profile-avatar { width: 80px; height: 80px; border-radius: 50%; background: linear-gradient(135deg, #1d9bf0, #7928ca); display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; margin: 0 auto 12px; }
+
     .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 600px; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 14px 0; z-index: 10; }
-    .nav-link { color: var(--text-sub); font-size: 1.3rem; cursor: pointer; transition: color 0.2s; }
-    .nav-link.active, .nav-link:hover { color: var(--accent); }
+    .nav-link { color: var(--text-sub); font-size: 1.3rem; cursor: pointer; }
+    .nav-link.active { color: var(--accent); }
 
+    .page-section { display: none; }
+    .page-section.active { display: block; }
     .hidden { display: none !important; }
   </style>
 </head>
@@ -78,26 +85,35 @@
       <div id="userBadge" class="user-pill hidden"></div>
     </header>
 
-    <!-- شاشة تسجيل الدخول -->
+    <!-- Auth View -->
     <div id="authSection" class="auth-card">
       <div class="brand" style="justify-content: center; font-size: 2rem; margin-bottom: 12px;"><i class="fa-solid fa-feather-pointed"></i></div>
-      <h2 class="auth-title">ماذا يحدث الآن؟</h2>
-      <p class="auth-sub">انضم إلى منصة كلمات اليوم وشارك أفكارك مع العالم.</p>
+      <h2 class="auth-title">مرحباً بك في كلمات</h2>
+      <p class="auth-sub">سجل دخولك لبدء المشاركة والتواصل.</p>
       
-      <input type="text" id="username" class="input-box" placeholder="اسم المستخدم (مثال: Rim)">
-      <input type="email" id="email" class="input-box" placeholder="البريد الإلكتروني">
-      <button class="btn-primary" onclick="loginDirectly()">الدخول للمنصة</button>
+      <input type="text" id="username" class="input-box" placeholder="اسم المستخدم (Username)">
+      <input type="email" id="email" class="input-box" placeholder="البريد الإلكتروني (Email)">
+      <button class="btn-primary" onclick="loginDirectly()">دخول</button>
     </div>
 
-    <!-- شاشة التايم لاين والنشر -->
-    <div id="mainSection" class="hidden">
+    <!-- Home View -->
+    <div id="homeSection" class="page-section">
       <div class="composer">
-        <div class="avatar" id="myAvatar">ك</div>
+        <div class="avatar" id="myAvatar">U</div>
         <div class="composer-input-wrap">
           <textarea id="postInput" placeholder="ماذا يدور في أفكارك؟"></textarea>
+          
+          <div id="imagePreviewBox" class="image-preview-box hidden">
+            <img id="previewImg" src="" alt="Preview">
+            <button class="remove-img-btn" onclick="removeSelectedImage()">×</button>
+          </div>
+
           <div class="composer-actions">
             <div class="action-icons">
-              <i class="fa-regular fa-image"></i>
+              <label for="imageInput" title="Image">
+                <i class="fa-regular fa-image"></i>
+                <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="previewImage(event)">
+              </label>
               <i class="fa-solid fa-list-ul"></i>
               <i class="fa-regular fa-face-smile"></i>
             </div>
@@ -109,12 +125,34 @@
       <div id="postsList"></div>
     </div>
 
-    <!-- شريط التنقل السفلي -->
+    <!-- Profile View -->
+    <div id="profileSection" class="page-section">
+      <div class="profile-header">
+        <div class="profile-avatar" id="profileAvatar">U</div>
+        <h2 id="profileName">User</h2>
+        <p id="profileHandle" style="color:var(--text-sub); margin-bottom:12px;">@user</p>
+        <button class="btn-primary" style="width:auto; padding:6px 16px; background:#333;" onclick="logout()">تسجيل الخروج</button>
+      </div>
+      <div id="myPostsList"></div>
+    </div>
+
+    <!-- Search View -->
+    <div id="searchSection" class="page-section" style="padding: 20px; text-align: center; color: var(--text-sub);">
+      <input type="text" class="input-box" placeholder="بحث...">
+    </div>
+
+    <!-- Notifications View -->
+    <div id="notificationsSection" class="page-section" style="padding: 30px; text-align: center; color: var(--text-sub);">
+      <i class="fa-regular fa-bell" style="font-size: 2rem; margin-bottom: 10px;"></i>
+      <p>لا توجد إشعارات حالياً</p>
+    </div>
+
+    <!-- Navigation -->
     <div id="navBar" class="nav-bar hidden">
-      <div class="nav-link active"><i class="fa-solid fa-house"></i></div>
-      <div class="nav-link"><i class="fa-solid fa-magnifying-glass"></i></div>
-      <div class="nav-link"><i class="fa-regular fa-bell"></i></div>
-      <div class="nav-link" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+      <div class="nav-link active" onclick="switchTab('homeSection', this)"><i class="fa-solid fa-house"></i></div>
+      <div class="nav-link" onclick="switchTab('searchSection', this)"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <div class="nav-link" onclick="switchTab('notificationsSection', this)"><i class="fa-regular fa-bell"></i></div>
+      <div class="nav-link" onclick="switchTab('profileSection', this)"><i class="fa-regular fa-user"></i></div>
     </div>
   </div>
 
@@ -124,6 +162,7 @@
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
     let localPosts = [];
+    let selectedImageData = null;
     let activeUser = localStorage.getItem('kalimat_user') || null;
 
     function init() {
@@ -133,7 +172,8 @@
     }
 
     function loginDirectly() {
-      const name = document.getElementById('username').value.trim() || 'زائر';
+      const inputVal = document.getElementById('username').value.trim();
+      const name = inputVal ? inputVal : 'Guest';
       activeUser = name;
       localStorage.setItem('kalimat_user', name);
       showApp();
@@ -141,53 +181,113 @@
 
     function showApp() {
       document.getElementById('authSection').classList.add('hidden');
-      document.getElementById('mainSection').classList.remove('hidden');
       document.getElementById('navBar').classList.remove('hidden');
       
       const badge = document.getElementById('userBadge');
       badge.innerText = '@' + activeUser;
       badge.classList.remove('hidden');
 
-      document.getElementById('myAvatar').innerText = activeUser[0].toUpperCase();
+      const initial = activeUser[0].toUpperCase();
+      document.getElementById('myAvatar').innerText = initial;
+      document.getElementById('profileAvatar').innerText = initial;
+      document.getElementById('profileName').innerText = activeUser;
+      document.getElementById('profileHandle').innerText = '@' + activeUser;
+
+      switchTab('homeSection', document.querySelector('.nav-link'));
       loadPosts();
     }
 
     function logout() {
       localStorage.removeItem('kalimat_user');
       activeUser = null;
-      document.getElementById('authSection').classList.remove('hidden');
-      document.getElementById('mainSection').classList.add('hidden');
-      document.getElementById('navBar').classList.add('hidden');
-      document.getElementById('userBadge').classList.add('hidden');
+      location.reload();
+    }
+
+    function switchTab(sectionId, el) {
+      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+      
+      document.getElementById(sectionId).classList.add('active');
+      if (el) el.classList.add('active');
+
+      if(sectionId === 'profileSection') {
+        renderMyPosts();
+      }
+    }
+
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          selectedImageData = e.target.result;
+          document.getElementById('previewImg').src = selectedImageData;
+          document.getElementById('imagePreviewBox').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeSelectedImage() {
+      selectedImageData = null;
+      document.getElementById('imageInput').value = '';
+      document.getElementById('imagePreviewBox').classList.add('hidden');
     }
 
     async function addPost() {
       const text = document.getElementById('postInput').value.trim();
-      if (!text) return;
+      if (!text && !selectedImageData) return;
+
+      const newPost = {
+        id: Date.now(),
+        author_name: activeUser,
+        content: text,
+        image_url: selectedImageData,
+        likes: 0,
+        liked_by_me: false,
+        created_at: new Date()
+      };
 
       try {
         await _supabase.from('posts').insert([{ content: text, author_name: activeUser }]);
       } catch (e) {}
 
-      localPosts.unshift({ author_name: activeUser, content: text, created_at: new Date() });
+      localPosts.unshift(newPost);
       document.getElementById('postInput').value = '';
+      removeSelectedImage();
       renderPosts(localPosts);
+    }
+
+    function toggleLike(postId) {
+      const post = localPosts.find(p => p.id === postId);
+      if (post) {
+        post.liked_by_me = !post.liked_by_me;
+        post.likes += post.liked_by_me ? 1 : -1;
+        renderPosts(localPosts);
+      }
     }
 
     async function loadPosts() {
       const container = document.getElementById('postsList');
-      container.innerHTML = '<p style="text-align:center; padding:30px; color:var(--text-sub);">جاري تحميل المنشورات...</p>';
+      container.innerHTML = '<p style="text-align:center; padding:30px; color:var(--text-sub);">Loading...</p>';
 
       try {
         const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
         if (!error && posts && posts.length > 0) {
-          localPosts = posts;
+          localPosts = posts.map(p => ({
+            id: p.id || Math.random(),
+            author_name: p.author_name || 'User',
+            content: p.content || '',
+            image_url: p.image_url || null,
+            likes: p.likes || 0,
+            liked_by_me: false
+          }));
         }
       } catch (e) {}
 
       if (localPosts.length === 0) {
         localPosts = [
-          { author_name: 'منصة كلمات', content: 'أهلاً بك في الشكل الجديد لمنصة كلمات! جرب نشر أفكارك الآن.' }
+          { id: 1, author_name: 'Kalimat', content: 'مرحباً بك! يمكنك تجربة رفع الصور والتفاعل الآن.', likes: 0, liked_by_me: false }
         ];
       }
 
@@ -197,26 +297,45 @@
     function renderPosts(list) {
       const container = document.getElementById('postsList');
       container.innerHTML = list.map(p => {
-        const initial = p.author_name ? p.author_name[0].toUpperCase() : '؟';
+        const initial = p.author_name ? p.author_name[0].toUpperCase() : 'U';
         return `
           <div class="post">
             <div class="avatar">${initial}</div>
             <div class="post-content">
               <div class="post-header">
-                <span class="post-author">${p.author_name || 'مستخدم'}</span>
-                <span class="post-handle">@${p.author_name || 'user'}</span>
+                <span class="post-author">${p.author_name}</span>
+                <span class="post-handle">@${p.author_name}</span>
               </div>
               <div class="post-text">${p.content}</div>
+              ${p.image_url ? `<img src="${p.image_url}" class="post-image">` : ''}
               <div class="post-footer">
                 <div class="post-action"><i class="fa-regular fa-comment"></i> 0</div>
                 <div class="post-action"><i class="fa-solid fa-retweet"></i> 0</div>
-                <div class="post-action like"><i class="fa-regular fa-heart"></i> 0</div>
-                <div class="post-action"><i class="fa-regular fa-bookmark"></i></div>
+                <div class="post-action ${p.liked_by_me ? 'liked' : ''}" onclick="toggleLike(${p.id})">
+                  <i class="fa-${p.liked_by_me ? 'solid' : 'regular'} fa-heart"></i> ${p.likes}
+                </div>
               </div>
             </div>
           </div>
         `;
       }).join('');
+    }
+
+    function renderMyPosts() {
+      const myPosts = localPosts.filter(p => p.author_name === activeUser);
+      const container = document.getElementById('myPostsList');
+      if(myPosts.length === 0) {
+        container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-sub);">لا توجد منشورات خاصة بك بعد.</p>';
+      } else {
+        container.innerHTML = myPosts.map(p => `
+          <div class="post">
+            <div class="post-content">
+              <div class="post-text">${p.content}</div>
+              ${p.image_url ? `<img src="${p.image_url}" class="post-image">` : ''}
+            </div>
+          </div>
+        `).join('');
+      }
     }
 
     init();

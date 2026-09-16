@@ -1,0 +1,20 @@
+{
+  "short_name": "كلمات",
+  "name": "منصة كلمات الاجتماعية",
+  "icons": [
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "logo.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/kalimat/",
+  "background_color": "#ffffff",
+  "theme_color": "#1da1f2",
+  "display": "standalone"
+}

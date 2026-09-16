@@ -57,7 +57,9 @@
     .post-img { width: 100%; max-height: 380px; border-radius: 14px; margin-top: 10px; border: 1px solid var(--border-color); object-fit: cover; }
 
     .post-footer { display: flex; justify-content: space-between; max-width: 420px; margin-top: 12px; color: var(--text-sub); font-size: 0.85rem; }
-    .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 12px; }
+    .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 12px; user-select: none; }
+    .action-btn.liked { color: var(--like-color); }
+    .action-btn.liked i { font-weight: 900; }
 
     .comments-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color); display: none; }
     .comment-item { background: var(--card-bg); padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.88rem; }
@@ -146,7 +148,7 @@
         <label style="font-size: 0.85rem; color: var(--text-sub);">تعديل الاسم المستعار</label>
         <input type="text" id="editDisplayName" class="input-field" placeholder="اسمك الظاهر">
         
-        <label style="font-size: 0.85rem; color: var(--text-sub);">رابط الصورة الشخصية (Direct Link)</label>
+        <label style="font-size: 0.85rem; color: var(--text-sub);">رابط الصورة الشخصية المباشر</label>
         <input type="text" id="editAvatarUrl" class="input-field" placeholder="https://i.ibb.co/example.jpg">
         
         <button class="btn-tweet" style="width: 100%; padding: 10px;" onclick="saveProfileSettings()">حفظ التغييرات</button>
@@ -169,6 +171,7 @@
     let isSignUp = false;
     let currentUser = null;
     let currentBase64Image = '';
+    let likedPosts = JSON.parse(localStorage.getItem('kalimat_likes') || '{}');
 
     function toggleAuthMode() {
       isSignUp = !isSignUp;
@@ -302,6 +305,8 @@
       timeline.innerHTML = '';
       for (const post of posts) {
         const { data: comments } = await _supabase.from('comments').select('*').eq('post_id', post.id).order('created_at', { ascending: true });
+        const isLiked = !!likedPosts[post.id];
+        const likesCount = (post.likes_count || 0) + (isLiked ? 1 : 0);
         
         const postElement = document.createElement('div');
         postElement.className = 'post';
@@ -324,8 +329,8 @@
               <div class="action-btn retweet" onclick="handleRetweet('${(post.content || '').replace(/'/g, "\\'")}', '${post.author_name}')">
                 <i class="fa-solid fa-retweet"></i> <span>إعادة نشر</span>
               </div>
-              <div class="action-btn like" onclick="handleLike(${post.id}, 'like', ${post.likes_count || 0})">
-                <i class="fa-regular fa-heart"></i> <span>${post.likes_count || 0}</span>
+              <div class="action-btn ${isLiked ? 'liked' : ''}" id="like-btn-${post.id}" onclick="toggleLike(${post.id})">
+                <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i> <span id="like-count-${post.id}">${likesCount}</span>
               </div>
               <div class="action-btn" onclick="sharePost('${(post.content || '').replace(/'/g, "\\'")}')">
                 <i class="fa-solid fa-share-nodes"></i>
@@ -352,9 +357,24 @@
       }
     }
 
-    async function handleLike(postId, type, currentCount) {
-      const { error } = await _supabase.from('posts').update({ likes_count: currentCount + 1 }).eq('id', postId);
-      if (!error) loadTimeline();
+    function toggleLike(postId) {
+      const btn = document.getElementById(`like-btn-${postId}`);
+      const countSpan = document.getElementById(`like-count-${postId}`);
+      let currentCount = parseInt(countSpan.innerText) || 0;
+
+      if (likedPosts[postId]) {
+        delete likedPosts[postId];
+        btn.classList.remove('liked');
+        btn.querySelector('i').className = 'fa-regular fa-heart';
+        countSpan.innerText = Math.max(0, currentCount - 1);
+      } else {
+        likedPosts[postId] = true;
+        btn.classList.add('liked');
+        btn.querySelector('i').className = 'fa-solid fa-heart';
+        countSpan.innerText = currentCount + 1;
+      }
+      localStorage.setItem('kalimat_likes', JSON.stringify(likedPosts));
+      _supabase.from('posts').rpc('increment_likes', { row_id: postId }).then(() => {}).catch(() => {});
     }
 
     function toggleComments(postId) {

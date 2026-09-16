@@ -17,29 +17,25 @@
     }
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background-color: var(--bg); color: var(--text); display: flex; justify-content: center; min-height: 100vh; }
-    .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; min-height: 100vh; border-left: 1px solid var(--border); border-right: 1px solid var(--border); position: relative; pb-16; }
+    .container { width: 100%; max-width: 500px; display: flex; flex-direction: column; min-height: 100vh; border-left: 1px solid var(--border); border-right: 1px solid var(--border); position: relative; padding-bottom: 60px; }
     
-    /* Header */
     header { position: sticky; top: 0; background: rgba(0,0,0,0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border); padding: 12px 16px; display: flex; align-items: center; justify-content: space-between; z-index: 100; }
     .logo { font-size: 1.2rem; font-weight: bold; color: var(--text); display: flex; align-items: center; gap: 8px; }
     .search-bar { width: 100%; background: #202327; border: none; border-radius: 9999px; padding: 10px 16px; color: white; outline: none; margin: 10px 0; }
     
-    /* Auth Forms */
     .auth-container { padding: 32px 20px; display: flex; flex-direction: column; gap: 16px; align-items: center; }
     .auth-title { font-size: 1.5rem; font-weight: bold; margin-bottom: 10px; }
-    .input-field { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: #0a0a0a; color: white; }
+    .input-field { width: 100%; padding: 14px; border-radius: 8px; border: 1px solid var(--border); background: #0a0a0a; color: white; outline: none; }
     .btn-primary { width: 100%; padding: 12px; border-radius: 9999px; background: var(--accent); color: white; font-weight: bold; border: none; cursor: pointer; }
     .btn-secondary { background: transparent; color: var(--subtext); border: none; cursor: pointer; font-size: 0.9rem; margin-top: 10px; }
 
-    /* Feed & Post Box */
     .post-box { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; }
     .avatar { width: 44px; height: 44px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 1.1rem; color: white; flex-shrink: 0; }
     .post-input-container { flex: 1; }
     textarea { width: 100%; background: transparent; border: none; color: white; font-size: 1.1rem; resize: none; outline: none; min-height: 80px; }
-    .post-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); pt: 10px; margin-top: 10px; }
+    .post-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border); padding-top: 10px; margin-top: 10px; }
     .post-btn { background: var(--accent); color: white; border: none; padding: 8px 20px; border-radius: 9999px; font-weight: bold; cursor: pointer; }
     
-    /* Posts Timeline */
     .tweet { padding: 16px; border-bottom: 1px solid var(--border); display: flex; gap: 12px; }
     .tweet-content { flex: 1; }
     .tweet-header { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
@@ -50,12 +46,10 @@
     .action-btn { cursor: pointer; display: flex; align-items: center; gap: 6px; transition: color 0.2s; }
     .action-btn:hover { color: var(--accent); }
 
-    /* Navigation Bar */
     nav { position: fixed; bottom: 0; width: 100%; max-width: 500px; background: rgba(0,0,0,0.95); border-top: 1px solid var(--border); display: flex; justify-content: space-around; padding: 12px 0; z-index: 100; }
     .nav-item { color: var(--subtext); font-size: 1.3rem; text-decoration: none; cursor: pointer; }
     .nav-item.active { color: var(--accent); }
 
-    /* Profile View */
     .profile-header { padding: 20px; text-align: center; border-bottom: 1px solid var(--border); }
     .profile-avatar-lg { width: 80px; height: 80px; border-radius: 50%; background: #444; margin: 0 auto 12px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; }
     
@@ -66,10 +60,8 @@
 
 <div class="container">
   
-  <!-- Header -->
   <header>
     <div class="logo"><i class="fa-solid fa-feather"></i> كلمات</div>
-    <div id="userHeaderBadge" class="avatar hidden" style="width:32px; height:32px; font-size:0.8rem;"></div>
   </header>
 
   <!-- Auth Screen -->
@@ -82,7 +74,7 @@
   </div>
 
   <!-- App Content -->
-  <div id="appScreen" class="hidden" style="padding-bottom: 60px;">
+  <div id="appScreen" class="hidden">
     <div style="padding: 0 16px;">
       <input type="text" class="search-bar" placeholder="بحث في كلمات...">
     </div>
@@ -122,7 +114,6 @@
         <p id="profileHandle" style="color:var(--subtext); margin-bottom:16px;">@username</p>
         <button onclick="logout()" class="btn-primary" style="background:#e50914; max-width:200px;">تسجيل الخروج</button>
       </div>
-      <div id="myTweets"></div>
     </div>
   </div>
 
@@ -137,9 +128,9 @@
 </div>
 
 <script>
-  // Supabase Configuration
-  const SUPABASE_URL = "https://aahryawjiyrtstjylcjy.supabase.co";
-  const SUPABASE_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImFhaHJ5YXdqaXlydHN0anktY2p5Iiwicm9sZSI6ImFub24iLCJpYXQiOjE3NDEzNTY5NjcsImV4cCI6MjA1NjkzMjk2N30.5Mv0q2P5f12y9a-T2_R4Q2J_u1_Xy4V5aX2Z3b4c5d6";
+  // Correct Supabase Config
+  const SUPABASE_URL = 'https://qrnbfjvutzkmoannmujk.supabase.co';
+  const SUPABASE_KEY = 'sb_publishable_Q4uNpSCbSEPo5-TaWzuFqQ_yts_mf6p';
   const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
   let currentUser = null;
@@ -154,11 +145,9 @@
       document.getElementById('appScreen').classList.remove('hidden');
       document.getElementById('bottomNav').classList.remove('hidden');
 
-      const name = user.email.split('@')[0];
-      const initial = name[0].toUpperCase();
-      document.getElementById('myAvatar').innerText = initial;
+      const name = user.email ? user.email.split('@')[0] : 'مستخدم';
+      document.getElementById('myAvatar').innerText = name[0].toUpperCase();
       
-      // التوجيه الافتراضي والمباشر للصفحة الرئيسية
       navigateTo('home');
     } else {
       document.getElementById('authScreen').classList.remove('hidden');
@@ -182,7 +171,10 @@
     if (isSignUpMode) {
       const { error } = await _supabase.auth.signUp({ email, password });
       if (error) alert(error.message);
-      else alert('تم إنشاء الحساب بنجاح! يمكنك الآن تسجيل الدخول.');
+      else {
+        alert('تم إنشاء الحساب بنجاح! جاري تسجيل الدخول...');
+        checkUser();
+      }
     } else {
       const { error } = await _supabase.auth.signInWithPassword({ email, password });
       if (error) alert(error.message);
@@ -229,7 +221,7 @@
     if (!content) return;
 
     const username = currentUser.email.split('@')[0];
-    const { error } = await _supabase.from('tweets').insert([{ content, author: username, user_id: currentUser.id }]);
+    const { error } = await _supabase.from('posts').insert([{ content, author_name: username }]);
     if (error) {
       alert('خطأ أثناء النشر: ' + error.message);
     } else {
@@ -242,27 +234,27 @@
     const timelineEl = document.getElementById('timeline');
     timelineEl.innerHTML = '<p style="text-align:center; padding:20px; color:var(--subtext);">جاري تحميل المنشورات...</p>';
 
-    const { data: tweets, error } = await _supabase.from('tweets').select('*').order('created_at', { ascending: false });
+    const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
 
     if (error) {
       timelineEl.innerHTML = '<p style="text-align:center; padding:20px; color:red;">تعذر تحميل المنشورات.</p>';
       return;
     }
 
-    if (!tweets || tweets.length === 0) {
+    if (!posts || posts.length === 0) {
       timelineEl.innerHTML = '<p style="text-align:center; padding:20px; color:var(--subtext);">لا توجد منشورات حتى الآن.</p>';
       return;
     }
 
-    timelineEl.innerHTML = tweets.map(tweet => `
+    timelineEl.innerHTML = posts.map(post => `
       <div class="tweet">
-        <div class="avatar">${(tweet.author || 'م')[0].toUpperCase()}</div>
+        <div class="avatar">${(post.author_name || 'م')[0].toUpperCase()}</div>
         <div class="tweet-content">
           <div class="tweet-header">
-            <span class="tweet-author">${tweet.author || 'مستخدم'}</span>
-            <span class="tweet-handle">@${tweet.author || 'user'}</span>
+            <span class="tweet-author">${post.author_name || 'مستخدم'}</span>
+            <span class="tweet-handle">@${post.author_name || 'user'}</span>
           </div>
-          <div class="tweet-text">${tweet.content}</div>
+          <div class="tweet-text">${post.content}</div>
           <div class="tweet-footer">
             <span class="action-btn"><i class="fa-regular fa-comment"></i> 0</span>
             <span class="action-btn"><i class="fa-solid fa-retweet"></i> 0</span>
@@ -273,7 +265,6 @@
     `).join('');
   }
 
-  // Initializing App
   checkUser();
 </script>
 </body>

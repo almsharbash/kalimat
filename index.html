@@ -17,7 +17,6 @@
       --accent-hover: #1a8cd8;
       --like-color: #f91880;
       --retweet-color: #00ba7c;
-      --dislike-color: #e0245e;
     }
 
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
@@ -29,14 +28,14 @@
     .brand-title i { color: var(--accent); }
     
     .user-pill { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-main); background: var(--card-bg); padding: 4px 12px 4px 6px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; }
-    .avatar-mini { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; overflow: hidden; object-fit: cover; }
+    .avatar-mini { width: 28px; height: 28px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; overflow: hidden; }
 
     .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 600px; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 12px 0; z-index: 100; }
-    .nav-item { color: var(--text-sub); font-size: 1.3rem; cursor: pointer; transition: color 0.2s; position: relative; }
+    .nav-item { color: var(--text-sub); font-size: 1.3rem; cursor: pointer; transition: color 0.2s; }
     .nav-item.active, .nav-item:hover { color: var(--accent); }
 
     .tweet-box { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
-    .avatar { width: 44px; height: 44px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; object-fit: cover; }
+    .avatar { width: 44px; height: 44px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; }
     .tweet-input-area { flex-grow: 1; }
     textarea { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1.1rem; resize: none; outline: none; min-height: 70px; }
     
@@ -46,11 +45,9 @@
 
     .tweet-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 10px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 10px; }
     .media-btn { color: var(--accent); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; gap: 6px; }
-    .btn-tweet { background-color: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 0.95rem; cursor: pointer; transition: background 0.2s; }
-    .btn-tweet:hover { background-color: var(--accent-hover); }
+    .btn-tweet { background-color: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 0.95rem; cursor: pointer; }
 
-    .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; transition: background 0.15s; }
-    .post:hover { background: rgba(255,255,255,0.02); }
+    .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
     .post-main { flex-grow: 1; }
     .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
     .post-author-info { display: flex; align-items: center; gap: 6px; }
@@ -60,13 +57,10 @@
     .post-img { width: 100%; max-height: 380px; border-radius: 14px; margin-top: 10px; border: 1px solid var(--border-color); object-fit: cover; }
 
     .post-footer { display: flex; justify-content: space-between; max-width: 420px; margin-top: 12px; color: var(--text-sub); font-size: 0.85rem; }
-    .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; transition: color 0.2s; padding: 4px 8px; border-radius: 12px; }
-    .action-btn:hover { color: var(--accent); background: rgba(29, 155, 240, 0.1); }
-    .action-btn.retweet:hover { color: var(--retweet-color); background: rgba(0, 186, 124, 0.1); }
-    .action-btn.like:hover { color: var(--like-color); background: rgba(249, 24, 128, 0.1); }
+    .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 12px; }
 
     .comments-section { margin-top: 12px; padding-top: 12px; border-top: 1px solid var(--border-color); display: none; }
-    .comment-item { background: var(--card-bg); padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.88rem; border: 1px solid rgba(255,255,255,0.05); }
+    .comment-item { background: var(--card-bg); padding: 8px 12px; border-radius: 10px; margin-bottom: 8px; font-size: 0.88rem; }
     .comment-author { font-weight: bold; color: var(--accent); margin-bottom: 2px; }
     .comment-input-box { display: flex; gap: 8px; margin-top: 8px; }
     .comment-input-box input { flex-grow: 1; background: #000; border: 1px solid var(--border-color); border-radius: 18px; padding: 8px 14px; color: #fff; font-size: 0.85rem; outline: none; }
@@ -74,7 +68,6 @@
     .auth-container { padding: 40px 20px; text-align: center; }
     .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 24px; border-radius: 16px; margin-top: 20px; text-align: right; }
     .input-field { width: 100%; padding: 12px; margin: 8px 0 16px; background: #000; border: 1px solid var(--border-color); border-radius: 8px; color: #fff; outline: none; font-size: 0.95rem; }
-    .input-field:focus { border-color: var(--accent); }
 
     .modal-overlay { position: fixed; top: 0; left: 0; right: 0; bottom: 0; background: rgba(0,0,0,0.7); display: flex; justify-content: center; align-items: center; z-index: 200; padding: 16px; }
     .modal-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 16px; width: 100%; max-width: 440px; padding: 20px; text-align: right; }
@@ -87,40 +80,40 @@
 
   <div class="layout-container">
     <header>
-      <div class="brand-title"><i class="fa-solid fa-feather-pointed"></i> &#x0643;&#x0644;&#x0645;&#x0627;&#x062A;</div>
+      <div class="brand-title"><i class="fa-solid fa-feather-pointed"></i> كلمات</div>
       <div id="userInfo" class="user-pill hidden" onclick="openSettings()">
-        <span id="userPillName">&#x0627;&#x0644;&#x0645;&#x0633;&#x062A;&#x062E;&#x062F;&#x0645;</span>
-        <div class="avatar-mini" id="userPillAvatar">&#x0643;</div>
+        <span id="userPillName">المستخدم</span>
+        <div class="avatar-mini" id="userPillAvatar">ك</div>
       </div>
     </header>
 
     <div id="authScreen" class="auth-container">
-      <h2 style="font-size: 1.8rem; margin-bottom: 10px;">&#x0645;&#x0631;&#x062D;&#x0628;&#x0627;&#x064B; &#x0628;&#x0643; &#x0641;&#x064A; &#x0645;&#x0646;&#x0635;&#x0629; &#x0643;&#x0644;&#x0645;&#x0627;&#x062A;</h2>
-      <p style="color: var(--text-sub);">&#x0634;&#x0627;&#x0631;&#x0643; &#x0623;&#x0641;&#x0643;&#x0627;&#x0631;&#x0643; &#x0648;&#x062A;&#x0641;&#x0627;&#x0639;&#x0644; &#x0645;&#x0639; &#x0627;&#x0644;&#x062C;&#x0645;&#x064A;&#x0639; &#x0628;&#x062D;&#x0631;&#x064A;&#x0629;</p>
+      <h2 style="font-size: 1.8rem; margin-bottom: 10px;">مرحباً بك في منصة كلمات</h2>
+      <p style="color: var(--text-sub);">شارك أفكارك وتفاعل مع الجميع بحرية</p>
 
       <div class="auth-card">
         <div id="nameGroup" class="hidden">
-          <label style="font-size: 0.85rem; color: var(--text-sub);">&#x0627;&#x0644;&#x0627;&#x0633;&#x0645; &#x0627;&#x0644;&#x0645;&#x0633;&#x062A;&#x0639;&#x0627;&#x0631;</label>
-          <input type="text" id="regName" class="input-field" placeholder="&#x0623;&#x062F;&#x062E;&#x0644; &#x0627;&#x0633;&#x0645;&#x0643; &#x0627;&#x0644;&#x0643;&#x0627;&#x0645;&#x0644;">
+          <label style="font-size: 0.85rem; color: var(--text-sub);">الاسم المستعار</label>
+          <input type="text" id="regName" class="input-field" placeholder="أدخل اسمك الكامل">
         </div>
-        <label style="font-size: 0.85rem; color: var(--text-sub);">&#x0627;&#x0644;&#x0628;&#x0631;&#x064A;&#x062F; &#x0627;&#x0644;&#x0625;&#x0644;&#x0643;&#x062A;&#x0631;&#x0648;&#x0646;&#x064A;</label>
+        <label style="font-size: 0.85rem; color: var(--text-sub);">البريد الإلكتروني</label>
         <input type="email" id="authEmail" class="input-field" placeholder="example@mail.com">
-        <label style="font-size: 0.85rem; color: var(--text-sub);">&#x0643;&#x0644;&#x0645;&#x0629; &#x0627;&#x0644;&#x0633;&#x0631;</label>
+        <label style="font-size: 0.85rem; color: var(--text-sub);">كلمة السر</label>
         <input type="password" id="authPass" class="input-field" placeholder="••••••••">
-        <button class="btn-tweet" style="width: 100%; padding: 12px;" onclick="submitAuth()">&#x0645;&#x062A;&#x0627;&#x0628;&#x0639;&#x0629;</button>
+        <button class="btn-tweet" style="width: 100%; padding: 12px;" onclick="submitAuth()">متابعة</button>
 
         <div style="text-align: center; margin-top: 16px; font-size: 0.9rem; color: var(--text-sub);">
-          <span id="switchPrompt">&#x0644;&#x064A;&#x0633; &#x0644;&#x062F;&#x064A;&#x0643; &#x062D;&#x0633;&#x0627;&#x0628;&#x061F;</span>
-          <a style="color: var(--accent); cursor: pointer; font-weight: bold;" onclick="toggleAuthMode()" id="switchBtn">&#x0625;&#x0646;&#x0634;&#x0627;&#x0621; &#x062D;&#x0633;&#x0627;&#x0628;</a>
+          <span id="switchPrompt">ليس لديك حساب؟</span>
+          <a style="color: var(--accent); cursor: pointer; font-weight: bold;" onclick="toggleAuthMode()" id="switchBtn">إنشاء حساب</a>
         </div>
       </div>
     </div>
 
     <div id="appScreen" class="hidden">
       <div class="tweet-box">
-        <div class="avatar" id="myAvatar">&#x0643;</div>
+        <div class="avatar" id="myAvatar">ك</div>
         <div class="tweet-input-area">
-          <textarea id="tweetContent" placeholder="&#x0645;&#x0627;&#x0630;&#x0627; &#x064A;&#x062F;&#x0648;&#x0631; &#x0641;&#x064A; &#x0623;&#x0641;&#x0643;&#x0627;&#x0631;&#x0643; &#x0627;&#x0644;&#x064A;&#x0648;&#x0645;&#x061F;"></textarea>
+          <textarea id="tweetContent" placeholder="ماذا يدور في أفكارك اليوم؟"></textarea>
 
           <div class="img-preview-container">
             <img id="imgPreview" class="img-preview" src="">
@@ -130,39 +123,39 @@
           <div class="tweet-actions">
             <label class="media-btn">
               <i class="fa-regular fa-image"></i>
-              <span style="font-size: 0.85rem;">&#x0635;&#x0648;&#x0631;&#x0629;</span>
+              <span style="font-size: 0.85rem;">صورة</span>
               <input type="file" id="imageFileInput" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
             </label>
-            <button class="btn-tweet" onclick="publishTweet()">&#x0646;&#x0634;&#x0631;</button>
+            <button class="btn-tweet" onclick="publishTweet()">نشر</button>
           </div>
         </div>
       </div>
 
       <div id="timeline">
-        <div style="text-align: center; padding: 40px; color: var(--text-sub);">&#x062C;&#x0627;&#x0631;&#x064A; &#x062A;&#x062D;&#x0645;&#x064A;&#x0644; &#x0627;&#x0644;&#x0623;&#x0641;&#x0643;&#x0627;&#x0631;...</div>
+        <div style="text-align: center; padding: 40px; color: var(--text-sub);">جاري تحميل الأفكار...</div>
       </div>
     </div>
 
     <div id="settingsModal" class="modal-overlay hidden">
       <div class="modal-card">
         <div class="modal-header">
-          <h3 style="font-size: 1.1rem;"><i class="fa-solid fa-gear"></i> &#x0625;&#x0639;&#x062F;&#x0627;&#x062F;&#x0627;&#x062A; &#x0627;&#x0644;&#x062D;&#x0633;&#x0627;&#x0628;</h3>
+          <h3 style="font-size: 1.1rem;"><i class="fa-solid fa-gear"></i> إعدادات الحساب</h3>
           <i class="fa-solid fa-xmark" style="cursor: pointer;" onclick="closeSettings()"></i>
         </div>
         
-        <label style="font-size: 0.85rem; color: var(--text-sub);">&#x062A;&#x0639;&#x062F;&#x064A;&#x0644; &#x0627;&#x0644;&#x0627;&#x0633;&#x0645; &#x0627;&#x0644;&#x0645;&#x0633;&#x062A;&#x0639;&#x0627;&#x0631;</label>
-        <input type="text" id="editDisplayName" class="input-field" placeholder="&#x0627;&#x0633;&#x0645;&#x0643; &#x0627;&#x0644;&#x0638;&#x0627;&#x0647;&#x0631;">
+        <label style="font-size: 0.85rem; color: var(--text-sub);">تعديل الاسم المستعار</label>
+        <input type="text" id="editDisplayName" class="input-field" placeholder="اسمك الظاهر">
         
-        <label style="font-size: 0.85rem; color: var(--text-sub);">&#x0631;&#x0627;&#x0628;&#x0637; &#x0627;&#x0644;&#x0635;&#x0648;&#x0631;&#x0629; &#x0627;&#x0644;&#x0634;&#x062E;&#x0635;&#x064A;&#x0629;</label>
-        <input type="text" id="editAvatarUrl" class="input-field" placeholder="https://example.com/photo.jpg">
+        <label style="font-size: 0.85rem; color: var(--text-sub);">رابط الصورة الشخصية (Direct Link)</label>
+        <input type="text" id="editAvatarUrl" class="input-field" placeholder="https://i.ibb.co/example.jpg">
         
-        <button class="btn-tweet" style="width: 100%; padding: 10px;" onclick="saveProfileSettings()">&#x062D;&#x0641;&#x0638; &#x0627;&#x0644;&#x062A;&#x063A;&#x064A;&#x064A;&#x0631;&#x0627;&#x062A;</button>
+        <button class="btn-tweet" style="width: 100%; padding: 10px;" onclick="saveProfileSettings()">حفظ التغييرات</button>
       </div>
     </div>
 
     <div class="nav-bar hidden" id="bottomNav">
       <div class="nav-item active"><i class="fa-solid fa-house"></i></div>
-      <div class="nav-item" onclick="alert('\u0642\u0633\u0645 \u0627\u0644\u0628\u062D\u062B \u0642\u0627\u062F\u0645 \u0642\u0631\u064A\u0628\u0627\u064B!')"><i class="fa-solid fa-magnifying-glass"></i></div>
+      <div class="nav-item" onclick="alert('قسم البحث قادم قريباً!')"><i class="fa-solid fa-magnifying-glass"></i></div>
       <div class="nav-item" onclick="openSettings()"><i class="fa-solid fa-gear"></i></div>
       <div class="nav-item" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
     </div>
@@ -180,8 +173,8 @@
     function toggleAuthMode() {
       isSignUp = !isSignUp;
       document.getElementById('nameGroup').classList.toggle('hidden', !isSignUp);
-      document.getElementById('switchPrompt').innerText = isSignUp ? '\u0644\u062F\u064A\u0643 \u062D\u0633\u0627\u0628 \u0628\u0629\u0627\u0644\u0641\u0639\u0644\u061F' : '\u0644\u064A\u0633 \u0644\u062F\u064A\u0643 \u062D\u0633\u0627\u0628\u061F';
-      document.getElementById('switchBtn').innerText = isSignUp ? '\u062A\u0633\u062C\u064A\u0644 \u0627\u0644\u062F\u062E\u0648\u0644' : '\u0625\u0646\u0634\u0627\u0621 \u062D\u0633\u0627\u0628';
+      document.getElementById('switchPrompt').innerText = isSignUp ? 'لديك حساب بالفعل؟' : 'ليس لديك حساب؟';
+      document.getElementById('switchBtn').innerText = isSignUp ? 'تسجيل الدخول' : 'إنشاء حساب';
     }
 
     async function checkUser() {
@@ -228,14 +221,14 @@
       const password = document.getElementById('authPass').value.trim();
       const name = document.getElementById('regName').value.trim();
 
-      if (!email || !password) return alert('\u064A\u0631\u062C\u0649 \u062D\u0633\u0627\u0628 \u0628\u0631\u064A\u062F \u0648\u0643\u0644\u0645\u0629 \u0633\u0631');
+      if (!email || !password) return alert('يرجى إدخال البريد وكلمة السر');
 
       if (isSignUp) {
-        const { error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: name || '\u0639\u0636\u0648 \u0643\u0644\u0645\u0627\u062A' } } });
+        const { error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: name || 'عضو كلمات' } } });
         if (error) alert(error.message); else checkUser();
       } else {
         const { error } = await _supabase.auth.signInWithPassword({ email, password });
-        if (error) alert('\u0628\u064A\u0627\u0646\u0627\u062A \u0627\u0644\u062F\u062E\u0648\u0644 \u063A\u064A\u0631 \u0635\u062D\u064A\u062D\u0629'); else checkUser();
+        if (error) alert('بيانات الدخول غير صحيحة'); else checkUser();
       }
     }
 
@@ -276,7 +269,7 @@
         image_url: currentBase64Image 
       }]);
 
-      if (error) alert('\u062D\u062F\u062B \u062E\u0637\u0623 \u0623\u062B\u0646\u0627\u0621 \u0627\u0644\u0646\u0634\u0631');
+      if (error) alert('حدث خطأ أثناء النشر');
       else {
         document.getElementById('tweetContent').value = '';
         clearSelectedImage();
@@ -287,7 +280,7 @@
     async function handleRetweet(content, author) {
       const meta = currentUser?.user_metadata || {};
       const myName = meta.full_name || currentUser?.email?.split('@')[0];
-      const retweetContent = `\u0623\u0639\u0627\u062F \u0646\u0634\u0631 🔄 (@${author}):\n"${content}"`;
+      const retweetContent = `أعاد نشر 🔄 (@${author}):\n"${content}"`;
 
       const { error } = await _supabase.from('posts').insert([{ 
         content: retweetContent, 
@@ -302,7 +295,7 @@
       const timeline = document.getElementById('timeline');
 
       if (error || !posts || posts.length === 0) {
-        timeline.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">\u0644\u0627 \u062A\u0648\u062C\u062F \u0645\u0646\u0634\u0648\u0631\u0627\u062A \u062D\u062A\u0649 \u0627\u0644\u0622\u0646. \u0643\u0646 \u0623\u0648\u0644 \u0645\u0646 \u064A\u0646\u0634\u0631!</div>`;
+        timeline.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد منشورات حتى الآن. كن أول من ينشر!</div>`;
         return;
       }
 
@@ -329,7 +322,7 @@
                 <i class="fa-regular fa-comment"></i> <span>${comments ? comments.length : 0}</span>
               </div>
               <div class="action-btn retweet" onclick="handleRetweet('${(post.content || '').replace(/'/g, "\\'")}', '${post.author_name}')">
-                <i class="fa-solid fa-retweet"></i> <span>\u0625\u0639\u0627\u062F\u0627\u062F \u0646\u0634\u0631</span>
+                <i class="fa-solid fa-retweet"></i> <span>إعادة نشر</span>
               </div>
               <div class="action-btn like" onclick="handleLike(${post.id}, 'like', ${post.likes_count || 0})">
                 <i class="fa-regular fa-heart"></i> <span>${post.likes_count || 0}</span>
@@ -349,8 +342,8 @@
                 `).join('')}
               </div>
               <div class="comment-input-box">
-                <input type="text" id="comment-input-${post.id}" placeholder="\u0627\u0643\u062A\u0628 \u0631\u062F\u0627\u064B...">
-                <button class="btn-tweet" style="padding: 6px 14px; font-size: 0.8rem;" onclick="addComment(${post.id})">\u0631\u062F</button>
+                <input type="text" id="comment-input-${post.id}" placeholder="اكتب رداً...">
+                <button class="btn-tweet" style="padding: 6px 14px; font-size: 0.8rem;" onclick="addComment(${post.id})">رد</button>
               </div>
             </div>
           </div>
@@ -404,7 +397,7 @@
       });
 
       if (error) {
-        alert('\u062D\u062F\u062B \u062E\u0637\u0623 \u0623\u062B\u0646\u0627\u0621 \u062D\u0641\u0638 \u0627\u0644\u0628\u064A\u0627\u0646\u0627\u062A');
+        alert('حدث خطأ أثناء حفظ البيانات');
       } else {
         currentUser = data.user;
         updateUserDisplay();
@@ -418,7 +411,7 @@
         navigator.share({ title: 'كلمات', text: text, url: window.location.href });
       } else {
         navigator.clipboard.writeText(text);
-        alert('\u062A\u0645 \u0646\u0633\u062E \u0627\u0644\u0646\u0635!');
+        alert('تم نسخ النص!');
       }
     }
 

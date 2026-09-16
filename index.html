@@ -4,541 +4,811 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>كلمات - Kalimat</title>
-  <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
   <style>
     :root {
-      --bg: #090a0f;
-      --card-bg: #12141c;
-      --card-border: #1f2231;
-      --text-main: #f3f4f6;
-      --text-sub: #8b92a5;
-      --accent-gradient: linear-gradient(135deg, #f43f5e, #e11d48);
-      --accent: #f43f5e;
-      --hover-bg: #1a1d29;
+      --bg-color: #000000;
+      --card-bg: #16181c;
+      --border-color: #2f3336;
+      --text-main: #f7f9f9;
+      --text-sub: #71767b;
+      --accent: #1d9bf0;
+      --like-color: #f91880;
+      --danger-color: #f4212e;
     }
 
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-    body { background-color: var(--bg); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
+    body.light-mode {
+      --bg-color: #ffffff;
+      --card-bg: #f7f9f9;
+      --border-color: #e1e8ed;
+      --text-main: #0f1419;
+      --text-sub: #536471;
+    }
+
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
     
-    .app-container {
-      width: 100%;
-      max-width: 480px;
-      display: flex;
-      flex-direction: column;
-      min-height: 100vh;
-      border-left: 1px solid var(--card-border);
-      border-right: 1px solid var(--card-border);
-      position: relative;
-      padding-bottom: 70px;
-      background: var(--bg);
-    }
+    .layout-container { width: 100%; max-width: 650px; min-height: 100vh; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding-bottom: 70px; background: var(--bg-color); position: relative; }
 
-    /* Header */
-    header {
-      position: sticky;
-      top: 0;
-      background: rgba(9, 10, 15, 0.85);
-      backdrop-filter: blur(15px);
-      border-bottom: 1px solid var(--card-border);
-      padding: 14px 20px;
-      display: flex;
-      align-items: center;
-      justify-content: space-between;
-      z-index: 100;
-    }
-    .logo {
-      font-size: 1.3rem;
-      font-weight: 800;
-      background: var(--accent-gradient);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
-
-    /* Auth Screen */
-    .auth-card {
-      margin: auto 20px;
-      padding: 30px 20px;
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 20px;
-      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-      text-align: center;
-    }
-    .input-group { margin-bottom: 15px; text-align: right; }
-    .input-field {
-      width: 100%;
-      padding: 14px 16px;
-      border-radius: 12px;
-      border: 1px solid var(--card-border);
-      background: #181b26;
-      color: white;
-      outline: none;
-      font-size: 0.95rem;
-      transition: 0.3s;
-    }
-    .input-field:focus { border-color: var(--accent); }
-    .btn-main {
-      width: 100%;
-      padding: 14px;
-      border-radius: 12px;
-      background: var(--accent-gradient);
-      color: white;
-      font-weight: bold;
-      border: none;
-      cursor: pointer;
-      font-size: 1rem;
-      box-shadow: 0 4px 15px rgba(244, 63, 94, 0.3);
-      transition: 0.2s;
-    }
-    .btn-main:active { transform: scale(0.98); }
-
-    /* Stories Section */
-    .stories-container {
-      display: flex;
-      gap: 12px;
-      padding: 15px 20px;
-      overflow-x: auto;
-      border-bottom: 1px solid var(--card-border);
-      scrollbar-width: none;
-    }
-    .stories-container::-webkit-scrollbar { display: none; }
-    .story-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 6px;
-      font-size: 0.75rem;
-      color: var(--text-sub);
-    }
-    .story-ring {
-      width: 56px;
-      height: 56px;
-      border-radius: 50%;
-      padding: 2px;
-      background: var(--accent-gradient);
-      display: flex;
-      align-items: center;
-      justify-content: center;
-    }
-    .story-avatar {
-      width: 100%;
-      height: 100%;
-      border-radius: 50%;
-      background: #25293a;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: white;
-      border: 2px solid var(--bg);
-    }
-
-    /* Post Creation Box */
-    .create-post {
-      padding: 16px;
-      background: var(--card-bg);
-      margin: 15px 16px;
-      border-radius: 16px;
-      border: 1px solid var(--card-border);
-    }
-    .create-post-top { display: flex; gap: 12px; }
-    .avatar {
-      width: 42px;
-      height: 42px;
-      border-radius: 50%;
-      background: #2a2e3f;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: bold;
-      color: white;
-      flex-shrink: 0;
-    }
-    textarea {
-      width: 100%;
-      background: transparent;
-      border: none;
-      color: white;
-      font-size: 1rem;
-      resize: none;
-      outline: none;
-      min-height: 60px;
-    }
-    .create-post-bottom {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-top: 10px;
-      padding-top: 10px;
-      border-top: 1px solid var(--card-border);
-    }
-    .media-btn { color: var(--accent); cursor: pointer; font-size: 1.1rem; }
-    .post-btn {
-      background: var(--accent-gradient);
-      color: white;
-      border: none;
-      padding: 8px 22px;
-      border-radius: 20px;
-      font-weight: bold;
-      cursor: pointer;
-    }
-
-    /* Post Feed */
-    .feed { display: flex; flex-direction: column; gap: 15px; padding: 0 16px 20px; }
-    .post-card {
-      background: var(--card-bg);
-      border: 1px solid var(--card-border);
-      border-radius: 16px;
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
-    .post-header { display: flex; gap: 10px; align-items: center; }
-    .user-info { display: flex; flex-direction: column; }
-    .user-name { font-weight: bold; font-size: 0.95rem; }
-    .user-handle { color: var(--text-sub); font-size: 0.8rem; }
-    .post-body { font-size: 0.95rem; line-height: 1.5; color: #e1e3e8; }
+    header { position: sticky; top: 0; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; height: 53px; }
+    body.light-mode header { background-color: rgba(255, 255, 255, 0.85); }
     
-    /* Post Actions */
-    .post-actions {
-      display: flex;
-      justify-content: space-between;
-      border-top: 1px solid var(--card-border);
-      padding-top: 10px;
-      color: var(--text-sub);
-      font-size: 0.85rem;
-    }
-    .action-item {
-      display: flex;
-      align-items: center;
-      gap: 6px;
-      cursor: pointer;
-      transition: 0.2s;
-    }
-    .action-item:hover, .action-item.active { color: var(--accent); }
-    .action-item.liked { color: #f43f5e; }
+    .header-left { display: flex; align-items: center; gap: 12px; }
+    .back-btn { background: transparent; border: none; color: var(--text-main); font-size: 1.2rem; cursor: pointer; display: none; padding: 4px 8px; border-radius: 50%; }
+    .back-btn:hover { background: var(--card-bg); }
+    .brand-title { font-size: 1.2rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; cursor: pointer; }
+    .brand-title i { color: var(--accent); }
+    
+    .header-actions { display: flex; align-items: center; gap: 10px; }
+    .theme-toggle-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
 
-    /* Comments Section */
-    .comments-list {
-      background: #181b26;
-      border-radius: 12px;
-      padding: 10px;
-      margin-top: 8px;
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-    }
-    .comment-item { font-size: 0.85rem; border-bottom: 1px solid #25293a; padding-bottom: 5px; }
-    .comment-item:last-child { border: none; }
-    .comment-author { font-weight: bold; color: var(--text-main); margin-left: 5px; }
+    .user-pill { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-main); background: var(--card-bg); padding: 4px 12px 4px 6px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; }
+    .avatar-mini { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; overflow: hidden; color: #fff; }
 
+    /* Clean Auth Tabs UI */
+    .auth-container { padding: 30px 20px; text-align: center; }
+    .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-top: 15px; text-align: right; }
+    .auth-tabs { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; }
+    .auth-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: bold; color: var(--text-sub); border-bottom: 2px solid transparent; }
+    .auth-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
+
+    .input-field { width: 100%; padding: 12px; margin: 6px 0 14px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); outline: none; font-size: 0.95rem; }
+
+    .search-box { padding: 10px 16px; border-bottom: 1px solid var(--border-color); }
+    .search-input-wrapper { position: relative; }
+    .search-input-wrapper i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
+    .search-input-wrapper input { width: 100%; padding: 10px 40px 10px 12px; border-radius: 20px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); outline: none; font-size: 0.9rem; }
+
+    .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 650px; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 12px 0; z-index: 100; }
+    body.light-mode .nav-bar { background-color: rgba(255, 255, 255, 0.85); }
+    .nav-item { color: var(--text-sub); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
+    .nav-item.active, .nav-item:hover { color: var(--accent); }
+
+    .tweet-box { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; cursor: pointer; }
+    .tweet-input-area { flex-grow: 1; }
+    textarea { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1rem; resize: none; outline: none; min-height: 70px; }
+    
+    .img-preview-container { position: relative; display: inline-block; margin-top: 8px; }
+    .img-preview { max-width: 100%; max-height: 250px; border-radius: 12px; display: none; border: 1px solid var(--border-color); object-fit: cover; }
+    .remove-img-btn { position: absolute; top: 8px; right: 8px; background: rgba(0,0,0,0.7); color: white; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; display: none; }
+
+    .tweet-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; }
+    .media-btn { color: var(--accent); cursor: pointer; font-size: 1.1rem; display: flex; align-items: center; gap: 6px; }
+    .btn-tweet { background-color: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; }
+    .btn-action-outline { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
+    .btn-danger { background: transparent; border: 1px solid var(--danger-color); color: var(--danger-color); padding: 6px 14px; border-radius: 20px; cursor: pointer; font-size: 0.85rem; }
+
+    .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
+    .post-main { flex-grow: 1; }
+    .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
+    .post-author-info { display: flex; align-items: center; gap: 6px; cursor: pointer; }
+    .post-author { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
+    .post-author:hover { text-decoration: underline; }
+    .post-time { color: var(--text-sub); font-size: 0.85rem; }
+    .post-text { font-size: 0.95rem; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
+    .post-img { width: 100%; max-height: 350px; border-radius: 12px; margin-top: 10px; border: 1px solid var(--border-color); object-fit: cover; }
+    .post-footer { display: flex; justify-content: space-between; max-width: 400px; margin-top: 10px; color: var(--text-sub); font-size: 0.85rem; }
+    .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 4px 8px; border-radius: 12px; user-select: none; }
+    .action-btn.liked { color: var(--like-color); }
+
+    .comments-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color); display: none; }
+    .comment-item { background: var(--card-bg); padding: 8px 12px; border-radius: 10px; margin-bottom: 6px; font-size: 0.85rem; }
+    .comment-author { font-weight: bold; color: var(--accent); margin-bottom: 2px; cursor: pointer; }
     .comment-input-box { display: flex; gap: 8px; margin-top: 8px; }
-    .comment-input {
-      flex: 1;
-      background: #181b26;
-      border: 1px solid var(--card-border);
-      border-radius: 8px;
-      padding: 6px 10px;
-      color: white;
-      font-size: 0.85rem;
-      outline: none;
-    }
-    .comment-btn {
-      background: var(--accent);
-      color: white;
-      border: none;
-      padding: 6px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 0.85rem;
-    }
+    .comment-input-box input { flex-grow: 1; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 18px; padding: 6px 12px; color: var(--text-main); font-size: 0.85rem; outline: none; }
 
-    /* Navigation */
-    nav {
-      position: fixed;
-      bottom: 0;
-      width: 100%;
-      max-width: 480px;
-      background: rgba(9, 10, 15, 0.95);
-      backdrop-filter: blur(15px);
-      border-top: 1px solid var(--card-border);
-      display: flex;
-      justify-content: space-around;
-      padding: 14px 0;
-      z-index: 100;
-    }
-    .nav-link { color: var(--text-sub); font-size: 1.3rem; text-decoration: none; cursor: pointer; transition: 0.2s; }
-    .nav-link.active { color: var(--accent); }
+    .profile-header-card { background: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 20px 16px; text-align: center; }
+    .profile-big-avatar { width: 80px; height: 80px; border-radius: 50%; background: var(--accent); margin: 0 auto 10px; display: flex; align-items: center; justify-content: center; font-size: 2rem; font-weight: bold; overflow: hidden; border: 3px solid var(--border-color); color: #fff; }
+    .profile-name { font-size: 1.2rem; font-weight: bold; color: var(--text-main); }
+    .profile-handle { font-size: 0.85rem; color: var(--text-sub); margin-bottom: 8px; }
+    .profile-bio { font-size: 0.9rem; color: var(--text-main); margin-bottom: 10px; padding: 0 10px; line-height: 1.4; }
+    .profile-meta { font-size: 0.8rem; color: var(--text-sub); display: flex; justify-content: center; gap: 12px; margin-bottom: 12px; flex-wrap: wrap; }
+    .profile-controls { display: flex; justify-content: center; gap: 10px; flex-wrap: wrap; }
+
+    .chat-container { display: flex; flex-direction: column; height: calc(100vh - 120px); }
+    .chat-header { padding: 12px 16px; border-bottom: 1px solid var(--border-color); font-weight: bold; display: flex; justify-content: space-between; align-items: center; background: var(--card-bg); }
+    .chat-messages { flex-grow: 1; overflow-y: auto; padding: 16px; display: flex; flex-direction: column; gap: 10px; }
+    .chat-bubble { max-width: 80%; padding: 10px 14px; border-radius: 16px; font-size: 0.9rem; word-break: break-word; line-height: 1.4; }
+    .chat-bubble.me { background: var(--accent); color: white; align-self: flex-start; border-bottom-right-radius: 4px; }
+    .chat-bubble.other { background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); align-self: flex-end; border-bottom-left-radius: 4px; }
+    .chat-input-bar { padding: 12px 16px; border-top: 1px solid var(--border-color); display: flex; gap: 8px; background: var(--bg-color); }
+    .chat-input-bar input { flex-grow: 1; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 20px; padding: 10px 14px; color: var(--text-main); outline: none; font-size: 0.9rem; }
+
+    .section-card { padding: 20px 16px; }
+    .list-item { display: flex; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid var(--border-color); }
 
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-<div class="app-container">
-
-  <!-- Header -->
-  <header>
-    <div class="logo"><i class="fa-solid fa-feather-pointed"></i> كلمات</div>
-  </header>
-
-  <!-- Auth Screen -->
-  <div id="authScreen" style="display: flex; flex: 1; align-items: center;">
-    <div class="auth-card">
-      <h2 style="margin-bottom: 8px;">مرحباً بك في كلمات</h2>
-      <p style="color: var(--text-sub); font-size: 0.9rem; margin-bottom: 24px;">شارك أفكارك مع العالم بأناقة</p>
-      
-      <div class="input-group">
-        <input type="email" id="emailInput" class="input-field" placeholder="البريد الإلكتروني">
+  <div class="layout-container">
+    <header>
+      <div class="header-left">
+        <button id="backBtn" class="back-btn" onclick="navigateBack()"><i class="fa-solid fa-arrow-right"></i></button>
+        <div class="brand-title" onclick="navigateTo('home')"><i class="fa-solid fa-feather-pointed"></i> كلمات</div>
       </div>
-      <div class="input-group">
-        <input type="password" id="passwordInput" class="input-field" placeholder="كلمة المرور">
-      </div>
-      <button onclick="handleAuth()" class="btn-main">دخول / تسجيل</button>
-    </div>
-  </div>
-
-  <!-- Main App Content -->
-  <div id="appScreen" class="hidden">
-    
-    <!-- Story Bar -->
-    <div class="stories-container">
-      <div class="story-item">
-        <div class="story-ring" style="background: #333;"><div class="story-avatar">+</div></div>
-        <span>قصتك</span>
-      </div>
-      <div class="story-item">
-        <div class="story-ring"><div class="story-avatar">أ</div></div>
-        <span>أحمد</span>
-      </div>
-      <div class="story-item">
-        <div class="story-ring"><div class="story-avatar">س</div></div>
-        <span>سارة</span>
-      </div>
-      <div class="story-item">
-        <div class="story-ring"><div class="story-avatar">م</div></div>
-        <span>محمد</span>
-      </div>
-    </div>
-
-    <!-- Home Tab -->
-    <div id="homeSection">
-      <!-- Create Post Box -->
-      <div class="create-post">
-        <div class="create-post-top">
-          <div id="myAvatar" class="avatar">؟</div>
-          <textarea id="tweetInput" placeholder="ماذا يدور في ذهنك اليوم؟"></textarea>
+      <div class="header-actions">
+        <button class="theme-toggle-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
+        <div id="userInfo" class="user-pill hidden" onclick="navigateTo('profile', getMyName())">
+          <span id="userPillName">المستخدم</span>
+          <div class="avatar-mini" id="userPillAvatar">ك</div>
         </div>
-        <div class="create-post-bottom">
-          <i class="fa-regular fa-image media-btn"></i>
-          <button onclick="createTweet()" class="post-btn">نشر</button>
+      </div>
+    </header>
+
+    <!-- Authentication Screen -->
+    <div id="authScreen" class="auth-container">
+      <h2 style="font-size: 1.6rem; margin-bottom: 6px;">مرحباً بك في منصة كلمات</h2>
+      <p style="color: var(--text-sub); font-size: 0.9rem;">تواصل وشارك أفكارك بكل حرية</p>
+
+      <div class="auth-card">
+        <div class="auth-tabs">
+          <div id="tabLogin" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</div>
+          <div id="tabRegister" class="auth-tab" onclick="switchAuthTab('register')">إنشاء حساب جديد</div>
+        </div>
+
+        <div id="registerNameGroup" class="hidden">
+          <label style="font-size: 0.85rem; color: var(--text-sub);">الاسم المستعار</label>
+          <input type="text" id="regName" class="input-field" placeholder="أدخل اسمك الكامل">
+        </div>
+
+        <label style="font-size: 0.85rem; color: var(--text-sub);">البريد الإلكتروني</label>
+        <input type="email" id="authEmail" class="input-field" placeholder="example@mail.com">
+
+        <label style="font-size: 0.85rem; color: var(--text-sub);">كلمة السر</label>
+        <input type="password" id="authPass" class="input-field" placeholder="••••••••">
+
+        <button class="btn-tweet" style="width: 100%; padding: 12px; margin-top: 10px;" id="authSubmitBtn" onclick="submitAuth()">تسجيل الدخول</button>
+      </div>
+    </div>
+
+    <!-- Main Application Screen -->
+    <div id="appScreen" class="hidden">
+      
+      <!-- Search Bar -->
+      <div class="search-box" id="searchBoxArea">
+        <div class="search-input-wrapper">
+          <i class="fa-solid fa-magnifying-glass"></i>
+          <input type="text" id="searchInput" placeholder="بحث في كلمات..." oninput="handleSearch()">
         </div>
       </div>
 
-      <!-- Feed -->
-      <div id="timeline" class="feed"></div>
-    </div>
+      <!-- User Profile Header -->
+      <div id="profileViewSection" class="profile-header-card hidden">
+        <div class="profile-big-avatar" id="viewAvatar">ك</div>
+        <div class="profile-name" id="viewName">الاسم</div>
+        <div class="profile-handle" id="viewHandle">@user</div>
+        <div class="profile-bio" id="viewBio">لا توجد نبذة شخصية بعد.</div>
+        <div class="profile-meta" id="viewMeta"></div>
+        <div class="profile-controls" id="profileControls"></div>
+      </div>
 
-    <!-- Profile Tab -->
-    <div id="profileSection" class="hidden" style="padding: 30px 20px; text-align: center;">
-      <div class="avatar" id="profileAvatar" style="width:80px; height:80px; font-size:2rem; margin: 0 auto 15px;">ك</div>
-      <h3 id="profileName">اسم المستخدم</h3>
-      <p id="profileHandle" style="color:var(--text-sub); margin-bottom:20px;">@username</p>
-      <button onclick="logout()" class="btn-main" style="background:#dc2626; max-width:200px;">تسجيل الخروج</button>
-    </div>
+      <!-- Tweet Box -->
+      <div class="tweet-box" id="homeTweetBox">
+        <div class="avatar" id="myAvatar" onclick="navigateTo('profile', getMyName())">ك</div>
+        <div class="tweet-input-area">
+          <textarea id="tweetContent" placeholder="ماذا يدور في أفكارك اليوم؟"></textarea>
 
-  </div>
-
-  <!-- Bottom Nav Bar -->
-  <nav id="bottomNav" class="hidden">
-    <a class="nav-link active" id="navHome" onclick="navigateTo('home')"><i class="fa-solid fa-house"></i></a>
-    <a class="nav-link" id="navProfile" onclick="navigateTo('profile')"><i class="fa-regular fa-user"></i></a>
-  </nav>
-
-</div>
-
-<script>
-  let currentUser = localStorage.getItem('kalimat_user');
-
-  // Default Posts if Empty
-  const defaultPosts = [
-    {
-      id: 1,
-      author_name: 'سارة علي',
-      handle: 'sara_a',
-      content: 'تصميم التطبيق الجديد رائع جداً ومريح للعين! 🚀✨',
-      likes: 5,
-      comments: [{ author: 'أحمد', text: 'أتفق معكي تماماً!' }]
-    },
-    {
-      id: 2,
-      author_name: 'عمر خالد',
-      handle: 'omar_k',
-      content: 'صباح الخير جميعاً.. كلمة طيبة قد تغير يوم أحدهم بالكامل ❤️',
-      likes: 12,
-      comments: []
-    }
-  ];
-
-  function checkUser() {
-    if (currentUser) {
-      document.getElementById('authScreen').classList.add('hidden');
-      document.getElementById('appScreen').classList.remove('hidden');
-      document.getElementById('bottomNav').classList.remove('hidden');
-
-      const name = currentUser.split('@')[0];
-      document.getElementById('myAvatar').innerText = name[0].toUpperCase();
-
-      if (!localStorage.getItem('kalimat_posts')) {
-        localStorage.setItem('kalimat_posts', JSON.stringify(defaultPosts));
-      }
-      
-      navigateTo('home');
-    } else {
-      document.getElementById('authScreen').classList.remove('hidden');
-      document.getElementById('appScreen').classList.add('hidden');
-      document.getElementById('bottomNav').classList.add('hidden');
-    }
-  }
-
-  function handleAuth() {
-    const email = document.getElementById('emailInput').value.trim();
-    if (!email) return alert('يرجى كتابة البريد الإلكتروني');
-    localStorage.setItem('kalimat_user', email);
-    currentUser = email;
-    checkUser();
-  }
-
-  function logout() {
-    localStorage.removeItem('kalimat_user');
-    currentUser = null;
-    checkUser();
-  }
-
-  function navigateTo(screen) {
-    document.getElementById('homeSection').classList.add('hidden');
-    document.getElementById('profileSection').classList.add('hidden');
-    document.querySelectorAll('.nav-link').forEach(e => e.classList.remove('active'));
-
-    if (screen === 'home') {
-      document.getElementById('homeSection').classList.remove('hidden');
-      document.getElementById('navHome').classList.add('active');
-      loadTimeline();
-    } else if (screen === 'profile') {
-      document.getElementById('profileSection').classList.remove('hidden');
-      document.getElementById('navProfile').classList.add('active');
-      const name = currentUser.split('@')[0];
-      document.getElementById('profileName').innerText = name;
-      document.getElementById('profileHandle').innerText = `@${name}`;
-      document.getElementById('profileAvatar').innerText = name[0].toUpperCase();
-    }
-  }
-
-  function createTweet() {
-    const content = document.getElementById('tweetInput').value.trim();
-    if (!content) return;
-
-    const username = currentUser.split('@')[0];
-    const posts = JSON.parse(localStorage.getItem('kalimat_posts') || '[]');
-    
-    posts.unshift({
-      id: Date.now(),
-      author_name: username,
-      handle: username,
-      content: content,
-      likes: 0,
-      comments: []
-    });
-
-    localStorage.setItem('kalimat_posts', JSON.stringify(posts));
-    document.getElementById('tweetInput').value = '';
-    loadTimeline();
-  }
-
-  function toggleLike(index) {
-    const posts = JSON.parse(localStorage.getItem('kalimat_posts') || '[]');
-    if (!posts[index].isLiked) {
-      posts[index].likes += 1;
-      posts[index].isLiked = true;
-    } else {
-      posts[index].likes -= 1;
-      posts[index].isLiked = false;
-    }
-    localStorage.setItem('kalimat_posts', JSON.stringify(posts));
-    loadTimeline();
-  }
-
-  function addComment(index) {
-    const input = document.getElementById(`comment-input-${index}`);
-    const text = input.value.trim();
-    if (!text) return;
-
-    const posts = JSON.parse(localStorage.getItem('kalimat_posts') || '[]');
-    const username = currentUser.split('@')[0];
-    
-    if (!posts[index].comments) posts[index].comments = [];
-    posts[index].comments.push({ author: username, text: text });
-
-    localStorage.setItem('kalimat_posts', JSON.stringify(posts));
-    loadTimeline();
-  }
-
-  function toggleCommentsUI(index) {
-    const box = document.getElementById(`comments-box-${index}`);
-    box.classList.toggle('hidden');
-  }
-
-  function loadTimeline() {
-    const timelineEl = document.getElementById('timeline');
-    const posts = JSON.parse(localStorage.getItem('kalimat_posts') || '[]');
-
-    timelineEl.innerHTML = posts.map((post, idx) => `
-      <div class="post-card">
-        <div class="post-header">
-          <div class="avatar">${post.author_name[0].toUpperCase()}</div>
-          <div class="user-info">
-            <span class="user-name">${post.author_name}</span>
-            <span class="user-handle">@${post.handle}</span>
+          <div class="img-preview-container">
+            <img id="imgPreview" class="img-preview" src="">
+            <button class="remove-img-btn" id="removeImgBtn" onclick="clearSelectedImage()"><i class="fa-solid fa-xmark"></i></button>
+          </div>
+          
+          <div class="tweet-actions">
+            <label class="media-btn">
+              <i class="fa-regular fa-image"></i>
+              <span style="font-size: 0.85rem;">صورة</span>
+              <input type="file" id="imageFileInput" accept="image/*" class="hidden" onchange="handleImageSelect(event)">
+            </label>
+            <button class="btn-tweet" onclick="publishTweet()">نشر</button>
           </div>
         </div>
-        <div class="post-body">${post.content}</div>
+      </div>
+
+      <!-- Timeline View -->
+      <div id="timelineSection">
+        <div id="timeline">
+          <div style="text-align: center; padding: 40px; color: var(--text-sub);">جاري تحميل المنشورات...</div>
+        </div>
+      </div>
+
+      <!-- Friends View Screen -->
+      <div id="friendsSection" class="hidden">
+        <div style="padding: 16px; font-weight: bold; border-bottom: 1px solid var(--border-color);"><i class="fa-solid fa-users"></i> قائمة المتابَعين (الأصدقاء)</div>
+        <div id="friendsList"></div>
+      </div>
+
+      <!-- Notifications Screen -->
+      <div id="notificationsSection" class="hidden">
+        <div style="padding: 16px; font-weight: bold; border-bottom: 1px solid var(--border-color);"><i class="fa-solid fa-bell"></i> الإشعارات</div>
+        <div id="notificationsList">
+          <div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد إشعارات حالياً.</div>
+        </div>
+      </div>
+
+      <!-- Direct Messaging Screen -->
+      <div id="chatSection" class="chat-container hidden">
+        <div class="chat-header">
+          <span id="chatTargetTitle">دردشة خاصة</span>
+        </div>
+        <div class="chat-messages" id="chatMessages"></div>
+        <div class="chat-input-bar">
+          <input type="text" id="chatInputText" placeholder="اكتب رسالتك المباشرة...">
+          <button class="btn-tweet" onclick="sendDirectMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+        </div>
+      </div>
+
+      <!-- Settings Section View -->
+      <div id="settingsSection" class="section-card hidden">
+        <h3 style="font-size: 1.1rem; margin-bottom: 16px; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;"><i class="fa-solid fa-gear"></i> إعدادات الملف الشخصي الحساب</h3>
         
-        <div class="post-actions">
-          <div class="action-item ${post.isLiked ? 'liked' : ''}" onclick="toggleLike(${idx})">
-            <i class="${post.isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i>
-            <span>${post.likes}</span>
-          </div>
-          <div class="action-item" onclick="toggleCommentsUI(${idx})">
-            <i class="fa-regular fa-comment"></i>
-            <span>${post.comments ? post.comments.length : 0}</span>
-          </div>
-          <div class="action-item"><i class="fa-solid fa-retweet"></i></div>
-        </div>
+        <label style="font-size: 0.85rem; color: var(--text-sub);">الاسم المستعار</label>
+        <input type="text" id="editDisplayName" class="input-field" placeholder="اسمك الظاهر">
 
-        <!-- Comments UI -->
-        <div id="comments-box-${idx}" class="hidden">
-          <div class="comments-list">
-            ${(post.comments || []).map(c => `
-              <div class="comment-item">
-                <span class="comment-author">${c.author}:</span> ${c.text}
+        <label style="font-size: 0.85rem; color: var(--text-sub);">النبذة الشخصية (Bio)</label>
+        <textarea id="editBio" class="input-field" style="height: 60px;" placeholder="اكتب نبذة قصيرة عن نفسك..."></textarea>
+        
+        <label style="font-size: 0.85rem; color: var(--text-sub);">رابط الصورة الشخصية</label>
+        <input type="text" id="editAvatarUrl" class="input-field" placeholder="https://i.ibb.co/example.jpg">
+
+        <label style="font-size: 0.85rem; color: var(--text-sub);">البريد الإلكتروني</label>
+        <input type="email" id="editEmail" class="input-field" placeholder="البريد الإلكتروني">
+
+        <label style="font-size: 0.85rem; color: var(--text-sub);">كلمة المرور الجديدة (اختياري)</label>
+        <input type="password" id="editPassword" class="input-field" placeholder="أدخل كلمة مرور جديدة للتمكين">
+
+        <label style="font-size: 0.85rem; color: var(--text-sub);">رقم الهاتف (اختياري)</label>
+        <input type="text" id="editPhone" class="input-field" placeholder="+961 ...">
+
+        <label style="font-size: 0.85rem; color: var(--text-sub);">العنوان / البلد (اختياري)</label>
+        <input type="text" id="editAddress" class="input-field" placeholder="بيروت، لبنان">
+
+        <button class="btn-tweet" style="width: 100%; padding: 12px; margin-top: 10px;" onclick="saveProfileSettings()">حفظ والتحديث</button>
+      </div>
+
+    </div>
+
+    <!-- Bottom Navigation Bar -->
+    <div class="nav-bar hidden" id="bottomNav">
+      <div class="nav-item active" id="navHome" onclick="navigateTo('home')"><i class="fa-solid fa-house"></i></div>
+      <div class="nav-item" id="navFriends" onclick="navigateTo('friends')"><i class="fa-solid fa-user-group"></i></div>
+      <div class="nav-item" id="navNotifications" onclick="navigateTo('notifications')"><i class="fa-solid fa-bell"></i></div>
+      <div class="nav-item" id="navProfile" onclick="navigateTo('profile', getMyName())"><i class="fa-regular fa-user"></i></div>
+      <div class="nav-item" id="navSettings" onclick="navigateTo('settings')"><i class="fa-solid fa-gear"></i></div>
+      <div class="nav-item" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+    </div>
+  </div>
+
+  <script>
+    const SUPABASE_URL = 'https://qrnbfjvutzkmoannmujk.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Q4uNpSCbSEPo5-TaWzuFqQ_yts_mf6p';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let authMode = 'login';
+    let currentUser = null;
+    let currentBase64Image = '';
+    let likedPosts = JSON.parse(localStorage.getItem('kalimat_likes') || '{}');
+    let activeChatUser = null;
+    let blockedUserList = [];
+    let followingUserList = [];
+
+    // Navigation Stack for Smooth Back Button Support
+    let navHistory = [];
+    let currentView = { name: 'home', param: null };
+
+    function toggleTheme() {
+      document.body.classList.toggle('light-mode');
+      const icon = document.getElementById('themeIcon');
+      icon.className = document.body.classList.contains('light-mode') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
+    }
+
+    function switchAuthTab(mode) {
+      authMode = mode;
+      document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
+      document.getElementById('tabRegister').classList.toggle('active', mode === 'register');
+      document.getElementById('registerNameGroup').classList.toggle('hidden', mode === 'login');
+      document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب جديد';
+    }
+
+    async function checkUser() {
+      const { data: { user } } = await _supabase.auth.getUser();
+      currentUser = user;
+
+      if (user) {
+        document.getElementById('authScreen').classList.add('hidden');
+        document.getElementById('appScreen').classList.remove('hidden');
+        document.getElementById('bottomNav').classList.remove('hidden');
+
+        await fetchBlocksAndFollows();
+        updateUserDisplay();
+        navigateTo('home', null, true);
+      } else {
+        document.getElementById('authScreen').classList.remove('hidden');
+        document.getElementById('appScreen').classList.add('hidden');
+        document.getElementById('bottomNav').classList.add('hidden');
+      }
+    }
+
+    function getMyName() {
+      return currentUser?.user_metadata?.full_name || currentUser?.email?.split('@')[0] || 'User';
+    }
+
+    async function fetchBlocksAndFollows() {
+      if (!currentUser) return;
+      const myName = getMyName();
+      
+      const { data: blocks } = await _supabase.from('blocks').select('blocked_name').eq('blocker_name', myName);
+      blockedUserList = (blocks || []).map(b => b.blocked_name);
+
+      const { data: follows } = await _supabase.from('follows').select('following_name').eq('follower_name', myName);
+      followingUserList = (follows || []).map(f => f.following_name);
+    }
+
+    function updateUserDisplay() {
+      if (!currentUser) return;
+      const name = getMyName();
+      const avatarUrl = currentUser.user_metadata?.avatar_url;
+
+      document.getElementById('userPillName').innerText = name;
+      document.getElementById('userInfo').classList.remove('hidden');
+
+      const avatarBox = document.getElementById('myAvatar');
+      const pillAvatar = document.getElementById('userPillAvatar');
+
+      if (avatarUrl) {
+        avatarBox.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+        pillAvatar.innerHTML = `<img src="${avatarUrl}" style="width:100%;height:100%;object-fit:cover;">`;
+      } else {
+        avatarBox.innerText = name[0].toUpperCase();
+        pillAvatar.innerText = name[0].toUpperCase();
+      }
+    }
+
+    async function submitAuth() {
+      const email = document.getElementById('authEmail').value.trim();
+      const password = document.getElementById('authPass').value.trim();
+      const name = document.getElementById('regName').value.trim();
+
+      if (!email || !password) return alert('يرجى كتابة البريد الإلكتروني وكلمة المرور');
+
+      if (authMode === 'register') {
+        const { error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: name || 'عضو كلمات' } } });
+        if (error) alert(error.message); else checkUser();
+      } else {
+        const { error } = await _supabase.auth.signInWithPassword({ email, password });
+        if (error) alert('خطأ في إدخال بيانات الدخول'); else checkUser();
+      }
+    }
+
+    async function logout() { await _supabase.auth.signOut(); checkUser(); }
+
+    /* Router and Navigation Engine */
+    function navigateTo(screen, param = null, isReset = false) {
+      if (!isReset && currentView.name !== screen) {
+        navHistory.push({ ...currentView });
+      }
+      currentView = { name: screen, param: param };
+
+      document.getElementById('backBtn').style.display = navHistory.length > 0 ? 'inline-block' : 'none';
+
+      // Hide all content areas
+      document.getElementById('profileViewSection').classList.add('hidden');
+      document.getElementById('homeTweetBox').classList.add('hidden');
+      document.getElementById('timelineSection').classList.add('hidden');
+      document.getElementById('friendsSection').classList.add('hidden');
+      document.getElementById('notificationsSection').classList.add('hidden');
+      document.getElementById('chatSection').classList.add('hidden');
+      document.getElementById('settingsSection').classList.add('hidden');
+
+      // Update Nav Highlights
+      document.querySelectorAll('.nav-item').forEach(el => el.classList.remove('active'));
+
+      if (screen === 'home') {
+        document.getElementById('homeTweetBox').classList.remove('hidden');
+        document.getElementById('timelineSection').classList.remove('hidden');
+        document.getElementById('navHome').classList.add('active');
+        loadTimeline();
+      } else if (screen === 'profile') {
+        document.getElementById('profileViewSection').classList.remove('hidden');
+        document.getElementById('timelineSection').classList.remove('hidden');
+        document.getElementById('navProfile').classList.add('active');
+        renderUserProfile(param || getMyName());
+      } else if (screen === 'friends') {
+        document.getElementById('friendsSection').classList.remove('hidden');
+        document.getElementById('navFriends').classList.add('active');
+        renderFriendsList();
+      } else if (screen === 'notifications') {
+        document.getElementById('notificationsSection').classList.remove('hidden');
+        document.getElementById('navNotifications').classList.add('active');
+        loadNotifications();
+      } else if (screen === 'chat') {
+        document.getElementById('chatSection').classList.remove('hidden');
+        openChatView(param);
+      } else if (screen === 'settings') {
+        document.getElementById('settingsSection').classList.remove('hidden');
+        document.getElementById('navSettings').classList.add('active');
+        populateSettings();
+      }
+    }
+
+    function navigateBack() {
+      if (navHistory.length > 0) {
+        const prev = navHistory.pop();
+        currentView = prev;
+        navigateTo(prev.name, prev.param, true);
+        document.getElementById('backBtn').style.display = navHistory.length > 0 ? 'inline-block' : 'none';
+      }
+    }
+
+    function handleImageSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        currentBase64Image = e.target.result;
+        const img = document.getElementById('imgPreview');
+        img.src = currentBase64Image;
+        img.style.display = 'block';
+        document.getElementById('removeImgBtn').style.display = 'block';
+      };
+      reader.readAsDataURL(file);
+    }
+
+    function clearSelectedImage() {
+      currentBase64Image = '';
+      document.getElementById('imgPreview').style.display = 'none';
+      document.getElementById('removeImgBtn').style.display = 'none';
+      document.getElementById('imageFileInput').value = '';
+    }
+
+    async function publishTweet() {
+      const content = document.getElementById('tweetContent').value.trim();
+      if (!content && !currentBase64Image) return;
+
+      const name = getMyName();
+      const { error } = await _supabase.from('posts').insert([{ content, author_name: name, image_url: currentBase64Image, likes_count: 0 }]);
+
+      if (error) alert('خطأ أثناء النشر');
+      else {
+        document.getElementById('tweetContent').value = '';
+        clearSelectedImage();
+        loadTimeline();
+      }
+    }
+
+    async function loadTimeline(searchQuery = '') {
+      let query = _supabase.from('posts').select('*').order('created_at', { ascending: false });
+      if (currentView.name === 'profile' && currentView.param) {
+        query = query.eq('author_name', currentView.param);
+      }
+
+      const { data: posts, error } = await query;
+      const timeline = document.getElementById('timeline');
+
+      if (error || !posts || posts.length === 0) {
+        timeline.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد منشورات متاحة حالياً.</div>`;
+        return;
+      }
+
+      timeline.innerHTML = '';
+      for (const post of posts) {
+        if (blockedUserList.includes(post.author_name)) continue;
+
+        if (searchQuery) {
+          const textMatch = (post.content || '').toLowerCase().includes(searchQuery.toLowerCase());
+          const authorMatch = (post.author_name || '').toLowerCase().includes(searchQuery.toLowerCase());
+          if (!textMatch && !authorMatch) continue;
+        }
+
+        const { data: comments } = await _supabase.from('comments').select('*').eq('post_id', post.id).order('created_at', { ascending: true });
+        const isLiked = !!likedPosts[post.id];
+        const displayLikes = (post.likes_count || 0);
+
+        const postElement = document.createElement('div');
+        postElement.className = 'post';
+        postElement.innerHTML = `
+          <div class="avatar" onclick="navigateTo('profile', '${post.author_name}')">${post.author_name ? post.author_name[0].toUpperCase() : '؟'}</div>
+          <div class="post-main">
+            <div class="post-header">
+              <div class="post-author-info" onclick="navigateTo('profile', '${post.author_name}')">
+                <span class="post-author">${post.author_name}</span>
+                <span class="post-time">• ${new Date(post.created_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}</span>
               </div>
-            `).join('')}
-            <div class="comment-input-box">
-              <input type="text" id="comment-input-${idx}" class="comment-input" placeholder="اكتب تعليقاً...">
-              <button onclick="addComment(${idx})" class="comment-btn">إرسال</button>
+            </div>
+            <div class="post-text">${post.content || ''}</div>
+            ${post.image_url ? `<img src="${post.image_url}" class="post-img">` : ''}
+            
+            <div class="post-footer">
+              <div class="action-btn" onclick="toggleComments(${post.id})">
+                <i class="fa-regular fa-comment"></i> <span>${comments ? comments.length : 0}</span>
+              </div>
+              <div class="action-btn ${isLiked ? 'liked' : ''}" id="like-btn-${post.id}" onclick="toggleLike(${post.id}, ${displayLikes})">
+                <i class="${isLiked ? 'fa-solid' : 'fa-regular'} fa-heart"></i> <span id="like-count-${post.id}">${displayLikes}</span>
+              </div>
+              <div class="action-btn" onclick="sharePost('${(post.content || '').replace(/'/g, "\\'")}')">
+                <i class="fa-solid fa-share-nodes"></i>
+              </div>
+            </div>
+
+            <div class="comments-section" id="comments-${post.id}">
+              <div id="comments-list-${post.id}">
+                ${(comments || []).map(c => `
+                  <div class="comment-item">
+                    <div class="comment-author" onclick="navigateTo('profile', '${c.author_name}')">${c.author_name}</div>
+                    <div>${c.content}</div>
+                  </div>
+                `).join('')}
+              </div>
+              <div class="comment-input-box">
+                <input type="text" id="comment-input-${post.id}" placeholder="اكتب رداً...">
+                <button class="btn-tweet" style="padding: 6px 14px; font-size: 0.8rem;" onclick="addComment(${post.id}, '${post.author_name}')">رد</button>
+              </div>
             </div>
           </div>
+        `;
+        timeline.appendChild(postElement);
+      }
+    }
+
+    async function toggleLike(postId, currentLikes) {
+      const btn = document.getElementById(`like-btn-${postId}`);
+      const countSpan = document.getElementById(`like-count-${postId}`);
+
+      let newCount = currentLikes;
+      if (likedPosts[postId]) {
+        delete likedPosts[postId];
+        newCount = Math.max(0, currentLikes - 1);
+        btn.classList.remove('liked');
+        btn.querySelector('i').className = 'fa-regular fa-heart';
+      } else {
+        likedPosts[postId] = true;
+        newCount = currentLikes + 1;
+        btn.classList.add('liked');
+        btn.querySelector('i').className = 'fa-solid fa-heart';
+      }
+
+      countSpan.innerText = newCount;
+      localStorage.setItem('kalimat_likes', JSON.stringify(likedPosts));
+      await _supabase.from('posts').update({ likes_count: newCount }).eq('id', postId);
+    }
+
+    function toggleComments(postId) {
+      const sec = document.getElementById(`comments-${postId}`);
+      sec.style.display = sec.style.display === 'block' ? 'none' : 'block';
+    }
+
+    async function addComment(postId, postAuthor) {
+      const input = document.getElementById(`comment-input-${postId}`);
+      const content = input.value.trim();
+      if (!content) return;
+
+      const name = getMyName();
+      const { error } = await _supabase.from('comments').insert([{ post_id: postId, author_name: name, content }]);
+      
+      if (!error) {
+        input.value = '';
+        if (postAuthor !== name) {
+          await _supabase.from('notifications').insert([{
+            user_name: postAuthor,
+            sender_name: name,
+            type: 'علّق على منشورك',
+            content: content
+          }]);
+        }
+        loadTimeline();
+      }
+    }
+
+    async function loadNotifications() {
+      const myName = getMyName();
+      const { data: notifs } = await _supabase.from('notifications')
+        .select('*')
+        .eq('user_name', myName)
+        .order('created_at', { ascending: false });
+
+      const container = document.getElementById('notificationsList');
+      if (!notifs || notifs.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد إشعارات جديدة.</div>`;
+        return;
+      }
+
+      container.innerHTML = notifs.map(n => `
+        <div class="list-item">
+          <div>
+            <strong style="color: var(--accent); cursor: pointer;" onclick="navigateTo('profile', '${n.sender_name}')">${n.sender_name}</strong> ${n.type}
+            <div style="font-size: 0.85rem; color: var(--text-sub); margin-top: 4px;">"${n.content || ''}"</div>
+          </div>
+          <span style="font-size: 0.75rem; color: var(--text-sub);">${new Date(n.created_at).toLocaleTimeString('ar-EG', {hour:'2-digit', minute:'2-digit'})}</span>
         </div>
+      `).join('');
+    }
 
-      </div>
-    `).join('');
-  }
+    function renderUserProfile(authorName) {
+      const myName = getMyName();
+      document.getElementById('viewName').innerText = authorName;
+      document.getElementById('viewHandle').innerText = `@${authorName}`;
+      document.getElementById('viewAvatar').innerText = authorName ? authorName[0].toUpperCase() : '؟';
+      
+      const meta = currentUser?.user_metadata || {};
+      if (authorName === myName) {
+        document.getElementById('viewBio').innerText = meta.bio || 'لا توجد نبذة شخصية بعد.';
+        let metaText = '';
+        if (meta.address) metaText += `📍 ${meta.address} `;
+        if (meta.phone) metaText += `📞 ${meta.phone}`;
+        document.getElementById('viewMeta').innerText = metaText;
+      } else {
+        document.getElementById('viewBio').innerText = 'عضو في منصة كلمات';
+        document.getElementById('viewMeta').innerText = '';
+      }
 
-  checkUser();
-</script>
+      const controls = document.getElementById('profileControls');
+      controls.innerHTML = '';
+
+      if (authorName !== myName) {
+        const isFollowing = followingUserList.includes(authorName);
+        const isBlocked = blockedUserList.includes(authorName);
+
+        controls.innerHTML = `
+          <button class="${isFollowing ? 'btn-action-outline' : 'btn-tweet'}" onclick="toggleFollowUser('${authorName}')">
+            ${isFollowing ? 'إلغاء المتابعة' : 'متابعة'}
+          </button>
+          <button class="btn-action-outline" onclick="navigateTo('chat', '${authorName}')">
+            <i class="fa-regular fa-envelope"></i> رسالة خاصّة
+          </button>
+          <button class="btn-danger" onclick="toggleBlockUser('${authorName}')">
+            ${isBlocked ? 'إلغاء الحظر' : 'حظر'}
+          </button>
+        `;
+      } else {
+        controls.innerHTML = `<button class="btn-action-outline" onclick="navigateTo('settings')"><i class="fa-solid fa-pen-to-square"></i> تعديل البروفايل</button>`;
+      }
+
+      loadTimeline();
+    }
+
+    function renderFriendsList() {
+      const container = document.getElementById('friendsList');
+      if (followingUserList.length === 0) {
+        container.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">أنت لا تتابع أي شخص حالياً.</div>`;
+        return;
+      }
+
+      container.innerHTML = followingUserList.map(name => `
+        <div class="list-item">
+          <div style="display: flex; align-items: center; gap: 10px; cursor: pointer;" onclick="navigateTo('profile', '${name}')">
+            <div class="avatar-mini">${name[0].toUpperCase()}</div>
+            <span style="font-weight: bold;">${name}</span>
+          </div>
+          <button class="btn-action-outline" onclick="navigateTo('chat', '${name}')"><i class="fa-regular fa-envelope"></i> رسالة</button>
+        </div>
+      `).join('');
+    }
+
+    async function openChatView(targetUser) {
+      activeChatUser = targetUser;
+      document.getElementById('chatTargetTitle').innerText = `المحادثة مع @${targetUser}`;
+      loadDirectMessages();
+    }
+
+    async function loadDirectMessages() {
+      if (!activeChatUser) return;
+      const myName = getMyName();
+
+      const { data: messages } = await _supabase.from('direct_messages')
+        .select('*')
+        .or(`and(sender_name.eq.${myName},receiver_name.eq.${activeChatUser}),and(sender_name.eq.${activeChatUser},receiver_name.eq.${myName})`)
+        .order('created_at', { ascending: true });
+
+      const chatContainer = document.getElementById('chatMessages');
+      chatContainer.innerHTML = '';
+
+      (messages || []).forEach(msg => {
+        const isMe = msg.sender_name === myName;
+        const bubble = document.createElement('div');
+        bubble.className = `chat-bubble ${isMe ? 'me' : 'other'}`;
+        bubble.innerText = msg.content;
+        chatContainer.appendChild(bubble);
+      });
+
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    async function sendDirectMessage() {
+      const input = document.getElementById('chatInputText');
+      const content = input.value.trim();
+      if (!content || !activeChatUser) return;
+
+      const myName = getMyName();
+      const { error } = await _supabase.from('direct_messages').insert([{ sender_name: myName, receiver_name: activeChatUser, content: content }]);
+
+      if (!error) {
+        input.value = '';
+        loadDirectMessages();
+      }
+    }
+
+    function populateSettings() {
+      const meta = currentUser?.user_metadata || {};
+      document.getElementById('editDisplayName').value = meta.full_name || '';
+      document.getElementById('editBio').value = meta.bio || '';
+      document.getElementById('editAvatarUrl').value = meta.avatar_url || '';
+      document.getElementById('editEmail').value = currentUser?.email || '';
+      document.getElementById('editPhone').value = meta.phone || '';
+      document.getElementById('editAddress').value = meta.address || '';
+    }
+
+    async function saveProfileSettings() {
+      const newName = document.getElementById('editDisplayName').value.trim();
+      const newBio = document.getElementById('editBio').value.trim();
+      const newAvatar = document.getElementById('editAvatarUrl').value.trim();
+      const newEmail = document.getElementById('editEmail').value.trim();
+      const newPassword = document.getElementById('editPassword').value.trim();
+      const newPhone = document.getElementById('editPhone').value.trim();
+      const newAddress = document.getElementById('editAddress').value.trim();
+
+      const updatePayload = { data: { full_name: newName, bio: newBio, avatar_url: newAvatar, phone: newPhone, address: newAddress } };
+      if (newEmail && newEmail !== currentUser.email) updatePayload.email = newEmail;
+      if (newPassword) updatePayload.password = newPassword;
+
+      const { data, error } = await _supabase.auth.updateUser(updatePayload);
+
+      if (error) {
+        alert('حدث خطأ: ' + error.message);
+      } else {
+        currentUser = data.user;
+        updateUserDisplay();
+        alert('تم حفظ البيانات بنجاح!');
+        navigateTo('profile', getMyName());
+      }
+    }
+
+    async function toggleFollowUser(targetUser) {
+      const myName = getMyName();
+      const isFollowing = followingUserList.includes(targetUser);
+
+      if (isFollowing) {
+        await _supabase.from('follows').delete().eq('follower_name', myName).eq('following_name', targetUser);
+      } else {
+        await _supabase.from('follows').insert([{ follower_name: myName, following_name: targetUser }]);
+      }
+      await fetchBlocksAndFollows();
+      renderUserProfile(targetUser);
+    }
+
+    async function toggleBlockUser(targetUser) {
+      const myName = getMyName();
+      const isBlocked = blockedUserList.includes(targetUser);
+
+      if (isBlocked) {
+        await _supabase.from('blocks').delete().eq('blocker_name', myName).eq('blocked_name', targetUser);
+      } else {
+        await _supabase.from('blocks').insert([{ blocker_name: myName, blocked_name: targetUser }]);
+      }
+      await fetchBlocksAndFollows();
+      renderUserProfile(targetUser);
+    }
+
+    function handleSearch() {
+      const q = document.getElementById('searchInput').value.trim();
+      if (currentView.name === 'home' || currentView.name === 'profile') {
+        loadTimeline(q);
+      }
+    }
+
+    function sharePost(text) {
+      if (navigator.share) {
+        navigator.share({ title: 'كلمات', text: text, url: window.location.href });
+      } else {
+        navigator.clipboard.writeText(text);
+        alert('تم نسخ النص!');
+      }
+    }
+
+    checkUser();
+  </script>
 </body>
-</html>
+  </html>

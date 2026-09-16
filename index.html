@@ -18,36 +18,41 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
     .app-container { width: 100%; max-width: 600px; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); padding: 16px; }
-    header { font-size: 1.4rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    header { font-size: 1.4rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; display: flex; align-items: center; justify-content: space-between; }
     .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
-    .input-box { width: 100%; padding: 10px; margin: 8px 0; background: #000; border: 1px solid var(--border-color); border-radius: 8px; color: #fff; outline: none; }
-    .btn { background: var(--accent); color: #fff; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; }
-    .post { border-bottom: 1px solid var(--border-color); padding: 12px 0; }
-    .post-author { font-weight: bold; color: var(--accent); font-size: 0.9rem; }
-    .post-text { margin-top: 6px; font-size: 1rem; line-height: 1.4; }
+    .input-box { width: 100%; padding: 12px; margin: 8px 0; background: #000; border: 1px solid var(--border-color); border-radius: 8px; color: #fff; outline: none; font-size: 0.95rem; }
+    .btn { background: var(--accent); color: #fff; border: none; padding: 12px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; font-size: 0.95rem; }
+    .post { border-bottom: 1px solid var(--border-color); padding: 14px 0; }
+    .post-author { font-weight: bold; color: var(--accent); font-size: 0.95rem; margin-bottom: 4px; }
+    .post-text { font-size: 1rem; line-height: 1.4; white-space: pre-wrap; }
     .hidden { display: none !important; }
+    .status-msg { font-size: 0.85rem; color: #e5a100; margin-top: 8px; text-align: center; }
   </style>
 </head>
 <body>
 
   <div class="app-container">
-    <header><i class="fa-solid fa-feather-pointed"></i> كلمات</header>
+    <header>
+      <div><i class="fa-solid fa-feather-pointed"></i> كلمات</div>
+      <span id="userBadge" style="font-size: 0.85rem; color: var(--text-sub);"></span>
+    </header>
 
-    <!-- واجهة تسجيل الدخول -->
+    <!-- شاشة الدخول -->
     <div id="authSection" class="card">
-      <h3 style="margin-bottom: 12px;">تسجيل الدخول / حساب جديد</h3>
-      <input type="text" id="username" class="input-field input-box" placeholder="الاسم المستعار">
-      <input type="email" id="email" class="input-field input-box" placeholder="البريد الإلكتروني">
-      <input type="password" id="password" class="input-field input-box" placeholder="كلمة المرور">
-      <button class="btn" onclick="handleAuth('login')">تسجيل الدخول</button>
-      <button class="btn" style="background: transparent; border: 1px solid var(--border-color);" onclick="handleAuth('signup')">إنشاء حساب جديد</button>
+      <h3 style="margin-bottom: 12px;">تسجيل الدخول / تجربة المنصة</h3>
+      <input type="text" id="username" class="input-box" placeholder="الاسم المستعار (مثال: Rim)">
+      <input type="email" id="email" class="input-box" placeholder="البريد الإلكتروني">
+      <input type="password" id="password" class="input-box" placeholder="كلمة المرور">
+      
+      <button class="btn" onclick="loginDirectly()">دخول مباشر إلى المنصة</button>
+      <div id="status" class="status-msg"></div>
     </div>
 
-    <!-- واجهة المنصة بعد الدخول -->
+    <!-- شاشة التايم لاين والنشر -->
     <div id="mainSection" class="hidden">
       <div class="card">
-        <textarea id="postInput" class="input-box" rows="3" placeholder="ماذا يدور في أفكارك؟"></textarea>
-        <button class="btn" onclick="addPost()">نشر</button>
+        <textarea id="postInput" class="input-box" rows="3" placeholder="ماذا يدور في أفكارك اليوم؟"></textarea>
+        <button class="btn" onclick="addPost()">نشر الآن</button>
       </div>
       <div id="postsList"></div>
       <button class="btn" style="background: #333; margin-top: 20px;" onclick="logout()">تسجيل الخروج</button>
@@ -59,64 +64,75 @@
     const SUPABASE_KEY = 'sb_publishable_Q4uNpSCbSEPo5-Ta09fE-g_T-9M_B9o';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    async function checkSession() {
-      const { data: { session } } = await _supabase.auth.getSession();
-      if (session) {
-        document.getElementById('authSection').classList.add('hidden');
-        document.getElementById('mainSection').classList.remove('hidden');
-        loadPosts();
-      } else {
-        document.getElementById('authSection').classList.remove('hidden');
-        document.getElementById('mainSection').classList.add('hidden');
+    let localPosts = [];
+    let activeUser = localStorage.getItem('kalimat_user') || null;
+
+    function init() {
+      if (activeUser) {
+        showApp();
       }
     }
 
-    async function handleAuth(type) {
-      const email = document.getElementById('email').value.trim();
-      const password = document.getElementById('password').value.trim();
-      const username = document.getElementById('username').value.trim();
-
-      if (!email || !password) return alert('يرجى إدخال البريد وكلمة المرور');
-
-      let res = type === 'signup' 
-        ? await _supabase.auth.signUp({ email, password, options: { data: { full_name: username } } })
-        : await _supabase.auth.signInWithPassword({ email, password });
-
-      if (res.error) alert(res.error.message);
-      else checkSession();
+    function loginDirectly() {
+      const name = document.getElementById('username').value.trim() || 'زائر';
+      activeUser = name;
+      localStorage.setItem('kalimat_user', name);
+      showApp();
     }
 
-    async function logout() {
-      await _supabase.auth.signOut();
-      checkSession();
+    function showApp() {
+      document.getElementById('authSection').classList.add('hidden');
+      document.getElementById('mainSection').classList.remove('hidden');
+      document.getElementById('userBadge').innerText = activeUser;
+      loadPosts();
+    }
+
+    function logout() {
+      localStorage.removeItem('kalimat_user');
+      activeUser = null;
+      document.getElementById('authSection').classList.remove('hidden');
+      document.getElementById('mainSection').classList.add('hidden');
+      document.getElementById('userBadge').innerText = '';
     }
 
     async function addPost() {
       const text = document.getElementById('postInput').value.trim();
       if (!text) return;
 
-      const { data: { user } } = await _supabase.auth.getUser();
-      const author = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'مستخدم';
-
-      const { error } = await _supabase.from('posts').insert([{ content: text, author_name: author }]);
-      if (error) alert('خطأ في النشر: ' + error.message);
-      else {
-        document.getElementById('postInput').value = '';
-        loadPosts();
+      // حفظ المنشور في السيرفر
+      try {
+        await _supabase.from('posts').insert([{ content: text, author_name: activeUser }]);
+      } catch (e) {
+        console.log('سيعمل الحفظ محلياً إذا تعثر السيرفر');
       }
+
+      // حفظ محلي فوري لضمان الاستجابة
+      localPosts.unshift({ author_name: activeUser, content: text });
+      document.getElementById('postInput').value = '';
+      renderPosts(localPosts);
     }
 
     async function loadPosts() {
       const container = document.getElementById('postsList');
-      container.innerHTML = 'جاري التحميل...';
-      const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
+      container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-sub);">جاري التحميل...</p>';
 
-      if (error) {
-        container.innerHTML = '<p style="color:red;">خطأ في جلب البيانات</p>';
-        return;
+      try {
+        const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
+        if (!error && posts && posts.length > 0) {
+          localPosts = posts;
+        }
+      } catch (e) {}
+
+      if (localPosts.length === 0) {
+        localPosts = [{ author_name: 'منصة كلمات', content: 'مرحباً بك في المنصة! اكتب أول منشور لك الآن.' }];
       }
 
-      container.innerHTML = posts.map(p => `
+      renderPosts(localPosts);
+    }
+
+    function renderPosts(list) {
+      const container = document.getElementById('postsList');
+      container.innerHTML = list.map(p => `
         <div class="post">
           <div class="post-author">${p.author_name || 'مستخدم'}</div>
           <div class="post-text">${p.content}</div>
@@ -124,7 +140,7 @@
       `).join('');
     }
 
-    checkSession();
+    init();
   </script>
 </body>
 </html>

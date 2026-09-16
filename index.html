@@ -4,7 +4,6 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>كلمات</title>
-  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
   <style>
     :root {
@@ -128,35 +127,23 @@
 </div>
 
 <script>
-  // Updated Valid Supabase Config
-  const SUPABASE_URL = 'https://qrnbfjvutzkmoannmujk.supabase.co';
-  const SUPABASE_KEY = sb_publishable_Q4uNpSCbSEPo5-TaWzuFqQ_yts_mf6p
-  const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-  let currentUser = null;
+  let currentUser = localStorage.getItem('kalimat_user');
   let isSignUpMode = false;
 
-  async function checkUser() {
-    try {
-      const { data: { user } } = await _supabase.auth.getUser();
-      currentUser = user;
+  function checkUser() {
+    if (currentUser) {
+      document.getElementById('authScreen').classList.add('hidden');
+      document.getElementById('appScreen').classList.remove('hidden');
+      document.getElementById('bottomNav').classList.remove('hidden');
 
-      if (user) {
-        document.getElementById('authScreen').classList.add('hidden');
-        document.getElementById('appScreen').classList.remove('hidden');
-        document.getElementById('bottomNav').classList.remove('hidden');
-
-        const name = user.email ? user.email.split('@')[0] : 'مستخدم';
-        document.getElementById('myAvatar').innerText = name[0].toUpperCase();
-        
-        navigateTo('home');
-      } else {
-        document.getElementById('authScreen').classList.remove('hidden');
-        document.getElementById('appScreen').classList.add('hidden');
-        document.getElementById('bottomNav').classList.add('hidden');
-      }
-    } catch (e) {
-      console.log(e);
+      const name = currentUser.split('@')[0];
+      document.getElementById('myAvatar').innerText = name[0].toUpperCase();
+      
+      navigateTo('home');
+    } else {
+      document.getElementById('authScreen').classList.remove('hidden');
+      document.getElementById('appScreen').classList.add('hidden');
+      document.getElementById('bottomNav').classList.add('hidden');
     }
   }
 
@@ -167,27 +154,19 @@
     document.getElementById('toggleAuthBtn').innerText = isSignUpMode ? 'لديك حساب بالفعل؟ تسجيل الدخول' : 'ليس لديك حساب؟ إنشاء حساب جديد';
   }
 
-  async function handleAuth() {
+  function handleAuth() {
     const email = document.getElementById('emailInput').value.trim();
     const password = document.getElementById('passwordInput').value.trim();
     if (!email || !password) return alert('يرجى ملء جميع الحقول');
 
-    if (isSignUpMode) {
-      const { data, error } = await _supabase.auth.signUp({ email, password });
-      if (error) alert(error.message);
-      else {
-        alert('تم إنشاء الحساب بنجاح!');
-        checkUser();
-      }
-    } else {
-      const { data, error } = await _supabase.auth.signInWithPassword({ email, password });
-      if (error) alert(error.message);
-      else checkUser();
-    }
+    localStorage.setItem('kalimat_user', email);
+    currentUser = email;
+    checkUser();
   }
 
-  async function logout() {
-    await _supabase.auth.signOut();
+  function logout() {
+    localStorage.removeItem('kalimat_user');
+    currentUser = null;
     checkUser();
   }
 
@@ -213,39 +192,31 @@
       document.getElementById('profileSection').classList.remove('hidden');
       document.getElementById('navProfile').classList.add('active');
       
-      const name = currentUser ? currentUser.email.split('@')[0] : 'مستخدم';
+      const name = currentUser ? currentUser.split('@')[0] : 'مستخدم';
       document.getElementById('profileName').innerText = name;
       document.getElementById('profileHandle').innerText = `@${name}`;
       document.getElementById('profileAvatar').innerText = name[0].toUpperCase();
     }
   }
 
-  async function createTweet() {
+  function createTweet() {
     const content = document.getElementById('tweetInput').value.trim();
     if (!content) return;
 
-    const username = currentUser ? currentUser.email.split('@')[0] : 'زائر';
-    const { error } = await _supabase.from('posts').insert([{ content, author_name: username }]);
-    if (error) {
-      alert('خطأ أثناء النشر: ' + error.message);
-    } else {
-      document.getElementById('tweetInput').value = '';
-      loadTimeline();
-    }
+    const username = currentUser ? currentUser.split('@')[0] : 'مستخدم';
+    const posts = JSON.parse(localStorage.getItem('kalimat_posts') || '[]');
+    posts.unshift({ content, author_name: username, created_at: new Date().toISOString() });
+    localStorage.setItem('kalimat_posts', JSON.stringify(posts));
+
+    document.getElementById('tweetInput').value = '';
+    loadTimeline();
   }
 
-  async function loadTimeline() {
+  function loadTimeline() {
     const timelineEl = document.getElementById('timeline');
-    timelineEl.innerHTML = '<p style="text-align:center; padding:20px; color:var(--subtext);">جاري تحميل المنشورات...</p>';
+    const posts = JSON.parse(localStorage.getItem('kalimat_posts') || '[]');
 
-    const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
-
-    if (error) {
-      timelineEl.innerHTML = '<p style="text-align:center; padding:20px; color:red;">تعذر تحميل المنشورات.</p>';
-      return;
-    }
-
-    if (!posts || posts.length === 0) {
+    if (posts.length === 0) {
       timelineEl.innerHTML = '<p style="text-align:center; padding:20px; color:var(--subtext);">لا توجد منشورات حتى الآن.</p>';
       return;
     }

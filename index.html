@@ -14,180 +14,167 @@
       --text-muted: #71767b;
       --border-color: #2f3336;
     }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
     body {
       background-color: var(--bg-color);
       color: var(--text-main);
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Arial, sans-serif;
-      margin: 0; padding: 0; display: flex; justify-content: center;
+      display: flex; justify-content: center;
     }
     .app-container {
       width: 100%; max-width: 600px; min-height: 100vh;
       border-left: 1px solid var(--border-color);
       border-right: 1px solid var(--border-color);
-      display: flex; flex-direction: column;
+      display: flex; flex-direction: column; padding-bottom: 60px;
     }
     header {
       position: sticky; top: 0; background: rgba(0, 0, 0, 0.85);
       backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color);
       padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100;
     }
-    .composer {
-      padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 12px;
-    }
+    .brand { display: flex; align-items: center; gap: 8px; font-weight: bold; font-size: 20px; }
+    .composer { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; flex-direction: column; gap: 12px; }
     textarea {
       width: 100%; background: transparent; border: none; color: #fff;
       font-size: 18px; resize: none; outline: none; font-family: inherit;
     }
-    .composer-actions {
-      display: flex; justify-content: space-between; align-items: center;
-    }
+    .composer-actions { display: flex; justify-content: space-between; align-items: center; }
     .btn-primary {
       background: var(--accent-color); color: white; border: none;
-      padding: 8px 18px; border-radius: 20px; font-weight: bold; cursor: pointer;
+      padding: 8px 20px; border-radius: 20px; font-weight: bold; cursor: pointer;
     }
-    .btn-icon {
-      background: none; border: none; color: var(--accent-color); font-size: 20px; cursor: pointer;
-    }
-    .post-card {
-      padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px;
-    }
-    .avatar {
-      width: 44px; height: 44px; border-radius: 50%; background: #333; object-fit: cover;
-    }
+    .btn-icon { background: none; border: none; font-size: 22px; cursor: pointer; }
+    .preview-img { width: 100%; max-height: 250px; object-fit: cover; border-radius: 12px; display: none; margin-top: 8px; }
+    .post-card { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
+    .avatar { width: 44px; height: 44px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; }
     .post-content { flex: 1; }
-    .post-header { display: flex; gap: 8px; align-items: center; margin-bottom: 4px; }
+    .post-header { display: flex; gap: 8px; align-items: center; margin-bottom: 6px; }
     .post-image { width: 100%; max-height: 350px; border-radius: 16px; object-fit: cover; margin-top: 10px; }
-    .post-actions { display: flex; justify-content: space-between; margin-top: 12px; color: var(--text-muted); max-width: 300px; }
-    .action-btn { background: none; border: none; color: inherit; display: flex; align-items: center; gap: 6px; cursor: pointer; }
-    .action-btn.liked { color: #f91880; }
-    .preview-img { width: 100%; max-height: 200px; object-fit: cover; border-radius: 12px; margin-top: 8px; display: none; }
+    .post-actions { display: flex; gap: 24px; margin-top: 12px; color: var(--text-muted); }
+    .action-btn { background: none; border: none; color: inherit; display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 14px; }
+    nav.bottom-nav {
+      position: fixed; bottom: 0; width: 100%; max-width: 600px;
+      background: #000; border-top: 1px solid var(--border-color);
+      display: flex; justify-content: space-around; padding: 12px 0;
+    }
+    nav.bottom-nav button { background: none; border: none; color: var(--text-muted); font-size: 22px; cursor: pointer; }
+    nav.bottom-nav button.active { color: var(--accent-color); }
   </style>
 </head>
 <body>
 
 <div class="app-container">
-  <!-- الشعار ورأس الصفحة -->
+  <!-- الشعار العلوي -->
   <header>
-    <div style="display: flex; align-items: center; gap: 8px;">
-      <svg width="28" height="28" viewBox="0 0 24 24" fill="none">
+    <div class="brand">
+      <svg width="30" height="30" viewBox="0 0 24 24" fill="none">
         <path d="M20.24 12.24C21.3658 11.1142 21.9983 9.58739 21.9983 7.99501C21.9983 6.40263 21.3658 4.8758 20.24 3.75001C19.1142 2.62421 17.5874 1.9917 15.995 1.9917C14.4026 1.9917 12.8758 2.62421 11.75 3.75001L5 10.5V19H13.5L20.24 12.24Z" fill="url(#fg)"/>
         <path d="M16 8L2 22" stroke="#00D2FF" stroke-width="2"/>
         <defs><linearGradient id="fg" x1="5" y1="19" x2="22" y2="2"><stop stop-color="#0072FF"/><stop offset="1" stop-color="#00D2FF"/></linearGradient></defs>
       </svg>
-      <span style="font-size: 20px; font-weight: bold;">كلمات</span>
+      <span>كلمات</span>
     </div>
   </header>
 
-  <!-- صندوق كتابة المنشور -->
+  <!-- صندوق النشر -->
   <div class="composer">
     <textarea id="postText" rows="3" placeholder="ماذا يدور في أفكارك اليوم؟"></textarea>
     <img id="imagePreview" class="preview-img">
     <div class="composer-actions">
-      <!-- اختيار الصورة من المعرض مباشرة -->
       <button class="btn-icon" onclick="document.getElementById('fileInput').click()">🖼️</button>
       <input type="file" id="fileInput" accept="image/*" style="display:none" onchange="handleImageSelect(event)">
       <button class="btn-primary" onclick="publishPost()">نشر</button>
     </div>
   </div>
 
-  <!-- خلاصة المنشورات -->
+  <!-- الخيمة الرئيسية للمنشورات -->
   <div id="feed"></div>
+
+  <!-- الشريط السفلي للتنقل -->
+  <nav class="bottom-nav">
+    <button class="active">🏠</button>
+    <button onclick="alert('قريباً')">👥</button>
+    <button onclick="alert('قريباً')">🔔</button>
+    <button onclick="alert('قريباً')">👤</button>
+  </nav>
 </div>
 
 <script>
-  // تهيئة Supabase
-  const SUPABASE_URL = 'https://YOUR_SUPABASE_URL.supabase.co';
-  const SUPABASE_KEY = 'YOUR_SUPABASE_ANON_KEY';
-  const supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  let postsData = [];
 
-  let selectedFile = null;
-
-  // 1. معاينة الصورة من معرض الجهاز مباشرة
+  // معاينة الصورة مباشرة من المعرض
   function handleImageSelect(event) {
-    selectedFile = event.target.files[0];
-    if (selectedFile) {
-      const preview = document.getElementById('imagePreview');
-      preview.src = URL.createObjectURL(selectedFile);
-      preview.style.display = 'block';
-    }
-  }
-
-  // 2. نشر منشور مع رفع الصورة مباشرة للحفظ
-  async function publishPost() {
-    const text = document.getElementById('postText').value;
-    let imageUrl = null;
-
-    if (!text && !selectedFile) return;
-
-    if (selectedFile) {
-      const filePath = `posts/${Date.now()}_${selectedFile.name}`;
-      const { data, error } = await supabase.storage.from('media').upload(filePath, selectedFile);
-      if (!error) {
-        const { data: urlData } = supabase.storage.from('media').getPublicUrl(filePath);
-        imageUrl = urlData.publicUrl;
+    const file = event.target.files[0];
+    if (file) {
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        const preview = document.getElementById('imagePreview');
+        preview.src = e.target.result;
+        preview.style.display = 'block';
       }
+      reader.readAsDataURL(file);
     }
-
-    const { data: user } = await supabase.auth.getUser();
-    await supabase.from('posts').insert([{
-      user_id: user?.user?.id || 'guest',
-      content: text,
-      image_url: imageUrl,
-      likes_count: 0
-    }]);
-
-    document.getElementById('postText').value = '';
-    document.getElementById('imagePreview').style.display = 'none';
-    selectedFile = null;
-    loadFeed();
   }
 
-  // 3. تحميل المنشورات وتحديث الإعجابات فورياً
-  async function loadFeed() {
-    const { data: posts } = await supabase.from('posts').select('*').order('created_at', { ascending: false });
+  // إضافة منشور محلياً للتجربة الفورية
+  function publishPost() {
+    const text = document.getElementById('postText').value;
+    const preview = document.getElementById('imagePreview');
+    const imageSrc = preview.style.display === 'block' ? preview.src : null;
+
+    if (!text && !imageSrc) return;
+
+    const newPost = {
+      id: Date.now(),
+      author: 'كلمات',
+      content: text,
+      image: imageSrc,
+      likes: 0
+    };
+
+    postsData.unshift(newPost);
+    document.getElementById('postText').value = '';
+    preview.style.display = 'none';
+    preview.src = '';
+    renderFeed();
+  }
+
+  // زيادة عدد الإعجابات
+  function likePost(id) {
+    const post = postsData.find(p => p.id === id);
+    if (post) {
+      post.likes += 1;
+      renderFeed();
+    }
+  }
+
+  // مشاركة المنشور
+  function sharePost() {
+    navigator.clipboard.writeText(window.location.href);
+    alert('تم نسخ رابط المنشور!');
+  }
+
+  // عرض الخلاصة
+  function renderFeed() {
     const feed = document.getElementById('feed');
     feed.innerHTML = '';
-
-    posts?.forEach(post => {
+    postsData.forEach(post => {
       feed.innerHTML += `
         <div class="post-card">
-          <div class="avatar" style="background:#444"></div>
+          <div class="avatar">ك</div>
           <div class="post-content">
-            <div class="post-header"><strong>مستخدم كلمات</strong></div>
+            <div class="post-header"><strong>${post.author}</strong></div>
             <div>${post.content || ''}</div>
-            ${post.image_url ? `<img src="${post.image_url}" class="post-image">` : ''}
+            ${post.image ? `<img src="${post.image}" class="post-image">` : ''}
             <div class="post-actions">
-              <button class="action-btn" onclick="toggleLike('${post.id}', ${post.likes_count})">
-                ❤️ <span>${post.likes_count || 0}</span>
-              </button>
-              <button class="action-btn" onclick="sharePost('${post.id}')">
-                🔗 مشاركة
-              </button>
+              <button class="action-btn" onclick="likePost(${post.id})">❤️ ${post.likes}</button>
+              <button class="action-btn" onclick="sharePost()">🔗 مشاركة</button>
             </div>
           </div>
         </div>
       `;
     });
   }
-
-  // 4. زر الإعجاب المستقر وتحديث العداد
-  async function toggleLike(postId, currentLikes) {
-    const newLikes = currentLikes + 1;
-    await supabase.from('posts').update({ likes_count: newLikes }).eq('id', postId);
-    loadFeed();
-  }
-
-  // 5. ميزة مشاركة المنشور
-  function sharePost(postId) {
-    if (navigator.share) {
-      navigator.share({ title: 'منصة كلمات', url: window.location.href });
-    } else {
-      navigator.clipboard.writeText(window.location.href);
-      alert('تم نسخ رابط المنشور!');
-    }
-  }
-
-  loadFeed();
 </script>
 </body>
 </html>

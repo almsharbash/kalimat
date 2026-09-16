@@ -14,258 +14,117 @@
       --text-main: #f7f9f9;
       --text-sub: #71767b;
       --accent: #1d9bf0;
-      --like-color: #f91880;
-      --danger-color: #f4212e;
     }
-
-    body.light-mode {
-      --bg-color: #ffffff;
-      --card-bg: #f7f9f9;
-      --border-color: #e1e8ed;
-      --text-main: #0f1419;
-      --text-sub: #536471;
-    }
-
-    * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
-    body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; overflow-x: hidden; }
-    
-    .layout-container { width: 100%; max-width: 650px; min-height: 100vh; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); display: flex; flex-direction: column; padding-bottom: 70px; background: var(--bg-color); position: relative; }
-
-    header { position: sticky; top: 0; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-bottom: 1px solid var(--border-color); padding: 12px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; height: 53px; }
-    body.light-mode header { background-color: rgba(255, 255, 255, 0.85); }
-    
-    .header-left { display: flex; align-items: center; gap: 12px; }
-    .back-btn { background: transparent; border: none; color: var(--text-main); font-size: 1.2rem; cursor: pointer; display: none; padding: 4px 8px; border-radius: 50%; }
-    .brand-title { font-size: 1.2rem; font-weight: 800; color: var(--text-main); display: flex; align-items: center; gap: 8px; cursor: pointer; }
-    .brand-title i { color: var(--accent); }
-    
-    .header-actions { display: flex; align-items: center; gap: 10px; }
-    .theme-toggle-btn { background: transparent; border: 1px solid var(--border-color); color: var(--text-main); width: 34px; height: 34px; border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center; }
-
-    .user-pill { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-main); background: var(--card-bg); padding: 4px 12px 4px 6px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; }
-    .avatar-mini { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.8rem; overflow: hidden; color: #fff; }
-
-    .auth-container { padding: 30px 20px; text-align: center; }
-    .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); padding: 20px; border-radius: 16px; margin-top: 15px; text-align: right; }
-    .auth-tabs { display: flex; border-bottom: 1px solid var(--border-color); margin-bottom: 20px; }
-    .auth-tab { flex: 1; text-align: center; padding: 10px; cursor: pointer; font-weight: bold; color: var(--text-sub); border-bottom: 2px solid transparent; }
-    .auth-tab.active { color: var(--accent); border-bottom-color: var(--accent); }
-
-    .input-field { width: 100%; padding: 12px; margin: 6px 0 14px; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 8px; color: var(--text-main); outline: none; font-size: 0.95rem; }
-
-    .search-box { padding: 10px 16px; border-bottom: 1px solid var(--border-color); }
-    .search-input-wrapper { position: relative; }
-    .search-input-wrapper i { position: absolute; right: 12px; top: 50%; transform: translateY(-50%); color: var(--text-sub); }
-    .search-input-wrapper input { width: 100%; padding: 10px 40px 10px 12px; border-radius: 20px; background: var(--card-bg); border: 1px solid var(--border-color); color: var(--text-main); outline: none; font-size: 0.9rem; }
-
-    .nav-bar { position: fixed; bottom: 0; width: 100%; max-width: 650px; background-color: rgba(0, 0, 0, 0.85); backdrop-filter: blur(12px); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 12px 0; z-index: 100; }
-    body.light-mode .nav-bar { background-color: rgba(255, 255, 255, 0.85); }
-    .nav-item { color: var(--text-sub); font-size: 1.2rem; cursor: pointer; transition: color 0.2s; }
-    .nav-item.active, .nav-item:hover { color: var(--accent); }
-
-    .tweet-box { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
-    .avatar { width: 40px; height: 40px; border-radius: 50%; background: #333; display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; flex-shrink: 0; overflow: hidden; cursor: pointer; }
-    .tweet-input-area { flex-grow: 1; }
-    textarea { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1rem; resize: none; outline: none; min-height: 70px; }
-
-    .tweet-actions { display: flex; justify-content: space-between; align-items: center; margin-top: 8px; border-top: 1px solid rgba(255,255,255,0.08); padding-top: 8px; }
-    .btn-tweet { background-color: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; }
-
-    .post { padding: 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; }
-    .post-main { flex-grow: 1; }
-    .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 6px; }
-    .post-author { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
-    .post-text { font-size: 0.95rem; line-height: 1.4; white-space: pre-wrap; word-break: break-word; }
-
+    * { box-sizing: border-box; margin: 0; padding: 0; font-family: system-ui, -apple-system, sans-serif; }
+    body { background-color: var(--bg-color); color: var(--text-main); display: flex; justify-content: center; min-height: 100vh; }
+    .app-container { width: 100%; max-width: 600px; border-left: 1px solid var(--border-color); border-right: 1px solid var(--border-color); padding: 16px; }
+    header { font-size: 1.4rem; font-weight: bold; color: var(--accent); border-bottom: 1px solid var(--border-color); padding-bottom: 12px; margin-bottom: 16px; display: flex; align-items: center; gap: 8px; }
+    .card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    .input-box { width: 100%; padding: 10px; margin: 8px 0; background: #000; border: 1px solid var(--border-color); border-radius: 8px; color: #fff; outline: none; }
+    .btn { background: var(--accent); color: #fff; border: none; padding: 10px 16px; border-radius: 20px; font-weight: bold; cursor: pointer; width: 100%; margin-top: 8px; }
+    .post { border-bottom: 1px solid var(--border-color); padding: 12px 0; }
+    .post-author { font-weight: bold; color: var(--accent); font-size: 0.9rem; }
+    .post-text { margin-top: 6px; font-size: 1rem; line-height: 1.4; }
     .hidden { display: none !important; }
   </style>
 </head>
 <body>
 
-  <div class="layout-container">
-    <header>
-      <div class="header-left">
-        <button id="backBtn" class="back-btn" onclick="navigateBack()"><i class="fa-solid fa-arrow-right"></i></button>
-        <div class="brand-title" onclick="navigateTo('home')"><i class="fa-solid fa-feather-pointed"></i> كلمات</div>
-      </div>
-      <div class="header-actions">
-        <button class="theme-toggle-btn" onclick="toggleTheme()"><i class="fa-solid fa-moon" id="themeIcon"></i></button>
-        <div id="userInfo" class="user-pill hidden">
-          <span id="userPillName">المستخدم</span>
-          <div class="avatar-mini" id="userPillAvatar">ك</div>
-        </div>
-      </div>
-    </header>
+  <div class="app-container">
+    <header><i class="fa-solid fa-feather-pointed"></i> كلمات</header>
 
-    <div id="authScreen" class="auth-container">
-      <h2 style="font-size: 1.6rem; margin-bottom: 6px;">مرحباً بك في منصة كلمات</h2>
-      <p style="color: var(--text-sub); font-size: 0.9rem;">تواصل وشارك أفكارك بكل حرية</p>
-
-      <div class="auth-card">
-        <div class="auth-tabs">
-          <div id="tabLogin" class="auth-tab active" onclick="switchAuthTab('login')">تسجيل الدخول</div>
-          <div id="tabRegister" class="auth-tab" onclick="switchAuthTab('register')">إنشاء حساب جديد</div>
-        </div>
-
-        <div id="registerNameGroup" class="hidden">
-          <label style="font-size: 0.85rem; color: var(--text-sub);">الاسم المستعار</label>
-          <input type="text" id="regName" class="input-field" placeholder="أدخل اسمك الكامل">
-        </div>
-
-        <label style="font-size: 0.85rem; color: var(--text-sub);">البريد الإلكتروني</label>
-        <input type="email" id="authEmail" class="input-field" placeholder="example@mail.com">
-
-        <label style="font-size: 0.85rem; color: var(--text-sub);">كلمة السر</label>
-        <input type="password" id="authPass" class="input-field" placeholder="••••••••">
-
-        <button class="btn-tweet" style="width: 100%; padding: 12px; margin-top: 10px;" id="authSubmitBtn" onclick="submitAuth()">تسجيل الدخول</button>
-      </div>
+    <!-- واجهة تسجيل الدخول -->
+    <div id="authSection" class="card">
+      <h3 style="margin-bottom: 12px;">تسجيل الدخول / حساب جديد</h3>
+      <input type="text" id="username" class="input-field input-box" placeholder="الاسم المستعار">
+      <input type="email" id="email" class="input-field input-box" placeholder="البريد الإلكتروني">
+      <input type="password" id="password" class="input-field input-box" placeholder="كلمة المرور">
+      <button class="btn" onclick="handleAuth('login')">تسجيل الدخول</button>
+      <button class="btn" style="background: transparent; border: 1px solid var(--border-color);" onclick="handleAuth('signup')">إنشاء حساب جديد</button>
     </div>
 
-    <div id="appScreen" class="hidden">
-      <div class="tweet-box" id="homeTweetBox">
-        <div class="avatar" id="myAvatar">ك</div>
-        <div class="tweet-input-area">
-          <textarea id="tweetContent" placeholder="ماذا يدور في أفكارك اليوم؟"></textarea>
-          <div class="tweet-actions">
-            <div></div>
-            <button class="btn-tweet" onclick="publishTweet()">نشر</button>
-          </div>
-        </div>
+    <!-- واجهة المنصة بعد الدخول -->
+    <div id="mainSection" class="hidden">
+      <div class="card">
+        <textarea id="postInput" class="input-box" rows="3" placeholder="ماذا يدور في أفكارك؟"></textarea>
+        <button class="btn" onclick="addPost()">نشر</button>
       </div>
-
-      <div id="timelineSection">
-        <div id="timeline">
-          <div style="text-align: center; padding: 40px; color: var(--text-sub);">جاري تحميل المنشورات...</div>
-        </div>
-      </div>
-    </div>
-
-    <div class="nav-bar hidden" id="bottomNav">
-      <div class="nav-item active" id="navHome" onclick="navigateTo('home')"><i class="fa-solid fa-house"></i></div>
-      <div class="nav-item" onclick="logout()"><i class="fa-solid fa-arrow-right-from-bracket"></i></div>
+      <div id="postsList"></div>
+      <button class="btn" style="background: #333; margin-top: 20px;" onclick="logout()">تسجيل الخروج</button>
     </div>
   </div>
 
   <script>
     const SUPABASE_URL = 'https://qrnbfjvutzkmoannmujk.supabase.co';
-    const SUPABASE_KEY = 'sb_publishable_Q4uNpSCbSEPo5-Ta09fE-g_T-9M_B9o'; 
+    const SUPABASE_KEY = 'sb_publishable_Q4uNpSCbSEPo5-Ta09fE-g_T-9M_B9o';
     const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
 
-    let authMode = 'login';
-    let currentUser = null;
-
-    function toggleTheme() {
-      document.body.classList.toggle('light-mode');
-      const icon = document.getElementById('themeIcon');
-      icon.className = document.body.classList.contains('light-mode') ? 'fa-solid fa-sun' : 'fa-solid fa-moon';
-    }
-
-    function switchAuthTab(mode) {
-      authMode = mode;
-      document.getElementById('tabLogin').classList.toggle('active', mode === 'login');
-      document.getElementById('tabRegister').classList.toggle('active', mode === 'register');
-      document.getElementById('registerNameGroup').classList.toggle('hidden', mode === 'login');
-      document.getElementById('authSubmitBtn').innerText = mode === 'login' ? 'تسجيل الدخول' : 'إنشاء حساب جديد';
-    }
-
-    async function checkUser() {
-      try {
-        const { data: { user } } = await _supabase.auth.getUser();
-        currentUser = user;
-
-        if (user) {
-          document.getElementById('authScreen').classList.add('hidden');
-          document.getElementById('appScreen').classList.remove('hidden');
-          document.getElementById('bottomNav').classList.remove('hidden');
-          updateUserDisplay();
-          loadTimeline();
-        } else {
-          document.getElementById('authScreen').classList.remove('hidden');
-          document.getElementById('appScreen').classList.add('hidden');
-          document.getElementById('bottomNav').classList.add('hidden');
-        }
-      } catch (err) {
-        console.error("Auth error:", err);
-      }
-    }
-
-    function getMyName() {
-      return currentUser?.user_metadata?.full_name || currentUser?.email?.split('@')[0] || 'User';
-    }
-
-    function updateUserDisplay() {
-      if (!currentUser) return;
-      const name = getMyName();
-      document.getElementById('userPillName').innerText = name;
-      document.getElementById('userInfo').classList.remove('hidden');
-      document.getElementById('myAvatar').innerText = name[0].toUpperCase();
-      document.getElementById('userPillAvatar').innerText = name[0].toUpperCase();
-    }
-
-    async function submitAuth() {
-      const email = document.getElementById('authEmail').value.trim();
-      const password = document.getElementById('authPass').value.trim();
-      const name = document.getElementById('regName').value.trim();
-
-      if (!email || !password) return alert('يرجى كتابة البريد الإلكتروني وكلمة المرور');
-
-      if (authMode === 'register') {
-        const { error } = await _supabase.auth.signUp({ email, password, options: { data: { full_name: name || 'عضو كلمات' } } });
-        if (error) alert(error.message); else checkUser();
+    async function checkSession() {
+      const { data: { session } } = await _supabase.auth.getSession();
+      if (session) {
+        document.getElementById('authSection').classList.add('hidden');
+        document.getElementById('mainSection').classList.remove('hidden');
+        loadPosts();
       } else {
-        const { error } = await _supabase.auth.signInWithPassword({ email, password });
-        if (error) alert('خطأ في إدخال بيانات الدخول'); else checkUser();
+        document.getElementById('authSection').classList.remove('hidden');
+        document.getElementById('mainSection').classList.add('hidden');
       }
     }
 
-    async function logout() { await _supabase.auth.signOut(); checkUser(); }
+    async function handleAuth(type) {
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value.trim();
+      const username = document.getElementById('username').value.trim();
 
-    async function publishTweet() {
-      const content = document.getElementById('tweetContent').value.trim();
-      if (!content) return;
+      if (!email || !password) return alert('يرجى إدخال البريد وكلمة المرور');
 
-      const name = getMyName();
-      const { error } = await _supabase.from('posts').insert([{ content, author_name: name }]);
+      let res = type === 'signup' 
+        ? await _supabase.auth.signUp({ email, password, options: { data: { full_name: username } } })
+        : await _supabase.auth.signInWithPassword({ email, password });
 
-      if (error) alert('خطأ أثناء النشر: ' + error.message);
+      if (res.error) alert(res.error.message);
+      else checkSession();
+    }
+
+    async function logout() {
+      await _supabase.auth.signOut();
+      checkSession();
+    }
+
+    async function addPost() {
+      const text = document.getElementById('postInput').value.trim();
+      if (!text) return;
+
+      const { data: { user } } = await _supabase.auth.getUser();
+      const author = user?.user_metadata?.full_name || user?.email?.split('@')[0] || 'مستخدم';
+
+      const { error } = await _supabase.from('posts').insert([{ content: text, author_name: author }]);
+      if (error) alert('خطأ في النشر: ' + error.message);
       else {
-        document.getElementById('tweetContent').value = '';
-        loadTimeline();
+        document.getElementById('postInput').value = '';
+        loadPosts();
       }
     }
 
-    async function loadTimeline() {
-      const timeline = document.getElementById('timeline');
-      try {
-        const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
+    async function loadPosts() {
+      const container = document.getElementById('postsList');
+      container.innerHTML = 'جاري التحميل...';
+      const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
 
-        if (error || !posts || posts.length === 0) {
-          timeline.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">لا توجد منشورات متاحة حالياً.</div>`;
-          return;
-        }
-
-        timeline.innerHTML = '';
-        for (const post of posts) {
-          const postElement = document.createElement('div');
-          postElement.className = 'post';
-          postElement.innerHTML = `
-            <div class="avatar">${post.author_name ? post.author_name[0].toUpperCase() : '؟'}</div>
-            <div class="post-main">
-              <div class="post-header">
-                <span class="post-author">${post.author_name}</span>
-              </div>
-              <div class="post-text">${post.content || ''}</div>
-            </div>
-          `;
-          timeline.appendChild(postElement);
-        }
-      } catch (e) {
-        timeline.innerHTML = `<div style="text-align: center; padding: 40px; color: var(--text-sub);">حدث خطأ أثناء تحميل البيانات.</div>`;
+      if (error) {
+        container.innerHTML = '<p style="color:red;">خطأ في جلب البيانات</p>';
+        return;
       }
+
+      container.innerHTML = posts.map(p => `
+        <div class="post">
+          <div class="post-author">${p.author_name || 'مستخدم'}</div>
+          <div class="post-text">${p.content}</div>
+        </div>
+      `).join('');
     }
 
-    checkUser();
+    checkSession();
   </script>
 </body>
 </html>

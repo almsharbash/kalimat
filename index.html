@@ -46,7 +46,7 @@
     .user-pill { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-main); background: var(--card-bg); padding: 4px 10px; border-radius: 20px; border: 1px solid var(--border-color); cursor: pointer; }
     .avatar-mini { width: 24px; height: 24px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 0.75rem; overflow: hidden; color: #fff; }
 
-    /* Toast Notifications UI (Twitter/Facebook Popups) */
+    /* Toast Notifications UI */
     #toast-container { position: fixed; top: 16px; left: 50%; transform: translateX(-50%); z-index: 9999; display: flex; flex-direction: column; gap: 8px; width: 90%; max-width: 380px; pointer-events: none; }
     .toast-card { pointer-events: auto; background: var(--accent); color: #ffffff; padding: 12px 16px; border-radius: 25px; font-size: 0.9rem; font-weight: bold; box-shadow: 0 4px 15px rgba(0,0,0,0.3); display: flex; align-items: center; justify-content: space-between; gap: 10px; animation: popupSlide 0.3s ease-out; }
     .toast-card.success { background: var(--retweet-color); }
@@ -73,7 +73,7 @@
     .btn-tweet { background-color: var(--accent); color: white; border: none; padding: 8px 18px; border-radius: 20px; font-weight: bold; font-size: 0.9rem; cursor: pointer; transition: 0.2s; }
     .btn-tweet:hover { opacity: 0.9; }
 
-    /* Post Card (Twitter Card Design) */
+    /* Post Card */
     .post { padding: 14px 16px; border-bottom: 1px solid var(--border-color); display: flex; gap: 12px; transition: background 0.15s; }
     .post:hover { background: rgba(255,255,255,0.02); }
     .post-main { flex-grow: 1; }
@@ -89,7 +89,6 @@
     .action-btn:hover { background: rgba(29, 155, 240, 0.1); color: var(--accent); }
     .action-btn.liked { color: var(--like-color); }
     .action-btn.liked:hover { background: rgba(249, 24, 128, 0.1); }
-    .action-btn.reposted { color: var(--retweet-color); }
 
     /* Comments Section */
     .comments-section { margin-top: 10px; padding-top: 10px; border-top: 1px solid var(--border-color); display: none; }
@@ -98,10 +97,9 @@
     .comment-input-box { display: flex; gap: 8px; margin-top: 8px; }
     .comment-input-box input { flex-grow: 1; background: var(--bg-color); border: 1px solid var(--border-color); border-radius: 18px; padding: 8px 14px; color: var(--text-main); font-size: 0.85rem; outline: none; }
 
-    /* Notifications List Item Styling */
+    /* Notifications List Item */
     .notif-card { display: flex; align-items: flex-start; gap: 12px; padding: 14px 16px; border-bottom: 1px solid var(--border-color); transition: background 0.2s; }
     .notif-card:hover { background: var(--card-bg); }
-    .notif-icon-like { color: var(--like-color); font-size: 1.2rem; }
     .notif-icon-comment { color: var(--accent); font-size: 1.2rem; }
 
     .auth-container { padding: 30px 20px; text-align: center; }
@@ -113,7 +111,6 @@
 </head>
 <body>
 
-  <!-- Floating Toast Notifications Container -->
   <div id="toast-container"></div>
 
   <div class="layout-container">
@@ -191,17 +188,20 @@
         <div id="friendsList" style="padding: 20px; text-align: center; color: var(--text-sub);">قائمة الأصدقاء تظهر هنا.</div>
       </div>
 
-      <!-- Profile View Section -->
+      <!-- Dynamic Profile View Section -->
       <div id="profileSection" class="hidden" style="padding: 20px; text-align: center;">
         <div class="avatar" style="width: 70px; height: 70px; font-size: 1.8rem; margin: 0 auto 10px;" id="profileAvatar">ك</div>
         <h3 id="profileName" style="color: var(--text-main);">الاسم</h3>
         <p id="profileHandle" style="color: var(--text-sub); font-size: 0.85rem; margin-bottom: 15px;">@user</p>
-        <button class="btn-tweet" onclick="logout()" style="background: var(--like-color);">تسجيل الخروج</button>
+        
+        <div id="profileActions" style="display: flex; justify-content: center; gap: 10px; margin-bottom: 20px;">
+          <!-- أزرار الإجراءات الديناميكية ستنزل هنا -->
+        </div>
       </div>
 
     </div>
 
-    <!-- Navigation Bar -->
+    <!-- Bottom Navigation Bar -->
     <div class="nav-bar hidden" id="bottomNav">
       <div class="nav-item active" id="navHome" onclick="navigateTo('home')"><i class="fa-solid fa-house"></i></div>
       <div class="nav-item" id="navFriends" onclick="navigateTo('friends')"><i class="fa-solid fa-user-group"></i></div>
@@ -218,8 +218,8 @@
     let currentUser = null;
     let selectedImageUrl = '';
     let likedPosts = JSON.parse(localStorage.getItem('kalimat_likes') || '{}');
+    let navigationStack = ['home'];
 
-    // Display Popup Notifications (Toasts)
     function showToast(message, type = 'info', icon = 'fa-info-circle') {
       const container = document.getElementById('toast-container');
       const toast = document.createElement('div');
@@ -290,7 +290,20 @@
       checkUser();
     }
 
-    function navigateTo(screen, param = null) {
+    function navigateTo(screen, param = null, isBack = false) {
+      if (!isBack) {
+        if (navigationStack[navigationStack.length - 1] !== screen) {
+          navigationStack.push(screen);
+        }
+      }
+      
+      const backBtn = document.getElementById('backBtn');
+      if (navigationStack.length > 1) {
+        backBtn.style.display = 'block';
+      } else {
+        backBtn.style.display = 'none';
+      }
+
       document.getElementById('homeTweetBox').classList.add('hidden');
       document.getElementById('timelineSection').classList.add('hidden');
       document.getElementById('notificationsSection').classList.add('hidden');
@@ -313,10 +326,35 @@
         document.getElementById('navFriends').classList.add('active');
       } else if (screen === 'profile') {
         document.getElementById('profileSection').classList.remove('hidden');
-        document.getElementById('navProfile').classList.add('active');
-        document.getElementById('profileName').innerText = param || getMyName();
-        document.getElementById('profileHandle').innerText = `@${param || getMyName()}`;
-        document.getElementById('profileAvatar').innerText = (param || getMyName())[0].toUpperCase();
+        
+        const targetUser = param || getMyName();
+        const myName = getMyName();
+
+        document.getElementById('profileName').innerText = targetUser;
+        document.getElementById('profileHandle').innerText = `@${targetUser}`;
+        document.getElementById('profileAvatar').innerText = targetUser[0] ? targetUser[0].toUpperCase() : '؟';
+
+        const actionsContainer = document.getElementById('profileActions');
+
+        if (targetUser === myName) {
+          document.getElementById('navProfile').classList.add('active');
+          actionsContainer.innerHTML = `
+            <button class="btn-tweet" onclick="logout()" style="background: var(--like-color);">تسجيل الخروج</button>
+          `;
+        } else {
+          actionsContainer.innerHTML = `
+            <button class="btn-tweet" onclick="showToast('تمت المتابعة بنجاح', 'success', 'fa-user-check')">متابعة</button>
+            <button class="btn-tweet" style="background: transparent; border: 1px solid var(--border-color); color: var(--text-main);" onclick="showToast('ميزة الرسائل قادمة قريباً', 'info', 'fa-envelope')">مراسلة</button>
+          `;
+        }
+      }
+    }
+
+    function navigateBack() {
+      if (navigationStack.length > 1) {
+        navigationStack.pop();
+        const previousScreen = navigationStack[navigationStack.length - 1];
+        navigateTo(previousScreen, null, true);
       }
     }
 
@@ -499,4 +537,4 @@
     checkUser();
   </script>
 </body>
-  </html>
+                                                                                          </html>

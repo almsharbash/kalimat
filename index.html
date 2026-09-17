@@ -26,7 +26,7 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
     
-    /* تصميم كامل الشاشة مثل فيسبوك */
+    /* تصميم كامل الشاشة */
     .app-container { width: 100%; min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 60px; }
 
     /* هيدر علوي ممتد */
@@ -43,7 +43,7 @@
     .icon-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--hover-bg); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); font-size: 1.1rem; }
     .icon-btn:hover { background: #4e4f50; }
 
-    /* محتوى الصفحة الرئيسي ممتد لمنتصف الشاشة مع الحفاظ على التصميم المريح */
+    /* محتوى الصفحة الرئيسي */
     .main-content { max-width: 720px; width: 100%; margin: 0 auto; padding: 12px 8px; }
 
     /* Auth View */
@@ -118,10 +118,10 @@
     .profile-stats { display: flex; justify-content: center; gap: 24px; font-size: 0.9rem; color: var(--text-sub); margin-bottom: 16px; }
     .profile-stats span { color: var(--text-main); font-weight: bold; }
 
-    /* List Cards (Friends / Blocked) */
+    /* List Cards */
     .user-card { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px; }
 
-    /* Bottom / Header Navigation Bar */
+    /* Navigation Bar */
     .nav-bar { position: fixed; bottom: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
     .nav-link { color: var(--text-sub); font-size: 1.3rem; cursor: pointer; padding: 6px 16px; border-radius: 8px; }
     .nav-link.active { color: var(--accent); background: var(--hover-bg); }
@@ -301,7 +301,16 @@
   <script>
     const SUPABASE_URL = 'https://qrnbfjvutzkmoannmujk.supabase.co';
     const SUPABASE_KEY = 'sb_publishable_Q4uNpSCbSEPo5-Ta09fE-g_T-9M_B9o';
-    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+    let _supabase = null;
+
+    // تهيئة اتصال Supabase بأمان
+    try {
+      if (typeof supabase !== 'undefined' && supabase.createClient) {
+        _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+      }
+    } catch (err) {
+      console.warn("تنبيه: تعذر الاتصال بـ Supabase، سيتم استخدام التخزين المحلي فقط.", err);
+    }
 
     let localPosts = [];
     let selectedImageData = null;
@@ -309,13 +318,21 @@
     let isSignUp = false;
     let activeUser = localStorage.getItem('kalimat_user') || null;
     let userBio = localStorage.getItem('kalimat_bio') || 'مرحباً بك في ملفي الشخصي علي منصة كلمات!';
-    let followingUsers = JSON.parse(localStorage.getItem('kalimat_following') || '[]');
-    let blockedUsers = JSON.parse(localStorage.getItem('kalimat_blocked') || '[]');
+    let followingUsers = [];
+    let blockedUsers = [];
+
+    try {
+      followingUsers = JSON.parse(localStorage.getItem('kalimat_following') || '[]');
+      blockedUsers = JSON.parse(localStorage.getItem('kalimat_blocked') || '[]');
+    } catch(e) {
+      followingUsers = [];
+      blockedUsers = [];
+    }
 
     function init() {
       const savedPosts = localStorage.getItem('kalimat_posts_data');
       if (savedPosts) {
-        try { localPosts = JSON.parse(savedPosts); } catch(e) {}
+        try { localPosts = JSON.parse(savedPosts); } catch(e) { localPosts = []; }
       }
 
       if (activeUser) {
@@ -364,7 +381,6 @@
       document.getElementById('blockedCount').innerText = blockedUsers.length;
     }
 
-    /* إدارة المتابعة والحظر */
     function toggleFollow(authorName) {
       if (!authorName || authorName === activeUser) return;
 
@@ -389,7 +405,6 @@
         blockedUsers.push(authorName);
         localStorage.setItem('kalimat_blocked', JSON.stringify(blockedUsers));
         
-        // إلغاء المتابعة تلقائياً إن وجدت
         const followIdx = followingUsers.indexOf(authorName);
         if (followIdx > -1) {
           followingUsers.splice(followIdx, 1);
@@ -489,7 +504,8 @@
       document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
       document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
       
-      document.getElementById(sectionId).classList.add('active');
+      const target = document.getElementById(sectionId);
+      if(target) target.classList.add('active');
       
       const backBtn = document.getElementById('backBtn');
       if (sectionId === 'homeSection') {
@@ -599,13 +615,17 @@
         created_at: new Date().toISOString()
       };
 
-      try {
-        await _supabase.from('posts').insert([{ 
-          content: text, 
-          author_name: activeUser,
-          image_url: selectedImageData 
-        }]);
-      } catch (e) {}
+      if (_supabase) {
+        try {
+          await _supabase.from('posts').insert([{ 
+            content: text, 
+            author_name: activeUser,
+            image_url: selectedImageData 
+          }]);
+        } catch (e) {
+          console.error("خطأ أثناء الحفظ في السحابة:", e);
+        }
+      }
 
       localPosts.unshift(newPost);
       savePostsToStorage();
@@ -683,36 +703,41 @@
         savePostsToStorage();
         input.value = '';
         renderPosts(localPosts);
-        document.getElementById(`comments-${postId}`).classList.add('active');
+        const cBox = document.getElementById(`comments-${postId}`);
+        if(cBox) cBox.classList.add('active');
       }
     }
 
     async function loadPosts() {
-      try {
-        const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
-        if (!error && posts && posts.length > 0) {
-          const remotePosts = posts.map(p => ({
-            id: p.id || (Date.now() + Math.random()),
-            author_name: p.author_name || 'User',
-            content: p.content || '',
-            image_url: p.image_url || null,
-            likes: p.likes || 0,
-            reposts: p.reposts || 0,
-            liked_by_me: false,
-            reposted_by_me: false,
-            comments: []
-          }));
+      if (_supabase) {
+        try {
+          const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
+          if (!error && posts && posts.length > 0) {
+            const remotePosts = posts.map(p => ({
+              id: p.id || (Date.now() + Math.random()),
+              author_name: p.author_name || 'User',
+              content: p.content || '',
+              image_url: p.image_url || null,
+              likes: p.likes || 0,
+              reposts: p.reposts || 0,
+              liked_by_me: false,
+              reposted_by_me: false,
+              comments: []
+            }));
 
-          const merged = [...localPosts];
-          remotePosts.forEach(rp => {
-            if(!merged.some(mp => mp.id === rp.id || (mp.content === rp.content && mp.author_name === rp.author_name))) {
-              merged.push(rp);
-            }
-          });
-          localPosts = merged;
-          savePostsToStorage();
+            const merged = [...localPosts];
+            remotePosts.forEach(rp => {
+              if(!merged.some(mp => mp.id === rp.id || (mp.content === rp.content && mp.author_name === rp.author_name))) {
+                merged.push(rp);
+              }
+            });
+            localPosts = merged;
+            savePostsToStorage();
+          }
+        } catch (e) {
+          console.warn("تنبيه: فشل جلب البيانات من السحابة، الاعتماد على Cache المخزن محلياً.", e);
         }
-      } catch (e) {}
+      }
 
       if (localPosts.length === 0) {
         localPosts = [
@@ -728,7 +753,6 @@
       const container = document.getElementById(targetContainerId);
       if(!container) return;
 
-      // تصفية المنشورات المحظورة
       const visiblePosts = list.filter(p => !blockedUsers.includes(p.author_name));
 
       if(visiblePosts.length === 0) {

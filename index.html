@@ -56,3 +56,77 @@
     
     .btn-follow { background: var(--accent); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
     .btn-follow.following { background: var(--hover-bg); color: var(--text-main); border: 1px solid var(--border-color); }
+
+    .composer-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
+    .composer-input { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1rem; resize: none; outline: none; min-height: 80px; }
+    .composer-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 12px; }
+
+    .post-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
+    .user-info { display: flex; align-items: center; gap: 10px; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; }
+    .post-content { font-size: 1rem; line-height: 1.5; margin-bottom: 12px; white-space: pre-wrap; }
+    .post-image { width: 100%; border-radius: 8px; margin-bottom: 12px; max-height: 400px; object-fit: cover; }
+    .post-actions { display: flex; justify-content: space-around; border-top: 1px solid var(--border-color); padding-top: 10px; color: var(--text-sub); }
+    .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.9rem; }
+    .action-btn:hover { color: var(--accent); }
+  </style>
+</head>
+<body>
+  <div class="app-container">
+    <header>
+      <div class="header-right">
+        <div class="brand">
+          <img src="logo.png" alt="كلمات" class="app-logo">
+          <span>كلمات</span>
+        </div>
+      </div>
+      <div class="header-icons">
+        <div class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></div>
+        <div class="icon-btn"><i class="fa-paper-plane fa-solid"></i></div>
+        <div class="icon-btn"><i class="fa-solid fa-user"></i></div>
+      </div>
+    </header>
+
+    <div class="main-content">
+      <div class="composer-card">
+        <textarea class="composer-input" placeholder="بم تفكر اليوم؟"></textarea>
+        <div class="composer-actions">
+          <div style="display: flex; gap: 12px; color: var(--accent); font-size: 1.2rem; cursor: pointer;">
+            <i class="fa-regular fa-image"></i>
+            <i class="fa-regular fa-face-smile"></i>
+          </div>
+          <button class="btn-primary" style="width: auto; padding: 6px 20px;">نشر</button>
+        </div>
+      </div>
+
+      <div class="post-card">
+        <div class="post-header">
+          <div class="user-info">
+            <div class="avatar">K</div>
+            <div>
+              <strong>Kalimat</strong>
+              <div style="font-size: 0.8rem; color: var(--text-sub);">Kalimat@</div>
+            </div>
+          </div>
+          <button class="btn-follow">متابعة</button>
+        </div>
+        <div class="post-content">مرحباً بك! جرب إضافة منشور أو صورة، وسيظل محفوظاً بشكل دائم الآن.</div>
+        <div class="post-actions">
+          <div class="action-btn"><i class="fa-regular fa-heart"></i> 0</div>
+          <div class="action-btn"><i class="fa-regular fa-comment"></i> 0</div>
+          <div class="action-btn"><i class="fa-solid fa-repeat"></i> 0</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    if ('serviceWorker' in navigator) {
+      window.addEventListener('load', () => {
+        navigator.serviceWorker.register('./sw.js').catch(() => {});
+      });
+    }
+  </script>
+</body>
+</html>

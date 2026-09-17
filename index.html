@@ -6,9 +6,6 @@
   <title>Kalimat App</title>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
-  <link rel="icon" type="image/png" href="logo.png">
-  <link rel="apple-touch-icon" href="logo.png">
-  <link rel="manifest" href="manifest.json">
   <style>
     :root {
       --bg-color: #18191a;
@@ -26,8 +23,10 @@
     * { box-sizing: border-box; margin: 0; padding: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
     body { background-color: var(--bg-color); color: var(--text-main); min-height: 100vh; overflow-x: hidden; }
     
+    /* تصميم كامل الشاشة مثل فيسبوك */
     .app-container { width: 100%; min-height: 100vh; display: flex; flex-direction: column; padding-bottom: 60px; }
 
+    /* هيدر علوي ممتد */
     header { position: sticky; top: 0; background-color: var(--card-bg); border-bottom: 1px solid var(--border-color); padding: 8px 16px; display: flex; justify-content: space-between; align-items: center; z-index: 100; height: 56px; }
     
     .header-right { display: flex; align-items: center; gap: 12px; }
@@ -41,8 +40,10 @@
     .icon-btn { width: 40px; height: 40px; border-radius: 50%; background: var(--hover-bg); display: flex; align-items: center; justify-content: center; cursor: pointer; color: var(--text-main); font-size: 1.1rem; }
     .icon-btn:hover { background: #4e4f50; }
 
+    /* محتوى الصفحة الرئيسي ممتد لمنتصف الشاشة مع الحفاظ على التصميم المريح */
     .main-content { max-width: 720px; width: 100%; margin: 0 auto; padding: 12px 8px; }
 
+    /* Auth View */
     .auth-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 24px; max-width: 450px; margin: 40px auto; text-align: center; }
     .auth-title { font-size: 1.5rem; font-weight: 700; margin-bottom: 8px; }
     .auth-sub { color: var(--text-sub); font-size: 0.9rem; margin-bottom: 20px; }
@@ -57,76 +58,822 @@
     .btn-follow { background: var(--accent); color: #fff; border: none; padding: 6px 14px; border-radius: 6px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
     .btn-follow.following { background: var(--hover-bg); color: var(--text-main); border: 1px solid var(--border-color); }
 
-    .composer-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 16px; }
-    .composer-input { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1rem; resize: none; outline: none; min-height: 80px; }
-    .composer-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 12px; margin-top: 12px; }
+    /* Composer */
+    .composer { background: var(--card-bg); border-radius: 10px; padding: 12px 16px; margin-bottom: 12px; border: 1px solid var(--border-color); }
+    .composer-top { display: flex; gap: 10px; align-items: center; }
+    .avatar { width: 40px; height: 40px; border-radius: 50%; background: linear-gradient(135deg, #1877f2, #7928ca); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; font-size: 1.1rem; flex-shrink: 0; overflow: hidden; }
+    .avatar img { width: 100%; height: 100%; object-fit: cover; }
+    textarea { width: 100%; background: transparent; border: none; color: var(--text-main); font-size: 1rem; resize: none; outline: none; min-height: 50px; padding-top: 8px; }
+    
+    .image-preview-box { margin-top: 8px; position: relative; display: inline-block; }
+    .image-preview-box img { max-width: 100%; max-height: 250px; border-radius: 8px; border: 1px solid var(--border-color); }
+    .remove-img-btn { position: absolute; top: 6px; right: 6px; background: rgba(0,0,0,0.7); color: #fff; border: none; border-radius: 50%; width: 24px; height: 24px; cursor: pointer; }
 
-    .post-card { background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 12px; padding: 16px; margin-bottom: 12px; }
+    .composer-actions { display: flex; justify-content: space-between; align-items: center; border-top: 1px solid var(--border-color); padding-top: 10px; margin-top: 10px; }
+    .action-icons { color: var(--accent); display: flex; gap: 18px; font-size: 1.2rem; align-items: center; position: relative; }
+    .action-icons label { cursor: pointer; }
+
+    .emoji-bar { display: none; position: absolute; bottom: 35px; right: 0; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; padding: 8px; gap: 8px; z-index: 5; }
+    .emoji-bar.active { display: flex; }
+    .emoji-item { cursor: pointer; font-size: 1.2rem; }
+
+    /* Posts */
+    .post { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color); padding: 14px; margin-bottom: 12px; }
     .post-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; }
-    .user-info { display: flex; align-items: center; gap: 10px; }
-    .avatar { width: 40px; height: 40px; border-radius: 50%; background: var(--accent); display: flex; align-items: center; justify-content: center; font-weight: bold; color: #fff; }
-    .post-content { font-size: 1rem; line-height: 1.5; margin-bottom: 12px; white-space: pre-wrap; }
-    .post-image { width: 100%; border-radius: 8px; margin-bottom: 12px; max-height: 400px; object-fit: cover; }
-    .post-actions { display: flex; justify-content: space-around; border-top: 1px solid var(--border-color); padding-top: 10px; color: var(--text-sub); }
-    .action-btn { display: flex; align-items: center; gap: 6px; cursor: pointer; font-size: 0.9rem; }
-    .action-btn:hover { color: var(--accent); }
+    .post-user-info { display: flex; align-items: center; gap: 10px; }
+    .post-author { font-weight: 700; color: var(--text-main); font-size: 0.95rem; }
+    .post-handle { color: var(--text-sub); font-size: 0.85rem; }
+    
+    .post-options-menu { position: relative; }
+    .options-btn { color: var(--text-sub); cursor: pointer; padding: 6px; border-radius: 50%; }
+    .options-btn:hover { background: var(--hover-bg); color: var(--text-main); }
+    .dropdown-menu { display: none; position: absolute; left: 0; top: 25px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; width: 140px; box-shadow: 0 4px 12px rgba(0,0,0,0.5); z-index: 10; }
+    .dropdown-menu.active { display: block; }
+    .dropdown-item { padding: 10px 12px; font-size: 0.85rem; cursor: pointer; display: flex; align-items: center; gap: 8px; color: var(--text-main); }
+    .dropdown-item:hover { background: var(--hover-bg); }
+    .dropdown-item.danger { color: var(--danger-color); }
+
+    .post-text { font-size: 0.95rem; line-height: 1.5; color: var(--text-main); white-space: pre-wrap; word-break: break-word; }
+    .post-image { width: 100%; max-height: 400px; object-fit: cover; border-radius: 8px; margin-top: 10px; border: 1px solid var(--border-color); }
+    
+    .post-footer { display: flex; justify-content: space-around; border-top: 1px solid var(--border-color); margin-top: 12px; padding-top: 8px; color: var(--text-sub); font-size: 0.9rem; }
+    .post-action { display: flex; align-items: center; gap: 6px; cursor: pointer; padding: 6px 12px; border-radius: 6px; flex: 1; justify-content: center; }
+    .post-action:hover { background: var(--hover-bg); }
+    .post-action.liked { color: var(--like-color); }
+    .post-action.reposted { color: var(--repost-color); }
+
+    .comments-box { margin-top: 10px; border-top: 1px solid var(--border-color); padding-top: 10px; display: none; }
+    .comments-box.active { display: block; }
+    .comment-item { background: var(--hover-bg); padding: 8px 12px; border-radius: 8px; margin-bottom: 6px; font-size: 0.85rem; }
+    .comment-user { font-weight: bold; color: var(--accent); margin-bottom: 2px; }
+
+    /* Profile View */
+    .profile-header { background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color); padding: 20px 16px; text-align: center; margin-bottom: 12px; }
+    .profile-avatar { width: 90px; height: 90px; border-radius: 50%; background: linear-gradient(135deg, #1877f2, #7928ca); display: flex; align-items: center; justify-content: center; font-size: 2.2rem; font-weight: bold; margin: 0 auto 12px; overflow: hidden; border: 3px solid var(--accent); }
+    .profile-avatar img { width: 100%; height: 100%; object-fit: cover; }
+    .profile-bio { font-size: 0.9rem; color: var(--text-sub); margin: 8px 0 12px; }
+    .profile-stats { display: flex; justify-content: center; gap: 24px; font-size: 0.9rem; color: var(--text-sub); margin-bottom: 16px; }
+    .profile-stats span { color: var(--text-main); font-weight: bold; }
+
+    /* List Cards (Friends / Blocked) */
+    .user-card { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--card-bg); border: 1px solid var(--border-color); border-radius: 8px; margin-bottom: 8px; }
+
+    /* Bottom / Header Navigation Bar */
+    .nav-bar { position: fixed; bottom: 0; width: 100%; background: var(--card-bg); border-top: 1px solid var(--border-color); display: flex; justify-content: space-around; padding: 10px 0; z-index: 100; }
+    .nav-link { color: var(--text-sub); font-size: 1.3rem; cursor: pointer; padding: 6px 16px; border-radius: 8px; }
+    .nav-link.active { color: var(--accent); background: var(--hover-bg); }
+
+    .page-section { display: none; }
+    .page-section.active { display: block; }
+    .hidden { display: none !important; }
   </style>
 </head>
 <body>
+
   <div class="app-container">
     <header>
       <div class="header-right">
-        <div class="brand">
-          <img src="logo.png" alt="كلمات" class="app-logo">
-          <span>كلمات</span>
+        <i id="backBtn" class="fa-solid fa-arrow-right back-btn" onclick="goBackHome()" title="رجوع"></i>
+        <div class="brand" onclick="switchTab('homeSection')">
+          <i class="fa-solid fa-feather-pointed"></i> كلمات
         </div>
       </div>
+      
       <div class="header-icons">
-        <div class="icon-btn"><i class="fa-solid fa-magnifying-glass"></i></div>
-        <div class="icon-btn"><i class="fa-paper-plane fa-solid"></i></div>
-        <div class="icon-btn"><i class="fa-solid fa-user"></i></div>
+        <div class="icon-btn" onclick="switchTab('searchSection')"><i class="fa-solid fa-magnifying-glass"></i></div>
+        <div class="icon-btn" onclick="switchTab('chatSection')"><i class="fa-regular fa-paper-plane"></i></div>
+        <div id="userBadge" class="icon-btn" onclick="switchTab('profileSection')" title="الملف الشخصي"><i class="fa-regular fa-user"></i></div>
       </div>
     </header>
 
     <div class="main-content">
-      <div class="composer-card">
-        <textarea class="composer-input" placeholder="بم تفكر اليوم؟"></textarea>
-        <div class="composer-actions">
-          <div style="display: flex; gap: 12px; color: var(--accent); font-size: 1.2rem; cursor: pointer;">
-            <i class="fa-regular fa-image"></i>
-            <i class="fa-regular fa-face-smile"></i>
+      <!-- Auth View -->
+      <div id="authSection" class="auth-card">
+        <div class="brand" style="justify-content: center; font-size: 2rem; margin-bottom: 12px;"><i class="fa-solid fa-feather-pointed"></i> كلمات</div>
+        <h2 class="auth-title" id="authTitle">تسجيل الدخول</h2>
+        <p class="auth-sub" id="authSub">انضم إلى منصة كلمات وشارك أفكارك بسهولة.</p>
+        
+        <input type="text" id="username" class="input-box" placeholder="اسم المستخدم (Username)">
+        <input type="email" id="email" class="input-box" placeholder="البريد الإلكتروني (Email)">
+        <input type="password" id="password" class="input-box" placeholder="كلمة السر (Password)">
+        <input type="tel" id="phone" class="input-box hidden" placeholder="رقم الهاتف - اختياري">
+        
+        <button class="btn-primary" id="authSubmitBtn" onclick="loginDirectly()">دخول</button>
+        <button class="btn-secondary" id="authToggleBtn" onclick="toggleAuthMode()">إنشاء حساب جديد</button>
+      </div>
+
+      <!-- Home View -->
+      <div id="homeSection" class="page-section">
+        <div class="composer">
+          <div class="composer-top">
+            <div class="avatar" id="myAvatar">U</div>
+            <textarea id="postInput" placeholder="بم تفكر اليوم؟"></textarea>
           </div>
-          <button class="btn-primary" style="width: auto; padding: 6px 20px;">نشر</button>
+          
+          <div id="imagePreviewBox" class="image-preview-box hidden">
+            <img id="previewImg" src="" alt="Preview">
+            <button class="remove-img-btn" onclick="removeSelectedImage()">×</button>
+          </div>
+
+          <div class="composer-actions">
+            <div class="action-icons">
+              <label for="imageInput" title="إضافة صورة">
+                <i class="fa-regular fa-image"></i>
+                <input type="file" id="imageInput" accept="image/*" style="display:none" onchange="previewImage(event)">
+              </label>
+              
+              <i class="fa-regular fa-face-smile" onclick="toggleEmojiPicker()" title="إيموجي"></i>
+              <div id="emojiPicker" class="emoji-bar">
+                <span class="emoji-item" onclick="addEmoji('❤️')">❤️</span>
+                <span class="emoji-item" onclick="addEmoji('😂')">😂</span>
+                <span class="emoji-item" onclick="addEmoji('🔥')">🔥</span>
+                <span class="emoji-item" onclick="addEmoji('👍')">👍</span>
+                <span class="emoji-item" onclick="addEmoji('✨')">✨</span>
+              </div>
+            </div>
+            <button class="btn-primary" style="width: auto; padding: 6px 20px;" onclick="addPost()">نشر</button>
+          </div>
+        </div>
+
+        <div id="postsList"></div>
+      </div>
+
+      <!-- Search View -->
+      <div id="searchSection" class="page-section">
+        <div style="position: relative; margin-bottom: 16px;">
+          <input type="text" id="searchInput" class="input-box" placeholder="بحث عن أعضاء أو منشورات..." oninput="handleSearch()" style="padding-right: 38px;">
+          <i class="fa-solid fa-magnifying-glass" style="position: absolute; right: 12px; top: 14px; color: var(--text-sub);"></i>
+        </div>
+        
+        <div id="searchResults">
+          <p style="text-align: center; color: var(--text-sub); margin-top: 20px;">اكتب شيئاً للبحث في كلمات...</p>
         </div>
       </div>
 
-      <div class="post-card">
-        <div class="post-header">
-          <div class="user-info">
-            <div class="avatar">K</div>
-            <div>
-              <strong>Kalimat</strong>
-              <div style="font-size: 0.8rem; color: var(--text-sub);">Kalimat@</div>
-            </div>
+      <!-- Friends & Following View -->
+      <div id="friendsSection" class="page-section">
+        <h3 style="margin-bottom: 15px; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">الأصدقاء والمتابَعون</h3>
+        <div id="friendsList"></div>
+      </div>
+
+      <!-- Profile View -->
+      <div id="profileSection" class="page-section">
+        <div class="profile-header">
+          <div class="profile-avatar" id="profileAvatar">U</div>
+          <h2 id="profileName">User</h2>
+          <p id="profileHandle" style="color:var(--text-sub);">@user</p>
+          <p id="profileBio" class="profile-bio">مرحباً بك في ملفي الشخصي علي منصة كلمات!</p>
+          
+          <div class="profile-stats">
+            <div style="cursor:pointer;" onclick="switchTab('friendsSection')"><span id="followingCount">0</span> يُتابع</div>
+            <div><span id="followersCount">0</span> متابِع</div>
+            <div><span id="blockedCount">0</span> محظور</div>
           </div>
-          <button class="btn-follow">متابعة</button>
+
+          <div style="display: flex; gap: 10px; justify-content: center; margin-bottom: 10px; flex-wrap: wrap;">
+            <button class="btn-primary" style="width:auto; padding:6px 16px;" onclick="showEditProfileModal()">تعديل الملف</button>
+            <button class="btn-secondary" style="width:auto; padding:6px 16px;" onclick="toggleBlockedListModal()">المحظورون</button>
+            <button class="btn-secondary" style="width:auto; padding:6px 16px; color:var(--danger-color); border-color:var(--danger-color);" onclick="logout()">خروج</button>
+          </div>
+
+          <!-- قائمة المحظورين -->
+          <div id="blockedModal" class="auth-card hidden" style="margin: 10px 0; padding: 15px; text-align:right;">
+            <h4 style="margin-bottom: 10px; border-bottom:1px solid var(--border-color); padding-bottom:5px;">قائمة الحظر</h4>
+            <div id="blockedUsersList"></div>
+          </div>
+
+          <!-- تعديل البيانات -->
+          <div id="editProfileModal" class="auth-card hidden" style="margin: 10px 0; padding: 15px;">
+            <h4 style="margin-bottom: 10px;">تعديل البيانات</h4>
+            <input type="text" id="editDisplayName" class="input-box" placeholder="الاسم المعروض">
+            <input type="text" id="editBio" class="input-box" placeholder="النبذة الشخصية (Bio)">
+            <label style="color:var(--accent); font-size:0.85rem; cursor:pointer; display:block; margin-bottom:10px;">
+              <i class="fa-solid fa-camera"></i> تغيير صورة الملف الشخصي
+              <input type="file" id="profileImgInput" accept="image/*" style="display:none" onchange="updateProfilePicture(event)">
+            </label>
+            <button class="btn-primary" onclick="saveProfileChanges()">حفظ التغيرات</button>
+          </div>
         </div>
-        <div class="post-content">مرحباً بك! جرب إضافة منشور أو صورة، وسيظل محفوظاً بشكل دائم الآن.</div>
-        <div class="post-actions">
-          <div class="action-btn"><i class="fa-regular fa-heart"></i> 0</div>
-          <div class="action-btn"><i class="fa-regular fa-comment"></i> 0</div>
-          <div class="action-btn"><i class="fa-solid fa-repeat"></i> 0</div>
+
+        <div id="myPostsList"></div>
+      </div>
+
+      <!-- Chat View -->
+      <div id="chatSection" class="page-section">
+        <div style="background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color); padding: 16px; display: flex; flex-direction: column; height: 75vh;">
+          <h3 style="margin-bottom: 15px; font-size: 1.1rem; border-bottom: 1px solid var(--border-color); padding-bottom: 10px;">الرسائل المباشرة</h3>
+          
+          <div style="flex-grow: 1; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; margin-bottom: 15px;" id="chatMessages">
+            <div style="background: var(--hover-bg); padding: 10px 14px; border-radius: 12px; max-width: 80%; width: fit-content;">مرحباً بك في نظام الرسائل الخاص بمنصة كلمات!</div>
+          </div>
+
+          <div style="display: flex; gap: 8px;">
+            <input type="text" id="chatInput" class="input-box" placeholder="اكتب رسالة..." style="margin:0;">
+            <button class="btn-primary" style="width: auto; padding: 0 18px;" onclick="sendChatMessage()"><i class="fa-solid fa-paper-plane"></i></button>
+          </div>
         </div>
       </div>
+
+      <!-- Notifications View -->
+      <div id="notificationsSection" class="page-section" style="background: var(--card-bg); border-radius: 10px; border: 1px solid var(--border-color); padding: 40px; text-align: center; color: var(--text-sub);">
+        <i class="fa-regular fa-bell" style="font-size: 2.5rem; margin-bottom: 10px; color: var(--accent);"></i>
+        <p>لا توجد إشعارات جديدة حالياً.</p>
+      </div>
+    </div>
+
+    <!-- Navigation Bar -->
+    <div id="navBar" class="nav-bar hidden">
+      <div class="nav-link active" onclick="switchTab('homeSection', this)" title="الرئيسية"><i class="fa-solid fa-house"></i></div>
+      <div class="nav-link" onclick="switchTab('friendsSection', this)" title="الأصدقاء"><i class="fa-solid fa-user-group"></i></div>
+      <div class="nav-link" onclick="switchTab('chatSection', this)" title="الرسائل"><i class="fa-regular fa-envelope"></i></div>
+      <div class="nav-link" onclick="switchTab('notificationsSection', this)" title="الإشعارات"><i class="fa-regular fa-bell"></i></div>
+      <div class="nav-link" onclick="switchTab('profileSection', this)" title="الملف الشخصي"><i class="fa-regular fa-user"></i></div>
     </div>
   </div>
 
   <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('./sw.js').catch(() => {});
-      });
+    const SUPABASE_URL = 'https://qrnbfjvutzkmoannmujk.supabase.co';
+    const SUPABASE_KEY = 'sb_publishable_Q4uNpSCbSEPo5-Ta09fE-g_T-9M_B9o';
+    const _supabase = supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+
+    let localPosts = [];
+    let selectedImageData = null;
+    let customAvatarData = localStorage.getItem('kalimat_avatar') || null;
+    let isSignUp = false;
+    let activeUser = localStorage.getItem('kalimat_user') || null;
+    let userBio = localStorage.getItem('kalimat_bio') || 'مرحباً بك في ملفي الشخصي علي منصة كلمات!';
+    let followingUsers = JSON.parse(localStorage.getItem('kalimat_following') || '[]');
+    let blockedUsers = JSON.parse(localStorage.getItem('kalimat_blocked') || '[]');
+
+    function init() {
+      const savedPosts = localStorage.getItem('kalimat_posts_data');
+      if (savedPosts) {
+        try { localPosts = JSON.parse(savedPosts); } catch(e) {}
+      }
+
+      if (activeUser) {
+        showApp();
+      }
     }
+
+    function savePostsToStorage() {
+      localStorage.setItem('kalimat_posts_data', JSON.stringify(localPosts));
+    }
+
+    function toggleAuthMode() {
+      isSignUp = !isSignUp;
+      document.getElementById('authTitle').innerText = isSignUp ? 'إنشاء حساب جديد' : 'تسجيل الدخول';
+      document.getElementById('authSubmitBtn').innerText = isSignUp ? 'تسجيل' : 'دخول';
+      document.getElementById('authToggleBtn').innerText = isSignUp ? 'لدي حساب بالفعل' : 'إنشاء حساب جديد';
+      document.getElementById('phone').classList.toggle('hidden', !isSignUp);
+    }
+
+    function loginDirectly() {
+      const inputVal = document.getElementById('username').value.trim();
+      const name = inputVal ? inputVal : 'Guest';
+      activeUser = name;
+      localStorage.setItem('kalimat_user', name);
+      showApp();
+    }
+
+    function showApp() {
+      document.getElementById('authSection').classList.add('hidden');
+      document.getElementById('navBar').classList.remove('hidden');
+
+      updateAvatarDisplay();
+      document.getElementById('profileName').innerText = activeUser;
+      document.getElementById('profileHandle').innerText = '@' + activeUser;
+      document.getElementById('profileBio').innerText = userBio;
+      
+      updateFollowStats();
+
+      switchTab('homeSection', document.querySelector('.nav-link'));
+      loadPosts();
+    }
+
+    function updateFollowStats() {
+      document.getElementById('followingCount').innerText = followingUsers.length;
+      document.getElementById('followersCount').innerText = '0';
+      document.getElementById('blockedCount').innerText = blockedUsers.length;
+    }
+
+    /* إدارة المتابعة والحظر */
+    function toggleFollow(authorName) {
+      if (!authorName || authorName === activeUser) return;
+
+      const index = followingUsers.indexOf(authorName);
+      if (index > -1) {
+        followingUsers.splice(index, 1);
+      } else {
+        followingUsers.push(authorName);
+      }
+
+      localStorage.setItem('kalimat_following', JSON.stringify(followingUsers));
+      updateFollowStats();
+      renderPosts(localPosts);
+      handleSearch();
+      renderFriendsList();
+    }
+
+    function blockUser(authorName) {
+      if (!authorName || authorName === activeUser) return;
+      
+      if (!blockedUsers.includes(authorName)) {
+        blockedUsers.push(authorName);
+        localStorage.setItem('kalimat_blocked', JSON.stringify(blockedUsers));
+        
+        // إلغاء المتابعة تلقائياً إن وجدت
+        const followIdx = followingUsers.indexOf(authorName);
+        if (followIdx > -1) {
+          followingUsers.splice(followIdx, 1);
+          localStorage.setItem('kalimat_following', JSON.stringify(followingUsers));
+        }
+      }
+
+      updateFollowStats();
+      renderPosts(localPosts);
+      renderBlockedUsersList();
+      alert(`تم حظر ${authorName} بنجاح ولن تظهر منشوراته لديك.`);
+    }
+
+    function unblockUser(authorName) {
+      const idx = blockedUsers.indexOf(authorName);
+      if (idx > -1) {
+        blockedUsers.splice(idx, 1);
+        localStorage.setItem('kalimat_blocked', JSON.stringify(blockedUsers));
+      }
+
+      updateFollowStats();
+      renderPosts(localPosts);
+      renderBlockedUsersList();
+    }
+
+    function toggleBlockedListModal() {
+      const modal = document.getElementById('blockedModal');
+      modal.classList.toggle('hidden');
+      if (!modal.classList.contains('hidden')) {
+        renderBlockedUsersList();
+      }
+    }
+
+    function renderBlockedUsersList() {
+      const container = document.getElementById('blockedUsersList');
+      if (blockedUsers.length === 0) {
+        container.innerHTML = '<p style="color:var(--text-sub); font-size:0.85rem;">لا يوجد مستخدمين محظورين.</p>';
+        return;
+      }
+
+      container.innerHTML = blockedUsers.map(user => `
+        <div class="user-card">
+          <div style="display:flex; align-items:center; gap:8px;">
+            <div class="avatar" style="width:32px; height:32px; font-size:0.9rem;">${user[0].toUpperCase()}</div>
+            <span style="font-weight:bold; font-size:0.9rem;">${user}</span>
+          </div>
+          <button class="btn-secondary" style="width:auto; margin:0; padding:4px 10px; font-size:0.8rem;" onclick="unblockUser('${user}')">إلغاء الحظر</button>
+        </div>
+      `).join('');
+    }
+
+    function renderFriendsList() {
+      const container = document.getElementById('friendsList');
+      if (followingUsers.length === 0) {
+        container.innerHTML = '<p style="text-align:center; color:var(--text-sub); padding:20px;">أنت لا تتابع أي شخص حالياً. ابحث عن أعضاء وتابعهم!</p>';
+        return;
+      }
+
+      container.innerHTML = followingUsers.map(user => `
+        <div class="user-card">
+          <div style="display:flex; align-items:center; gap:10px;">
+            <div class="avatar">${user[0].toUpperCase()}</div>
+            <div>
+              <div style="font-weight:bold;">${user}</div>
+              <div style="font-size:0.8rem; color:var(--text-sub);">@${user}</div>
+            </div>
+          </div>
+          <div style="display:flex; gap:6px;">
+            <button class="btn-follow following" onclick="toggleFollow('${user}')">إلغاء المتابعة</button>
+            <button class="btn-danger" onclick="blockUser('${user}')">حظر</button>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    function updateAvatarDisplay() {
+      const initial = activeUser ? activeUser[0].toUpperCase() : 'U';
+      const myAvatar = document.getElementById('myAvatar');
+      const profileAvatar = document.getElementById('profileAvatar');
+
+      if (customAvatarData) {
+        myAvatar.innerHTML = `<img src="${customAvatarData}">`;
+        profileAvatar.innerHTML = `<img src="${customAvatarData}">`;
+      } else {
+        myAvatar.innerText = initial;
+        profileAvatar.innerText = initial;
+      }
+    }
+
+    function logout() {
+      localStorage.removeItem('kalimat_user');
+      activeUser = null;
+      location.reload();
+    }
+
+    function switchTab(sectionId, el) {
+      document.querySelectorAll('.page-section').forEach(s => s.classList.remove('active'));
+      document.querySelectorAll('.nav-link').forEach(n => n.classList.remove('active'));
+      
+      document.getElementById(sectionId).classList.add('active');
+      
+      const backBtn = document.getElementById('backBtn');
+      if (sectionId === 'homeSection') {
+        backBtn.style.display = 'none';
+      } else {
+        backBtn.style.display = 'block';
+      }
+
+      if (el) {
+        el.classList.add('active');
+      } else {
+        const links = document.querySelectorAll('.nav-link');
+        if (sectionId === 'homeSection') links[0]?.classList.add('active');
+        else if (sectionId === 'friendsSection') links[1]?.classList.add('active');
+        else if (sectionId === 'chatSection') links[2]?.classList.add('active');
+        else if (sectionId === 'notificationsSection') links[3]?.classList.add('active');
+        else if (sectionId === 'profileSection') links[4]?.classList.add('active');
+      }
+
+      if(sectionId === 'profileSection') renderMyPosts();
+      if(sectionId === 'friendsSection') renderFriendsList();
+    }
+
+    function goBackHome() {
+      switchTab('homeSection');
+    }
+
+    function toggleEmojiPicker() {
+      document.getElementById('emojiPicker').classList.toggle('active');
+    }
+
+    function addEmoji(emoji) {
+      const postInput = document.getElementById('postInput');
+      postInput.value += emoji;
+      document.getElementById('emojiPicker').classList.remove('active');
+    }
+
+    function previewImage(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          selectedImageData = e.target.result;
+          document.getElementById('previewImg').src = selectedImageData;
+          document.getElementById('imagePreviewBox').classList.remove('hidden');
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function removeSelectedImage() {
+      selectedImageData = null;
+      document.getElementById('imageInput').value = '';
+      document.getElementById('imagePreviewBox').classList.add('hidden');
+    }
+
+    function showEditProfileModal() {
+      document.getElementById('editProfileModal').classList.toggle('hidden');
+      document.getElementById('editDisplayName').value = activeUser;
+      document.getElementById('editBio').value = userBio;
+    }
+
+    function updateProfilePicture(event) {
+      const file = event.target.files[0];
+      if (file) {
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          customAvatarData = e.target.result;
+          localStorage.setItem('kalimat_avatar', customAvatarData);
+          updateAvatarDisplay();
+        };
+        reader.readAsDataURL(file);
+      }
+    }
+
+    function saveProfileChanges() {
+      const newName = document.getElementById('editDisplayName').value.trim();
+      const newBio = document.getElementById('editBio').value.trim();
+      
+      if (newName) {
+        activeUser = newName;
+        localStorage.setItem('kalimat_user', newName);
+      }
+      if (newBio) {
+        userBio = newBio;
+        localStorage.setItem('kalimat_bio', newBio);
+      }
+
+      showApp();
+      document.getElementById('editProfileModal').classList.add('hidden');
+    }
+
+    async function addPost() {
+      const text = document.getElementById('postInput').value.trim();
+      if (!text && !selectedImageData) return;
+
+      const newPost = {
+        id: Date.now(),
+        author_name: activeUser,
+        content: text,
+        image_url: selectedImageData,
+        likes: 0,
+        reposts: 0,
+        liked_by_me: false,
+        reposted_by_me: false,
+        comments: [],
+        created_at: new Date().toISOString()
+      };
+
+      try {
+        await _supabase.from('posts').insert([{ 
+          content: text, 
+          author_name: activeUser,
+          image_url: selectedImageData 
+        }]);
+      } catch (e) {}
+
+      localPosts.unshift(newPost);
+      savePostsToStorage();
+
+      document.getElementById('postInput').value = '';
+      removeSelectedImage();
+      renderPosts(localPosts);
+    }
+
+    function toggleDropdownMenu(postId, event) {
+      event.stopPropagation();
+      document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('active'));
+      const menu = document.getElementById(`dropdown-${postId}`);
+      if(menu) menu.classList.toggle('active');
+    }
+
+    document.addEventListener('click', () => {
+      document.querySelectorAll('.dropdown-menu').forEach(m => m.classList.remove('active'));
+    });
+
+    function toggleLike(postId) {
+      const post = localPosts.find(p => p.id === postId);
+      if (post) {
+        post.liked_by_me = !post.liked_by_me;
+        post.likes += post.liked_by_me ? 1 : -1;
+        savePostsToStorage();
+        renderPosts(localPosts);
+      }
+    }
+
+    function toggleRepost(postId) {
+      const originalPost = localPosts.find(p => p.id === postId);
+      if (!originalPost) return;
+
+      if (!originalPost.reposts) originalPost.reposts = 0;
+      originalPost.reposted_by_me = !originalPost.reposted_by_me;
+      originalPost.reposts += originalPost.reposted_by_me ? 1 : -1;
+
+      if (originalPost.reposted_by_me) {
+        const repostedPost = {
+          id: Date.now(),
+          author_name: activeUser,
+          content: `🔁 إعادة نشر من @${originalPost.author_name}:\n\n${originalPost.content}`,
+          image_url: originalPost.image_url,
+          likes: 0,
+          reposts: 0,
+          liked_by_me: false,
+          reposted_by_me: false,
+          comments: [],
+          created_at: new Date().toISOString()
+        };
+        localPosts.unshift(repostedPost);
+      }
+
+      savePostsToStorage();
+      renderPosts(localPosts);
+    }
+
+    function toggleComments(postId) {
+      const commentsBox = document.getElementById(`comments-${postId}`);
+      if (commentsBox) {
+        commentsBox.classList.toggle('active');
+      }
+    }
+
+    function addComment(postId) {
+      const input = document.getElementById(`comment-input-${postId}`);
+      const text = input.value.trim();
+      if (!text) return;
+
+      const post = localPosts.find(p => p.id === postId);
+      if (post) {
+        if (!post.comments) post.comments = [];
+        post.comments.push({ author: activeUser, text: text });
+        savePostsToStorage();
+        input.value = '';
+        renderPosts(localPosts);
+        document.getElementById(`comments-${postId}`).classList.add('active');
+      }
+    }
+
+    async function loadPosts() {
+      try {
+        const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
+        if (!error && posts && posts.length > 0) {
+          const remotePosts = posts.map(p => ({
+            id: p.id || Math.random(),
+            author_name: p.author_name || 'User',
+            content: p.content || '',
+            image_url: p.image_url || null,
+            likes: p.likes || 0,
+            reposts: p.reposts || 0,
+            liked_by_me: false,
+            reposted_by_me: false,
+            comments: []
+          }));
+
+          const merged = [...localPosts];
+          remotePosts.forEach(rp => {
+            if(!merged.some(mp => mp.id === rp.id || (mp.content === rp.content && mp.author_name === rp.author_name))) {
+              merged.push(rp);
+            }
+          });
+          localPosts = merged;
+          savePostsToStorage();
+        }
+      } catch (e) {}
+
+      if (localPosts.length === 0) {
+        localPosts = [
+          { id: 1, author_name: 'Kalimat', content: 'مرحباً بك! جرب إضافة منشور أو صورة، وسيظل محفوظاً بشكل دائم الآن.', likes: 0, reposts: 0, liked_by_me: false, reposted_by_me: false, comments: [] }
+        ];
+        savePostsToStorage();
+      }
+
+      renderPosts(localPosts);
+    }
+
+    function renderPosts(list, targetContainerId = 'postsList') {
+      const container = document.getElementById(targetContainerId);
+      if(!container) return;
+
+      // تصفية المنشورات المحظورة
+      const visiblePosts = list.filter(p => !blockedUsers.includes(p.author_name));
+
+      if(visiblePosts.length === 0) {
+        container.innerHTML = '<p style="text-align:center; padding:20px; color:var(--text-sub);">لا توجد منشورات لعرضها.</p>';
+        return;
+      }
+
+      container.innerHTML = visiblePosts.map(p => {
+        const initial = p.author_name ? p.author_name[0].toUpperCase() : 'U';
+        const commentsList = (p.comments || []).filter(c => !blockedUsers.includes(c.author));
+        const isFollowing = followingUsers.includes(p.author_name);
+        const isMe = p.author_name === activeUser;
+
+        return `
+          <div class="post">
+            <div class="post-header">
+              <div class="post-user-info">
+                <div class="avatar">${customAvatarData && isMe ? `<img src="${customAvatarData}">` : initial}</div>
+                <div>
+                  <div class="post-author">${p.author_name}</div>
+                  <div class="post-handle">@${p.author_name}</div>
+                </div>
+              </div>
+
+              <div style="display:flex; align-items:center; gap:8px;">
+                ${!isMe ? `
+                  <button class="btn-follow ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${p.author_name}')">
+                    ${isFollowing ? 'تتابعه' : 'متابعة'}
+                  </button>
+                ` : ''}
+                
+                <div class="post-options-menu">
+                  <i class="fa-solid fa-ellipsis options-btn" onclick="toggleDropdownMenu(${p.id}, event)"></i>
+                  <div id="dropdown-${p.id}" class="dropdown-menu">
+                    ${!isMe ? `
+                      <div class="dropdown-item danger" onclick="blockUser('${p.author_name}')">
+                        <i class="fa-solid fa-ban"></i> حظر ${p.author_name}
+                      </div>
+                    ` : '<div class="dropdown-item"><i class="fa-solid fa-thumbtack"></i> تثبيت المنشور</div>'}
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <div class="post-text">${p.content}</div>
+            ${p.image_url ? `<img src="${p.image_url}" class="post-image">` : ''}
+            
+            <div class="post-footer">
+              <div class="post-action ${p.liked_by_me ? 'liked' : ''}" onclick="toggleLike(${p.id})">
+                <i class="fa-${p.liked_by_me ? 'solid' : 'regular'} fa-heart"></i> ${p.likes}
+              </div>
+              <div class="post-action" onclick="toggleComments(${p.id})">
+                <i class="fa-regular fa-comment"></i> ${commentsList.length}
+              </div>
+              <div class="post-action ${p.reposted_by_me ? 'reposted' : ''}" onclick="toggleRepost(${p.id})">
+                <i class="fa-solid fa-retweet"></i> ${p.reposts || 0}
+              </div>
+            </div>
+
+            <div id="comments-${p.id}" class="comments-box">
+              <div id="comments-list-${p.id}">
+                ${commentsList.map(c => `
+                  <div class="comment-item">
+                    <div class="comment-user">@${c.author}</div>
+                    <div>${c.text}</div>
+                  </div>
+                `).join('')}
+              </div>
+              <div style="display:flex; gap:6px; margin-top:8px;">
+                <input type="text" id="comment-input-${p.id}" class="input-box" placeholder="اكتب تعليقاً..." style="margin:0; padding:8px 10px; font-size:0.85rem;">
+                <button class="btn-primary" style="width:auto; padding:6px 12px; font-size:0.85rem;" onclick="addComment(${p.id})">إرسال</button>
+              </div>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    function renderMyPosts() {
+      const myPosts = localPosts.filter(p => p.author_name === activeUser);
+      renderPosts(myPosts, 'myPostsList');
+    }
+
+    function handleSearch() {
+      const query = document.getElementById('searchInput').value.trim().toLowerCase();
+      const resultsContainer = document.getElementById('searchResults');
+
+      if (!query) {
+        resultsContainer.innerHTML = '<p style="text-align: center; color: var(--text-sub); margin-top: 20px;">اكتب شيئاً للبحث في كلمات...</p>';
+        return;
+      }
+
+      const allAuthors = [...new Set(localPosts.map(p => p.author_name))].filter(u => !blockedUsers.includes(u));
+      const matchedUsers = allAuthors.filter(u => u.toLowerCase().includes(query));
+      const matchedPosts = localPosts.filter(p => p.content.toLowerCase().includes(query) && !blockedUsers.includes(p.author_name));
+
+      let html = '';
+
+      if (matchedUsers.length > 0) {
+        html += `<h4 style="margin: 10px 0; color: var(--accent);">الأعضاء (${matchedUsers.length})</h4>`;
+        matchedUsers.forEach(u => {
+          const isFollowing = followingUsers.includes(u);
+          const isMe = u === activeUser;
+          html += `
+            <div class="user-card">
+              <div style="display:flex; align-items:center; gap:10px;">
+                <div class="avatar">${u[0].toUpperCase()}</div>
+                <div>
+                  <div style="font-weight:bold;">${u}</div>
+                  <div style="font-size:0.8rem; color:var(--text-sub);">@${u}</div>
+                </div>
+              </div>
+              ${!isMe ? `
+                <div style="display:flex; gap:6px;">
+                  <button class="btn-follow ${isFollowing ? 'following' : ''}" onclick="toggleFollow('${u}')">
+                    ${isFollowing ? 'تتابعه' : 'متابعة'}
+                  </button>
+                  <button class="btn-danger" onclick="blockUser('${u}')">حظر</button>
+                </div>
+              ` : ''}
+            </div>
+          `;
+        });
+      }
+
+      if (matchedPosts.length > 0) {
+        html += `<h4 style="margin: 15px 0 10px; color: var(--accent);">المنشورات (${matchedPosts.length})</h4>`;
+        resultsContainer.innerHTML = html + '<div id="searchPostsContainer"></div>';
+        renderPosts(matchedPosts, 'searchPostsContainer');
+      } else if (matchedUsers.length === 0) {
+        resultsContainer.innerHTML = '<p style="text-align: center; color: var(--text-sub); margin-top: 20px;">لم يتم العثور على أي نتائج مطابقة.</p>';
+      } else {
+        resultsContainer.innerHTML = html;
+      }
+    }
+
+    function sendChatMessage() {
+      const input = document.getElementById('chatInput');
+      const text = input.value.trim();
+      if (!text) return;
+
+      const chatContainer = document.getElementById('chatMessages');
+      const newMsg = document.createElement('div');
+      newMsg.style.cssText = "background: var(--accent); padding: 10px 14px; border-radius: 12px; max-width: 80%; width: fit-content; margin-left: auto; color: #fff;";
+      newMsg.innerText = text;
+      
+      chatContainer.appendChild(newMsg);
+      input.value = '';
+      chatContainer.scrollTop = chatContainer.scrollHeight;
+    }
+
+    init();
   </script>
 </body>
-</html>
+  </html>

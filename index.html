@@ -587,7 +587,7 @@
       if (!text && !selectedImageData) return;
 
       const newPost = {
-        id: Date.now(),
+        id: Date.now() + Math.random(),
         author_name: activeUser,
         content: text,
         image_url: selectedImageData,
@@ -646,7 +646,7 @@
 
       if (originalPost.reposted_by_me) {
         const repostedPost = {
-          id: Date.now(),
+          id: Date.now() + Math.random(),
           author_name: activeUser,
           content: `🔁 إعادة نشر من @${originalPost.author_name}:\n\n${originalPost.content}`,
           image_url: originalPost.image_url,
@@ -692,7 +692,7 @@
         const { data: posts, error } = await _supabase.from('posts').select('*').order('created_at', { ascending: false });
         if (!error && posts && posts.length > 0) {
           const remotePosts = posts.map(p => ({
-            id: p.id || Math.random(),
+            id: p.id || (Date.now() + Math.random()),
             author_name: p.author_name || 'User',
             content: p.content || '',
             image_url: p.image_url || null,

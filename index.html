@@ -161,6 +161,21 @@ body.dark{--p:#38bdf8;--p-bright:#7dd3fc;--p-soft:#123448;--bg:#0b1720;--s:#1426
 .mention{color:var(--p);font-weight:bold}
 .vis-select{width:auto;padding:8px 10px}.vis-tag{color:var(--m);font-size:12px}
 .comments-closed{text-align:center;color:var(--m);font-size:13px;padding:6px}
+.c-sortbar{display:flex;justify-content:flex-start}.c-sort{width:auto;padding:4px 8px;font-size:13px;border-radius:99px;background:var(--bg)}
+.c-badge{display:inline-block;margin-inline-start:6px;font-size:11px;font-weight:normal;color:var(--p);border:1px solid var(--p);border-radius:99px;padding:0 6px}
+.c-pin{display:block;font-size:11px;color:var(--m);padding:0 8px 2px}
+.comment-form{display:flex;gap:8px;align-items:flex-end}.comment-form .c-box{flex:1;min-width:0;display:grid;gap:4px}
+.comment-form textarea.comment-input{resize:none;min-height:40px;max-height:120px;border-radius:18px;padding:9px 13px;line-height:1.5;overflow-y:auto}
+.c-tools{display:flex;align-items:center;gap:8px}.c-tools .emoji-toggle{font-size:18px;text-decoration:none;padding:0 4px}
+.emoji-row{display:flex;flex-wrap:wrap;gap:2px;background:var(--bg);border-radius:12px;padding:4px}.emoji-pick{border:0;background:none;font-size:20px;padding:3px 5px;cursor:pointer;border-radius:8px}.emoji-pick:active{background:var(--p-soft)}
+.post-body a,.comment-bubble a{color:var(--p);text-decoration:underline;overflow-wrap:anywhere}
+.vid{position:relative;aspect-ratio:16/9;background:#000;border-radius:11px;overflow:hidden;max-width:100%}.vid.v{aspect-ratio:9/16;max-height:560px;margin-inline:auto}
+.vid-play{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;background:#10202e;color:#fff;cursor:pointer;display:grid;place-items:center}.vid-play img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:.85}
+.vid-ico{position:relative;width:58px;height:58px;border-radius:50%;background:rgba(0,0,0,.65);display:grid;place-items:center;font-size:24px;padding-inline-start:4px}.vid-lbl{position:absolute;bottom:8px;inset-inline-start:10px;font-size:12px;background:rgba(0,0,0,.6);padding:2px 8px;border-radius:99px}
+.vid iframe,.vid video{position:absolute;inset:0;width:100%;height:100%;border:0}.vid-open{font-size:12px;color:var(--m)}
+.prof-tab{display:flex;justify-content:center;margin:6px 0}.prof-tab .btn{min-width:130px}
+.info-list{display:grid;gap:10px}.info-row{display:flex;gap:10px;align-items:center;border-bottom:1px solid var(--b);padding-bottom:8px}.info-row:last-child{border-bottom:0}.info-row b{min-width:92px}
+
 .edit-opts{display:grid;gap:10px}.edit-opts label{display:grid;gap:4px;font-size:14px}.edit-opts .chk{display:flex;align-items:center;gap:8px}
 .heal-banner{position:fixed;z-index:300;top:0;right:0;left:0;background:#b45309;color:#fff;padding:10px 12px;text-align:center;font-size:14px}.heal-banner button{margin-inline-start:10px}
 .flag-note .btn{margin-top:6px;padding:5px 10px;font-size:13px}
@@ -217,7 +232,6 @@ body{-webkit-tap-highlight-color:transparent}
 <main class="main-column">
 <section id="page-home" class="page"><h2 class="page-title">الرئيسية</h2>
 <div id="welcome-note" class="card welcome-note hidden"><div class="wn-text"><strong>أهلًا بك في كلمات 👋</strong> شاركنا اقتراحك لنطوّر المنصة معًا.</div><button id="suggest-btn" class="sg-btn" type="button" title="أرسل اقتراحك" aria-label="أرسل اقتراحك"><i class="fa-regular fa-lightbulb"></i></button><button id="welcome-close" class="ib-close" type="button" aria-label="إغلاق">×</button></div>
-<div class="feature-actions"><button id="publish-main-btn" class="btn" type="button">➕ النشر</button><button id="profile-settings-btn" class="btn secondary" type="button">⚙️ الملف الشخصي (الجنس والحالة والعنوان)</button></div>
 <form id="new-post-form" class="card post" style="margin-bottom:14px"><div class="row"><img id="post-user-avatar" class="avatar" alt=""><strong>ماذا يدور في فكرك؟</strong></div>
 <textarea id="new-post-text" class="field" rows="3" maxlength="5000" placeholder="شارك فكرة أو خاطرة أو سؤالًا..."></textarea>
 <label class="video-url-label">رابط فيديو (اختياري)<input id="new-post-video-url" class="field" type="url" inputmode="url" maxlength="1000" placeholder="https://youtu.be/... أو رابط فيديو مباشر"></label>
@@ -227,7 +241,7 @@ body{-webkit-tap-highlight-color:transparent}
 <section id="page-chat" class="page hidden"><h2 class="page-title">المحادثات</h2><div class="card chat-layout"><div class="chat-rooms"><strong>المحادثات</strong><div id="chat-rooms-list" style="margin-top:8px"></div></div><div class="chat-box"><div id="chat-heading" class="muted">اختر صديقًا لبدء المحادثة</div><div id="chat-messages"><div class="feed-empty">لا توجد محادثة محددة.</div></div><form id="chat-form" class="chat-form"><input id="chat-input" class="field" maxlength="2000" placeholder="اكتب رسالة..." disabled><button id="chat-send-btn" class="btn" type="submit" disabled aria-label="إرسال"><i class="fa-solid fa-paper-plane"></i></button></form></div></div></section>
 <section id="page-friends" class="page hidden"><h2 class="page-title">الأصدقاء والطلبات</h2><div class="card" style="margin-bottom:14px"><h3 style="margin-top:0">طلبات الصداقة</h3><div id="friend-requests-list"><div class="feed-empty">جارٍ التحميل...</div></div></div><div class="card"><h3 style="margin-top:0">قائمة الأصدقاء</h3><div class="setting-row" style="margin-bottom:10px"><div><strong>ظهور قائمة أصدقائك</strong><p id="hide-friends-state"></p></div><button id="hide-friends-btn" class="btn secondary" type="button">إخفاء القائمة</button></div><div id="friends-list"><div class="feed-empty">جارٍ التحميل...</div></div></div></section>
 <section id="page-notifications" class="page hidden"><h2 class="page-title">الإشعارات</h2><div id="notifications-list" class="card"><div class="feed-empty">لا توجد إشعارات.</div></div></section>
-<section id="page-profile" class="page hidden"><div class="card profile-head"><img id="profile-view-avatar" class="avatar big" alt=""><h2 id="profile-view-name" style="margin:0"></h2><div id="profile-view-meta" class="muted small"></div><p id="profile-view-bio" class="profile-bio"></p><div id="profile-actions" class="row wrap" style="justify-content:center"></div></div><h3>منشورات العضو</h3><div id="user-profile-posts-feed" class="main-column"></div></section>
+<section id="page-profile" class="page hidden"><div class="card profile-head"><img id="profile-view-avatar" class="avatar big" alt=""><h2 id="profile-view-name" style="margin:0"></h2><div id="profile-view-meta" class="muted small"></div><p id="profile-view-bio" class="profile-bio"></p><div id="profile-view-info" class="muted small"></div><button type="button" class="btn secondary hidden" id="profile-info-btn">معلومات العضو</button><div id="profile-actions" class="row wrap" style="justify-content:center"></div></div><div class="prof-tab"><button type="button" class="btn" id="profile-posts-tab"><i class="fa-regular fa-pen-to-square"></i> النشر</button></div><div id="user-profile-posts-feed" class="main-column"></div></section>
 </main>
 <aside class="right-column"><div class="card"><h3 style="margin-top:0">مرحبًا بك في كلمات</h3><p class="muted small">مساحة عربية للفكر والمعرفة والحوار المحترم.</p><button class="btn secondary" data-page="friends" style="width:100%">اكتشف الأصدقاء</button></div><div class="card"><h3 style="margin-top:0">الخصوصية</h3><p class="muted small">أدر قائمة الحظر من مركز الإعدادات.</p><button class="btn secondary" id="right-settings-btn" style="width:100%">فتح الإعدادات</button></div></aside>
 </div>
@@ -305,16 +319,10 @@ const asArray=v=>Array.isArray(v)?v:[];
 const safeUrlRaw=v=>{const s=String(v||"");return /^(https:\/\/|data:image\/(jpeg|png|webp|gif);base64,)/i.test(s)?s:""};
 const safeVideoUrl=v=>{try{const u=new URL(String(v||"").trim());return u.protocol==="https:"?u.href:""}catch{return ""}};
 function videoHtmlForPost(p){
- const raw=safeVideoUrl(p?.videoUrl);if(!raw)return "";
- let u;try{u=new URL(raw)}catch{return ""}
- const host=u.hostname.toLowerCase().replace(/^www\./,"");
- let id="";
- if(host==="youtu.be")id=u.pathname.split("/").filter(Boolean)[0]||"";
- else if(host==="youtube.com"||host.endsWith(".youtube.com")){id=u.searchParams.get("v")||u.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/)?.[1]||""}
- if(/^[A-Za-z0-9_-]{11}$/.test(id))return `<div class="post-video"><iframe src="https://www.youtube-nocookie.com/embed/${id}" title="فيديو يوتيوب" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`;
- if(host==="facebook.com"||host.endsWith(".facebook.com")||host==="fb.watch")return `<div class="video-link-card"><p>🎥 فيديو من فيسبوك</p><a href="${esc(raw)}" target="_blank" rel="noopener noreferrer">فتح الفيديو على فيسبوك ↗</a></div>`;
- if(/\.(mp4|webm|ogg)$/i.test(u.pathname))return `<video class="post-video-file" src="${esc(raw)}" controls playsinline preload="metadata">عذرًا، لا يدعم متصفحك تشغيل هذا الفيديو.</video>`;
- return `<div class="video-link-card"><p>🎥 فيديو عبر رابط خارجي</p><a href="${esc(raw)}" target="_blank" rel="noopener noreferrer">مشاهدة الفيديو ↗</a></div>`;
+ const raw=safeVideoUrl(p?.videoUrl);
+ if(raw){if(videoOf(raw))return videoHtml(p.id,raw);
+  return `<div class="video-link-card"><p>🎥 فيديو عبر رابط خارجي</p><a href="${esc(raw)}" target="_blank" rel="noopener noreferrer nofollow">مشاهدة الفيديو ↗</a></div>`}
+ return videoOf(p?.text)?videoHtml(p.id,p.text):"";
 }
 const rawAvatar=u=>safeUrlRaw(u?.thumb||u?.photoURL||u?.avatar)||DEFAULT_AVATAR;
 const rawBigAvatar=u=>safeUrlRaw(u?.photoURL)||rawAvatar(u);
@@ -325,6 +333,32 @@ const ms=v=>{if(!v)return 0;if(typeof v==="number")return v;if(typeof v.toMillis
 const snapDoc=d=>({id:d.id,...d.data({serverTimestamps:"estimate"})});
 const online=()=>navigator.onLine!==false;
 function timeLabel(ts){try{const t=ms(ts);return t?new Date(t).toLocaleString("ar",{dateStyle:"medium",timeStyle:"short"}):"الآن"}catch{return""}}
+
+const relTime=ts=>{try{const t=ms(ts);if(!t)return"الآن";const d=(Date.now()-t)/1000;if(d<60)return"الآن";if(d<3600)return"قبل "+Math.floor(d/60)+" د";if(d<86400)return"قبل "+Math.floor(d/3600)+" س";if(d<604800)return"قبل "+Math.floor(d/86400)+" يوم";return new Date(t).toLocaleDateString("ar",{dateStyle:"medium"})}catch{return""}};
+const linkify=h=>h.replace(/(https?:\/\/[^\s<]+)/g,u=>{const m=u.match(/[.,;:!?)\]،؛]+$/),t=m?m[0]:"",c=t?u.slice(0,-t.length):u;return `<a href="${c}" target="_blank" rel="noopener noreferrer nofollow">${c}</a>${t}`});
+const brl=v=>linkify(br(v));
+const cSort={v:"rel"},cLimit=new Map(),playingVids=new Set();
+const EMOJIS=["😀","😂","😍","🥰","😮","😢","😡","👍","👏","🙏","💪","🔥","❤️","🌹","🤲","✨"];
+const STATUS_LBL={"عازب/ة":["عازب","عزباء"],"مرتبط/ة":["مرتبط","مرتبطة"],"متزوج/ة":["متزوج","متزوجة"],"مطلق/ة":["مطلّق","مطلّقة"],"أرمل/ة":["أرمل","أرملة"]};
+const statusLabel=u=>{const r=STATUS_LBL[u.status];return r?(u.gender==="أنثى"?r[1]:r[0]):(u.status||"")};
+/* روابط الفيديو: تُعرض بطاقة خفيفة، والتشغيل عند الضغط فقط */
+function videoOf(text){
+ const t=String(text||"");let m;
+ if((m=t.match(/https?:\/\/(?:www\.|m\.)?(?:youtube\.com\/(?:watch\?[^\s]*?v=|shorts\/|embed\/|live\/)|youtu\.be\/)([\w-]{11})/i)))return{k:"YouTube",src:`https://www.youtube-nocookie.com/embed/${m[1]}?autoplay=1&rel=0&playsinline=1`,thumb:`https://i.ytimg.com/vi/${m[1]}/hqdefault.jpg`,url:m[0]};
+ if((m=t.match(/https?:\/\/(?:www\.|m\.|web\.)?facebook\.com\/[^\s<]*?(?:\/videos\/|\/reel\/|\/watch\/?\?v=|\/share\/[vr]\/|video\.php)[^\s<]*/i))||(m=t.match(/https?:\/\/fb\.watch\/[^\s<]+/i)))return{k:"فيسبوك",src:`https://www.facebook.com/plugins/video.php?href=${encodeURIComponent(m[0])}&show_text=false&autoplay=true`,url:m[0]};
+ if((m=t.match(/https?:\/\/(?:www\.)?vimeo\.com\/(?:video\/)?(\d{6,12})/i)))return{k:"Vimeo",src:`https://player.vimeo.com/video/${m[1]}?autoplay=1`,url:m[0]};
+ if((m=t.match(/https?:\/\/(?:www\.)?dailymotion\.com\/video\/([a-z0-9]+)/i)))return{k:"Dailymotion",src:`https://www.dailymotion.com/embed/video/${m[1]}?autoplay=1`,url:m[0]};
+ if((m=t.match(/https?:\/\/(?:www\.)?tiktok\.com\/@[\w.]+\/video\/(\d+)/i)))return{k:"TikTok",src:`https://www.tiktok.com/embed/v2/${m[1]}`,url:m[0],v:1};
+ if((m=t.match(/https:\/\/[^\s<]+?\.(?:mp4|webm|ogv)(?:\?[^\s<]*)?/i)))return{k:"ملف",direct:m[0],url:m[0]};
+ return null;
+}
+function videoHtml(pid,text){
+ const v=videoOf(text);if(!v)return"";
+ if(v.direct)return `<video class="post-video-file" controls preload="none" playsinline src="${esc(v.direct)}"></video>`;
+ const key=pid+"|"+v.src,on=playingVids.has(key);
+ const inner=on?`<iframe src="${esc(v.src)}" title="مشغل الفيديو" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"></iframe>`:`<button type="button" class="vid-play" aria-label="تشغيل الفيديو">${v.thumb?`<img src="${esc(v.thumb)}" alt="" loading="lazy">`:""}<span class="vid-ico">▶</span><span class="vid-lbl">${esc(v.k)}</span></button>`;
+ return `<div class="vid${v.v?" v":""}" data-key="${esc(key)}" data-src="${esc(v.src)}">${inner}</div><a class="vid-open" href="${esc(v.url)}" target="_blank" rel="noopener noreferrer nofollow">فتح الفيديو في موقعه الأصلي ↗</a>`;
+}
 
 /* ============ الحالة العامة ============ */
 let currentUser=null,currentUserData={},viewedProfile=null,authMode="login",selectedImage="";
@@ -384,7 +418,7 @@ async function getOfflinePosts(){
 async function clearOfflinePosts(){const d=await idb();if(!d)return;try{const tx=d.transaction("posts","readwrite");tx.objectStore("posts").clear();await txDone(tx)}catch{}}
 async function saveOfflineProfile(p,full=true){
  if(!p?.uid)return;const d=await idb();if(!d)return;
- const safe={uid:p.uid,name:p.name||"",displayName:p.displayName||p.name||"",thumb:p.thumb||"",bio:p.bio||"",gender:p.gender||"",status:p.status||"",address:p.address||""};
+ const safe={uid:p.uid,name:p.name||"",displayName:p.displayName||p.name||"",thumb:p.thumb||"",bio:p.bio||"",gender:p.gender||"",status:p.status||"",address:p.address||"",infoVis:p.infoVis||"public"};
  if(full){safe.photoURL=p.photoURL||"";safe.friends=asArray(p.friends);safe.blockedUsers=asArray(p.blockedUsers)}
  try{const tx=d.transaction("profiles","readwrite");tx.objectStore("profiles").put(safe);await txDone(tx)}catch{}
 }
@@ -687,24 +721,29 @@ function renderPost(p){
  if(p.repostOf){
   const o=p.originalPost||{},oa=liveAuthor(o.author,o.uid||o.author?.uid),oimg=safeUrlRaw(o.image)||repostImg.get(p.repostOf)||"";
   const imgHtml=oimg?`<img class="post-image" src="${esc(oimg)}" alt="صورة المنشور الأصلي" loading="lazy" decoding="async">`:(o.hasImage&&!repostImg.has(p.repostOf)?`<div class="repost-img" data-orig="${esc(p.repostOf)}"></div>`:"");
-  body=`<div class="muted small"><i class="fa-solid fa-retweet"></i> أعاد ${esc(nameOf(author))} نشر هذا المنشور</div><div class="card post quoted"><div class="row"><img class="avatar" src="${avatarOf(oa)}" alt="" loading="lazy" decoding="async"><div><button type="button" class="open-profile link-btn" data-uid="${esc(o.uid||oa.uid||"")}">${esc(nameOf(oa))}</button><div class="muted small">المنشور الأصلي</div></div></div>${o.text?`<div class="post-body">${br(o.text)}</div>`:""}${imgHtml}</div>`;
+  body=`<div class="muted small"><i class="fa-solid fa-retweet"></i> أعاد ${esc(nameOf(author))} نشر هذا المنشور</div><div class="card post quoted"><div class="row"><img class="avatar" src="${avatarOf(oa)}" alt="" loading="lazy" decoding="async"><div><button type="button" class="open-profile link-btn" data-uid="${esc(o.uid||oa.uid||"")}">${esc(nameOf(oa))}</button><div class="muted small">المنشور الأصلي</div></div></div>${o.text?`<div class="post-body">${brl(o.text)}</div>`:""}${imgHtml}</div>`;
  }else{
   const img=safeUrlRaw(p.image);
-  body=(p.text?`<div class="post-body">${br(p.text)}</div>`:"")+(img?`<img class="post-image" src="${esc(img)}" alt="صورة المنشور" loading="lazy" decoding="async">`:"")+videoHtmlForPost(p);
+  body=(p.text?`<div class="post-body">${brl(p.text)}</div>`:"")+(img?`<img class="post-image" src="${esc(img)}" alt="صورة المنشور" loading="lazy" decoding="async">`:"")+videoHtmlForPost(p);
  }
  const open=openComments.has(p.id),closed=!!p.commentsOff;
  /* التعليقات والردود */
- const ids=new Set(comments.map(c=>c.id)),tops=comments.filter(c=>!c.parentId||!ids.has(c.parentId)),reps=new Map();
+ const ids=new Set(comments.map(c=>c.id)),tops0=comments.filter(c=>!c.parentId||!ids.has(c.parentId)),reps=new Map();
  comments.forEach(c=>{if(c.parentId&&ids.has(c.parentId)){if(!reps.has(c.parentId))reps.set(c.parentId,[]);reps.get(c.parentId).push(c)}});
- const shown=expanded?tops:tops.slice(-3);
- const toggle=tops.length>3?`<button type="button" class="link-btn small muted toggle-comments">${expanded?"إخفاء التعليقات القديمة":"عرض كل التعليقات ("+tops.length+")"}</button>`:"";
- const commentsHtml=toggle+shown.map(c=>{
+ const pin=p.pinnedComment&&ids.has(p.pinnedComment)?p.pinnedComment:"";
+ const score=c=>asArray(c.likes).length+(reps.get(c.id)||[]).length*2;
+ const tops=tops0.slice().sort((x,y)=>{if(pin&&x.id===pin)return-1;if(pin&&y.id===pin)return 1;if(cSort.v==="new")return ms(y.createdAt)-ms(x.createdAt);if(cSort.v==="old")return ms(x.createdAt)-ms(y.createdAt);return score(y)-score(x)||ms(y.createdAt)-ms(x.createdAt)});
+ const lim=cLimit.get(p.id)||3,shown=tops.slice(0,lim);
+ const more=tops.length>lim?`<button type="button" class="link-btn small muted more-comments">عرض المزيد من التعليقات (${tops.length-lim})</button>`:"";
+ const sortSel=tops.length>1?`<div class="c-sortbar"><select class="c-sort field" aria-label="ترتيب التعليقات"><option value="rel"${cSort.v==="rel"?" selected":""}>الأكثر صلة</option><option value="new"${cSort.v==="new"?" selected":""}>الأحدث</option><option value="old"${cSort.v==="old"?" selected":""}>الأقدم</option></select></div>`:"";
+ const ctx={au:uid,pin};
+ const commentsHtml=sortSel+shown.map(c=>{
   const rs=reps.get(c.id)||[];let r="";
-  if(rs.length)r=expandedReplies.has(c.id)?`<div class="replies">${rs.map(x=>commentHtml(x,own,closed)).join("")}</div>`:`<div class="replies"><button type="button" class="link-btn small muted toggle-replies" data-cid="${esc(c.id)}">عرض ${rs.length} ${rs.length===1?"رد":"ردود"}</button></div>`;
-  return commentHtml(c,own,closed)+r;
- }).join("");
+  if(rs.length)r=expandedReplies.has(c.id)?`<div class="replies">${rs.map(x=>commentHtml(x,own,closed,ctx,false)).join("")}</div>`:`<div class="replies"><button type="button" class="link-btn small muted toggle-replies" data-cid="${esc(c.id)}">عرض ${rs.length} ${rs.length===1?"رد":"ردود"}</button></div>`;
+  return commentHtml(c,own,closed,ctx,true)+r;
+ }).join("")+more;
  const rt=replyTarget.get(p.id);
- const formHtml=closed?'<div class="comments-closed"><i class="fa-solid fa-comment-slash"></i> أغلق صاحب المنشور التعليقات.</div>':`${rt?`<div class="reply-banner">الرد على <strong>${esc(rt.name)}</strong><button type="button" class="link-btn cancel-reply" aria-label="إلغاء الرد">✕</button></div>`:""}<form class="comment-form"><input class="field comment-input" maxlength="1000" placeholder="${rt?"اكتب ردًا...":"اكتب تعليقًا..."}" aria-label="تعليق"><button class="btn" type="submit" aria-label="إرسال التعليق"><i class="fa-solid fa-paper-plane"></i></button></form>`;
+ const formHtml=closed?'<div class="comments-closed"><i class="fa-solid fa-comment-slash"></i> أغلق صاحب المنشور التعليقات.</div>':`${rt?`<div class="reply-banner">الرد على <strong>${esc(rt.name)}</strong><button type="button" class="link-btn cancel-reply" aria-label="إلغاء الرد">✕</button></div>`:""}<form class="comment-form"><img class="avatar sm" src="${avatarOf(currentUserData)}" alt=""><div class="c-box"><textarea class="field comment-input" rows="1" maxlength="1000" placeholder="${rt?"اكتب ردًا...":"اكتب تعليقًا..."}" aria-label="تعليق"></textarea><div class="c-tools"><button type="button" class="link-btn emoji-toggle" aria-label="رموز تعبيرية">🙂</button></div><div class="emoji-row hidden">${EMOJIS.map(e=>`<button type="button" class="emoji-pick">${e}</button>`).join("")}</div></div><button class="btn" type="submit" aria-label="إرسال التعليق"><i class="fa-solid fa-paper-plane"></i></button></form>`;
  const vis=p.visibility||"public",vt=VIS_LABEL[vis]||VIS_LABEL.public;
  const visTag=(vis!=="public"||own)?` · <span class="vis-tag"><i class="fa-solid ${vt[0]}"></i> ${vt[1]}</span>`:"";
  const picker=pickerFor===p.id?`<div class="react-picker">${REACTIONS.map(r=>`<button type="button" class="react-pick ${mine===r[0]?"sel":""}" data-r="${r[0]}" title="${r[2]}" aria-label="${r[2]}">${r[1]}</button>`).join("")}</div>`:"";
@@ -837,8 +876,6 @@ function openPublishModal(){
  form.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"});
  setTimeout(()=>$("new-post-text")?.focus({preventScroll:true}),80);
 }
-$("publish-main-btn").addEventListener("click",openPublishModal);
-$("profile-settings-btn").addEventListener("click",()=>editOwnProfile());
 
 $("new-post-form").addEventListener("submit",e=>{
  e.preventDefault();
@@ -933,6 +970,22 @@ async function openUserProfile(uid){
    if(canSee)$("profile-friends-link").onclick=()=>openFriendsOf(u);
   }
   $("profile-view-bio").textContent=u.missing?"لم يُكمل هذا العضو إعداد ملفه بعد.":(cleanBio(u.bio)||"لم يضف نبذة شخصية بعد.");
+  {
+   const vis=u.infoVis||"public",isF=asArray(currentUserData.friends).includes(uid),allowed=own||vis==="public"||(vis==="friends"&&isF);
+   const sum=[u.gender,statusLabel(u),u.address].filter(Boolean);
+   $("profile-view-info").textContent=(!u.missing&&allowed&&sum.length)?sum.join(" · "):"";
+   const ib=$("profile-info-btn");ib.classList.toggle("hidden",!!u.missing);
+   ib.onclick=()=>{
+    const rows=[];
+    if(u.gender)rows.push(["الجنس",u.gender]);
+    if(u.status)rows.push(["الحالة الاجتماعية",statusLabel(u)]);
+    if(u.address)rows.push(["العنوان",u.address]);
+    const jt=ms(u.createdAt);if(jt)rows.push(["انضم إلى كلمات",new Date(jt).toLocaleDateString("ar",{dateStyle:"long"})]);
+    rows.push(["عدد الأصدقاء",String(asArray(u.friends).length)]);
+    const note=!allowed?(vis==="me"?"هذا العضو أخفى معلوماته.":"معلومات هذا العضو متاحة لأصدقائه فقط."):(rows.length<=1&&!u.gender&&!u.status&&!u.address?(own?"لم تضف معلومات بعد. من «تعديل الملف» يمكنك إضافتها.":"لم يضف هذا العضو معلومات بعد."):"");
+    showModal("معلومات "+nameOf(u),`<div class="info-list">${allowed?rows.map(r=>`<div class="info-row"><b>${esc(r[0])}</b><span>${esc(r[1])}</span></div>`).join(""):""}${note?`<p class="muted" style="margin:0">${esc(note)}</p>`:""}</div>`);
+   };
+  }
   const actions=$("profile-actions");
   if(own){
    actions.innerHTML='<button id="edit-profile-btn" class="btn"><i class="fa-solid fa-pen"></i> تعديل الملف</button>';
@@ -946,6 +999,7 @@ async function openUserProfile(uid){
    $("add-friend-btn")?.addEventListener("click",()=>sendFriendRequest(u));
    $("remove-friend-btn")?.addEventListener("click",()=>removeFriend(uid));
   }
+  $("profile-posts-tab").onclick=()=>{if(own){showPage("home");setTimeout(()=>{const t=$("new-post-text");if(t){t.scrollIntoView({block:"center"});t.focus()}},120)}else{$("user-profile-posts-feed").scrollIntoView({behavior:"smooth",block:"start"})}};
   loadProfilePosts(uid);
  }catch(e){showError(e)}
 }
@@ -981,7 +1035,7 @@ async function loadProfilePosts(uid){
 }
 async function editOwnProfile(){
  const u=currentUserData;let newPhoto=null;
- showModal("تعديل الملف الشخصي",`<form id="edit-profile-form" class="post"><label>الاسم<input class="field" name="name" required maxlength="60" value="${esc(nameOf(u))}"></label><label>نبذة عنك<textarea class="field" name="bio" rows="4" maxlength="500">${esc(u.bio||"")}</textarea></label><div class="setting-section"><strong>بيانات إضافية للملف الشخصي</strong><label>الجنس<select class="field" name="gender"><option value="" ${!u.gender?"selected":""}>لم أحدد</option><option value="ذكر" ${u.gender==="ذكر"?"selected":""}>ذكر</option><option value="أنثى" ${u.gender==="أنثى"?"selected":""}>أنثى</option></select></label><label>الحالة الاجتماعية<select class="field" name="status"><option value="" ${!u.status?"selected":""}>لم أحدد</option><option value="عازب/ة" ${u.status==="عازب/ة"?"selected":""}>عازب/ة</option><option value="مرتبط/ة" ${u.status==="مرتبط/ة"?"selected":""}>مرتبط/ة</option><option value="متزوج/ة" ${u.status==="متزوج/ة"?"selected":""}>متزوج/ة</option></select></label><label>العنوان (المدينة / الدولة)<input class="field" name="address" maxlength="120" value="${esc(u.address||"")}" placeholder="مثال: بيروت، لبنان"></label></div><div class="setting-section"><strong>صورة الملف الشخصي</strong><div class="row"><img id="profile-edit-preview" class="avatar big" src="${esc(rawBigAvatar(u))}" alt="معاينة صورة الملف الشخصي"><div class="post" style="flex:1"><button class="btn secondary" id="profile-pick-image" type="button"><i class="fa-regular fa-image"></i> اختيار صورة من المعرض</button><button class="btn secondary" id="profile-remove-image" type="button">إزالة الصورة</button></div></div><input id="profile-image-file" class="hidden" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><p class="muted small" style="margin:0">تُقصّ الصورة إلى مربع وتُضغط تلقائيًا (نحو 45 كيلوبايت) لتبقى المنصة سريعة ومجانية.</p></div><button class="btn" id="profile-save-btn" type="submit">حفظ التغييرات</button></form>`);
+ showModal("تعديل الملف الشخصي",`<form id="edit-profile-form" class="post"><label>الاسم<input class="field" name="name" required maxlength="60" value="${esc(nameOf(u))}"></label><label>نبذة عنك<textarea class="field" name="bio" rows="4" maxlength="500">${esc(u.bio||"")}</textarea></label><div class="setting-section"><strong>بيانات إضافية للملف الشخصي</strong><label>الجنس<select class="field" name="gender"><option value="" ${!u.gender?"selected":""}>لم أحدد</option><option value="ذكر" ${u.gender==="ذكر"?"selected":""}>ذكر</option><option value="أنثى" ${u.gender==="أنثى"?"selected":""}>أنثى</option></select></label><label>الحالة الاجتماعية<select class="field" name="status"><option value="" ${!u.status?"selected":""}>لم أحدد</option><option value="عازب/ة" ${u.status==="عازب/ة"?"selected":""}>عازب/ة</option><option value="مرتبط/ة" ${u.status==="مرتبط/ة"?"selected":""}>مرتبط/ة</option><option value="متزوج/ة" ${u.status==="متزوج/ة"?"selected":""}>متزوج/ة</option><option value="مطلق/ة" ${u.status==="مطلق/ة"?"selected":""}>مطلق/ة</option><option value="أرمل/ة" ${u.status==="أرمل/ة"?"selected":""}>أرمل/ة</option></select></label><label>العنوان (المدينة / الدولة)<input class="field" name="address" maxlength="120" value="${esc(u.address||"")}" placeholder="مثال: بيروت، لبنان"></label><label>من يرى هذه المعلومات<select class="field" name="infoVis"><option value="public" ${(u.infoVis||"public")==="public"?"selected":""}>الجميع</option><option value="friends" ${u.infoVis==="friends"?"selected":""}>الأصدقاء فقط</option><option value="me" ${u.infoVis==="me"?"selected":""}>أنا فقط</option></select></label></div><div class="setting-section"><strong>صورة الملف الشخصي</strong><div class="row"><img id="profile-edit-preview" class="avatar big" src="${esc(rawBigAvatar(u))}" alt="معاينة صورة الملف الشخصي"><div class="post" style="flex:1"><button class="btn secondary" id="profile-pick-image" type="button"><i class="fa-regular fa-image"></i> اختيار صورة من المعرض</button><button class="btn secondary" id="profile-remove-image" type="button">إزالة الصورة</button></div></div><input id="profile-image-file" class="hidden" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><p class="muted small" style="margin:0">تُقصّ الصورة إلى مربع وتُضغط تلقائيًا (نحو 45 كيلوبايت) لتبقى المنصة سريعة ومجانية.</p></div><button class="btn" id="profile-save-btn" type="submit">حفظ التغييرات</button></form>`);
  $("profile-pick-image").onclick=()=>$("profile-image-file").click();
  $("profile-remove-image").onclick=()=>{newPhoto={photoURL:"",thumb:""};$("profile-edit-preview").src=DEFAULT_AVATAR;$("profile-image-file").value=""};
  $("profile-image-file").onchange=async e=>{
@@ -999,9 +1053,10 @@ async function editOwnProfile(){
   const f=e.currentTarget,n=f.elements.name.value.trim(),bio=f.elements.bio.value.trim();
   if(n.length<2)return toast("يرجى إدخال اسم من حرفين على الأقل.");
   const gender=["","ذكر","أنثى"].includes(f.elements.gender.value)?f.elements.gender.value:"";
-  const status=["","عازب/ة","مرتبط/ة","متزوج/ة"].includes(f.elements.status.value)?f.elements.status.value:"";
+  const status=["","عازب/ة","مرتبط/ة","متزوج/ة","مطلق/ة","أرمل/ة"].includes(f.elements.status.value)?f.elements.status.value:"";
   const address=String(f.elements.address.value||"").trim().slice(0,120);
-  const patch={name:n,displayName:n,nameLower:n.toLowerCase(),bio,gender,status,address,...(newPhoto||{})};
+  const infoVis=["public","friends","me"].includes(f.elements.infoVis.value)?f.elements.infoVis.value:"public";
+  const patch={name:n,displayName:n,nameLower:n.toLowerCase(),bio,gender,status,address,infoVis,...(newPhoto||{})};
   const {nameLower,...local}=patch;
   currentUserData={...currentUserData,...local};
   updateAccountUI();saveOfflineProfile(currentUserData);
@@ -1021,7 +1076,7 @@ async function ensureOwnDoc(){
   const d=newUserDoc(currentUser.uid,nameOf(currentUserData));
   d.bio=String(currentUserData.bio||"").slice(0,500);
   d.gender=["","ذكر","أنثى"].includes(currentUserData.gender)?currentUserData.gender:"";
-  d.status=["","عازب/ة","مرتبط/ة","متزوج/ة"].includes(currentUserData.status)?currentUserData.status:"";
+  d.status=["","عازب/ة","مرتبط/ة","متزوج/ة","مطلق/ة","أرمل/ة"].includes(currentUserData.status)?currentUserData.status:"";
   d.address=String(currentUserData.address||"").slice(0,120);
   const ph=safeUrlRaw(currentUserData.photoURL),th=safeUrlRaw(currentUserData.thumb);
   d.photoURL=ph&&ph.length<=120000?ph:"";d.thumb=th&&th.length<=12000?th:"";
@@ -1291,15 +1346,15 @@ function postComments(p){
  const legacy=asArray(p.comments).map(c=>({...c,legacy:true}));
  return [...legacy,...(commentsByPost.get(p.id)||[])].sort((a,b)=>ms(a.createdAt)-ms(b.createdAt));
 }
-function commentHtml(c,postOwn,closed){
+function commentHtml(c,postOwn,closed,ctx,isTop){
  const me=currentUser.uid,mine=c.uid===me,canEdit=mine&&!c.legacy,canDel=!c.legacy&&(mine||postOwn);
  const canRep=!mine&&!c.legacy&&!!c.id;
  const cl=asArray(c.likes),on=cl.includes(me);
- const tools=`<span class="comment-tools">${(!c.legacy&&c.id)?`<button type="button" class="link-btn muted like-comment ${on?"on":""}">${on?"أعجبني":"إعجاب"}</button>`:""}${(!c.legacy&&c.id&&!closed)?`<button type="button" class="link-btn muted reply-comment">رد</button>`:""}${canRep?`<button type="button" class="link-btn muted report-comment" data-cid="${esc(c.id)}">إبلاغ</button>`:""}${canEdit?`<button type="button" class="link-btn muted edit-comment" data-cid="${esc(c.id)}">تعديل</button>`:""}${canDel?`<button type="button" class="link-btn muted delete-comment" data-cid="${esc(c.id)}">حذف</button>`:""}</span>`;
+ const tools=`<span class="comment-tools">${(!c.legacy&&c.id)?`<button type="button" class="link-btn muted like-comment ${on?"on":""}">${on?"أعجبني":"إعجاب"}</button>`:""}${(!c.legacy&&c.id&&!closed)?`<button type="button" class="link-btn muted reply-comment">رد</button>`:""}${canRep?`<button type="button" class="link-btn muted report-comment" data-cid="${esc(c.id)}">إبلاغ</button>`:""}${(postOwn&&isTop&&!c.legacy&&c.id)?`<button type="button" class="link-btn muted pin-comment" data-cid="${esc(c.id)}">${ctx&&ctx.pin===c.id?"إلغاء التثبيت":"تثبيت"}</button>`:""}${canEdit?`<button type="button" class="link-btn muted edit-comment" data-cid="${esc(c.id)}">تعديل</button>`:""}${canDel?`<button type="button" class="link-btn muted delete-comment" data-cid="${esc(c.id)}">حذف</button>`:""}</span>`;
  const u=mine?{...currentUserData,uid:c.uid}:(userCache.get(c.uid)?.u||null);
  const nm=u?nameOf(u):(c.name||"عضو");
  const lk=cl.length?`<span class="c-lk">❤️ ${cl.length}</span>`:"";
- return `<div class="comment" ${c.id?`data-cid="${esc(c.id)}"`:""}><button type="button" class="open-profile link-btn comment-av" data-uid="${esc(c.uid||"")}" aria-label="${esc(nm)}"><img class="avatar sm" src="${avatarOf(u)}" alt="" loading="lazy" decoding="async"></button><div class="comment-main"><div class="comment-bubble"><strong>${esc(nm)}</strong><div>${c.replyTo?`<span class="mention">@${esc(c.replyTo)}</span> `:""}${br(c.text||"")}</div></div><div class="comment-meta muted small">${esc(timeLabel(c.createdAt))}${c.editedAt?" · معدّل":""}${lk}${tools}</div></div></div>`;
+ return `<div class="comment" ${c.id?`data-cid="${esc(c.id)}"`:""}><button type="button" class="open-profile link-btn comment-av" data-uid="${esc(c.uid||"")}" aria-label="${esc(nm)}"><img class="avatar sm" src="${avatarOf(u)}" alt="" loading="lazy" decoding="async"></button><div class="comment-main">${ctx&&ctx.pin&&ctx.pin===c.id?'<span class="c-pin">📌 تعليق مثبّت</span>':""}<div class="comment-bubble"><strong>${esc(nm)}</strong>${ctx&&c.uid&&c.uid===ctx.au?'<span class="c-badge">كاتب المنشور</span>':""}<div>${c.replyTo?`<span class="mention">@${esc(c.replyTo)}</span> `:""}${brl(c.text||"")}</div></div><div class="comment-meta muted small"><span title="${esc(timeLabel(c.createdAt))}">${esc(relTime(c.createdAt))}</span>${c.editedAt?" · معدّل":""}${lk}${tools}</div></div></div>`;
 }
 let commenterRenderT=null;const commenterTried=new Set();
 function hydrateCommenters(list){
@@ -1336,7 +1391,7 @@ function openEditPost(id){
  const p=postsCache.get(id);if(!p||authorUid(p)!==currentUser.uid)return;
  const rp=!!p.repostOf,vis=p.visibility||"public";
  const opt=(v,l)=>`<option value="${v}" ${vis===v?"selected":""}>${l}</option>`;
- showModal("تعديل المنشور",`<form id="edit-post-form" class="post edit-opts">${rp?"":`<textarea class="field" name="t" rows="6" maxlength="5000">${esc(p.text||"")}</textarea>`}<label>من يرى المنشور<select class="field" name="v">${opt("public","🌍 عام")}${opt("friends","👥 الأصدقاء فقط")}${opt("me","🔒 أنا فقط")}</select></label><label class="chk"><input type="checkbox" name="c" ${p.commentsOff?"checked":""}> إغلاق التعليقات على هذا المنشور</label><button class="btn" type="submit">حفظ</button></form>`);
+ showModal("تعديل المنشور",`<form id="edit-post-form" class="post edit-opts">${rp?"":`<textarea class="field" name="t" rows="6" maxlength="5000">${esc(p.text||"")}</textarea>`}<label>رابط فيديو (اختياري)<input class="field" name="vu" type="url" maxlength="1000" value="${esc(p.videoUrl||"")}" placeholder="https://..."></label><label>من يرى المنشور<select class="field" name="v">${opt("public","🌍 عام")}${opt("friends","👥 الأصدقاء فقط")}${opt("me","🔒 أنا فقط")}</select></label><label class="chk"><input type="checkbox" name="c" ${p.commentsOff?"checked":""}> إغلاق التعليقات على هذا المنشور</label><button class="btn" type="submit">حفظ</button></form>`);
  $("edit-post-form").onsubmit=async e=>{
   e.preventDefault();
   const f=e.currentTarget.elements,patch={},local={};
@@ -1346,6 +1401,7 @@ function openEditPost(id){
    if(t!==String(p.text||"").trim()){patch.text=t;patch.editedAt=serverTimestamp();local.text=t;local.editedAt=new Date().toISOString()}
   }
   const v=f.v.value;if(["public","friends","me"].includes(v)&&v!==vis){patch.visibility=v;local.visibility=v}
+  {const raw=f.vu.value.trim(),nv=raw?safeVideoUrl(raw):"";if(raw&&!nv)return toast("أدخل رابط فيديو صحيحًا يبدأ بـ https://.");if(nv!==String(p.videoUrl||"")){patch.videoUrl=nv;local.videoUrl=nv}}
   const c=!!f.c.checked;if(c!==!!p.commentsOff){patch.commentsOff=c;local.commentsOff=c}
   if(!Object.keys(patch).length){await closeModal();return}
   setPostLocal({...p,...local});
@@ -1772,7 +1828,24 @@ document.addEventListener("click",async e=>{
   if(openComments.has(id))setTimeout(()=>document.querySelector(`article[data-post-id="${CSS.escape(id)}"] .comment-input`)?.focus(),60);
  }
  else if(t.closest(".share-post"))openShareOptions(id);
+ else if(t.closest(".more-comments")){cLimit.set(id,(cLimit.get(id)||3)+10);const p=postsCache.get(id);if(p)setPostLocal(p)}
+ else if(t.closest(".pin-comment"))togglePin(id,t.closest(".pin-comment").dataset.cid);
+ else if(t.closest(".emoji-toggle")){t.closest(".comment-form")?.querySelector(".emoji-row")?.classList.toggle("hidden")}
+ else if(t.closest(".emoji-pick")){const f=t.closest(".comment-form"),i=f&&f.querySelector(".comment-input");if(i){const e=t.closest(".emoji-pick").textContent,a0=i.selectionStart??i.value.length,b0=i.selectionEnd??a0;i.value=(i.value.slice(0,a0)+e+i.value.slice(b0)).slice(0,1000);i.focus();i.selectionStart=i.selectionEnd=a0+e.length}}
+ else if(t.closest(".vid-play")){const box=t.closest(".vid");if(box){playingVids.add(box.dataset.key);box.innerHTML=`<iframe src="${esc(box.dataset.src)}" title="مشغل الفيديو" allow="autoplay; encrypted-media; picture-in-picture; fullscreen" allowfullscreen referrerpolicy="strict-origin-when-cross-origin" sandbox="allow-scripts allow-same-origin allow-presentation allow-popups allow-popups-to-escape-sandbox"></iframe>`}}
  else if(t.closest(".toggle-comments")){expandedComments.has(id)?expandedComments.delete(id):expandedComments.add(id);const p=postsCache.get(id);if(p)setPostLocal(p)}
+});
+function togglePin(pid,cid){
+ const p=postsCache.get(pid);if(!p||authorUid(p)!==currentUser.uid)return;
+ const was=p.pinnedComment===cid;
+ updateDoc(doc(db,"posts",pid),{pinnedComment:was?"":cid}).catch(showError);
+ setPostLocal({...p,pinnedComment:was?"":cid});
+}
+document.addEventListener("change",e=>{const sel=e.target.closest&&e.target.closest(".c-sort");if(!sel)return;cSort.v=sel.value;renderAll()});
+document.addEventListener("input",e=>{const i=e.target;if(i.classList&&i.classList.contains("comment-input")){i.style.height="auto";i.style.height=Math.min(i.scrollHeight,120)+"px"}});
+document.addEventListener("keydown",e=>{
+ const i=e.target;if(!(i.classList&&i.classList.contains("comment-input")))return;
+ if(e.key==="Enter"&&!e.shiftKey&&!e.isComposing&&matchMedia("(pointer:fine)").matches){e.preventDefault();const f=i.closest(".comment-form");f&&f.requestSubmit()}
 });
 document.addEventListener("submit",e=>{
  const f=e.target.closest(".comment-form");if(!f)return;

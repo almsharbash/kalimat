@@ -1,0 +1,1804 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover,interactive-widget=resizes-content">
+<style>html,body{touch-action:pan-x pan-y}</style>
+<script>
+/* منع التكبير بإصبعين، النسخة Z2 */
+(function(){
+ var M='width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover,interactive-widget=resizes-content';
+ var D=document,opt={passive:false,capture:true};
+ function block(e){if(e.touches&&e.touches.length>1){e.preventDefault();e.stopPropagation()}}
+ D.addEventListener('gesturestart',function(e){e.preventDefault()},opt);
+ D.addEventListener('gesturechange',function(e){e.preventDefault()},opt);
+ addEventListener('touchstart',block,opt);
+ addEventListener('touchmove',block,opt);
+ D.addEventListener('touchstart',block,opt);
+ D.addEventListener('touchmove',block,opt);
+ D.addEventListener('wheel',function(e){if(e.ctrlKey)e.preventDefault()},opt);
+ /* شبكة أمان: إن ارتفع التكبير رغم ذلك، أعد ضبط الصفحة فوراً */
+ function reset(){
+  var m=D.querySelector('meta[name=viewport]');
+  if(m){var n=D.createElement('meta');n.name='viewport';n.content=M+',minimum-scale=1';m.parentNode.replaceChild(n,m)}
+ }
+ var t=0;
+ function check(){var v=window.visualViewport;if(v&&v.scale>1.02){reset();clearTimeout(t);t=setTimeout(function(){var w=window.visualViewport;if(w&&w.scale>1.02)reset()},120)}}
+ if(window.visualViewport){visualViewport.addEventListener('resize',check);visualViewport.addEventListener('scroll',check)}
+ if(/[?&]debug=1/.test(location.search)){
+  addEventListener('DOMContentLoaded',function(){
+   var d=D.createElement('div');
+   d.style.cssText='position:fixed;z-index:99999;top:0;left:0;right:0;background:rgba(0,0,0,.8);color:#0f0;font:11px monospace;padding:3px 6px;direction:ltr;pointer-events:none';
+   D.body.appendChild(d);
+   setInterval(function(){var v=window.visualViewport;d.textContent='Z2 scale='+(v?v.scale.toFixed(2):'?')+' y='+Math.round(scrollY)},400)
+  })
+ }
+})();
+</script>
+<meta name="theme-color" content="#0284c7">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="كلمات">
+<meta name="description" content="كلمات، منصة عربية للتواصل ومشاركة الأفكار والمعرفة وبناء مجتمع فكري.">
+<title>كلمات</title>
+<link rel="manifest" href="./manifest.json">
+<link rel="icon" type="image/png" sizes="256x256" href="./kalimat_256x256-1.png">
+<link rel="shortcut icon" href="./kalimat_256x256-1.png">
+<link rel="apple-touch-icon" href="./kalimat_180x180.png">
+<link rel="preconnect" href="https://www.gstatic.com" crossorigin>
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js">
+<link rel="modulepreload" href="https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js">
+<style>
+:root{--p:#0284c7;--p-bright:#38bdf8;--p-soft:#e0f2fe;--gold:#d6ad60;--bg:#f0f9ff;--s:#fff;--t:#0c3348;--m:#5f7f91;--b:#d8eaf4;--danger:#c33e49;--shadow:0 5px 22px #07598512;--r:16px}
+body.dark{--p:#38bdf8;--p-bright:#7dd3fc;--p-soft:#123448;--bg:#0b1720;--s:#142633;--t:#e6f6ff;--m:#9ab6c7;--b:#294555;--shadow:0 5px 22px #0004}
+*{box-sizing:border-box}html{overflow-anchor:none;scroll-behavior:auto;overscroll-behavior-y:contain}body{margin:0;min-height:100vh;min-height:100dvh;overflow-x:hidden;overscroll-behavior-y:contain;background:var(--bg);color:var(--t);font-family:Tahoma,Arial,sans-serif;line-height:1.7}button,input,textarea{font:inherit}button{cursor:pointer}button:disabled{opacity:.55;cursor:not-allowed}.hidden{display:none!important}.muted{color:var(--m)}.small{font-size:12px}
+.btn{border:0;border-radius:10px;padding:9px 13px;background:var(--p);color:white;display:inline-flex;align-items:center;justify-content:center;gap:7px;font-weight:bold}.btn.secondary{background:var(--bg);color:var(--t);border:1px solid var(--b)}.btn.danger{background:var(--danger)}.btn.gold{background:var(--gold);color:#30240f}.icon-btn{width:42px;height:42px;padding:8px}
+.link-btn{padding:0;border:0;background:none;color:var(--t);font-weight:bold;text-align:right}
+.field{width:100%;padding:11px 13px;color:var(--t);background:var(--bg);border:1px solid var(--b);border-radius:10px;outline:none}.field:focus{border-color:var(--p)}
+.card{background:var(--s);border:1px solid var(--b);border-radius:var(--r);padding:16px;box-shadow:var(--shadow)}.row{display:flex;align-items:center;gap:10px}.between{justify-content:space-between}.wrap{flex-wrap:wrap}
+.avatar{width:42px;height:42px;border-radius:50%;object-fit:cover;background:var(--bg);border:1px solid var(--b);flex-shrink:0}.avatar.big{width:88px;height:88px}
+.brand{font-weight:900;color:var(--p);font-size:23px}.brand span{color:var(--gold)}
+.topbar{position:sticky;top:0;z-index:20;background:var(--s);border-bottom:1px solid var(--b)}.topbar-inner{max-width:1200px;margin:auto;padding:9px 16px;display:flex;align-items:center;gap:12px}
+.offline-bar{background:#b45309;color:#fff;text-align:center;font-size:13px;padding:4px 8px}
+.search-wrap{position:relative;flex:1;max-width:460px}#search-results-dropdown{position:absolute;top:calc(100% + 5px);right:0;left:0;z-index:30;background:var(--s);border:1px solid var(--b);border-radius:12px;box-shadow:var(--shadow);max-height:320px;overflow:auto}.search-result{padding:10px;display:flex;gap:10px;align-items:center;cursor:pointer}.search-result:hover{background:var(--bg)}
+.app-layout{max-width:1200px;min-height:calc(100vh - 150px);min-height:calc(100dvh - 150px);margin:20px auto;padding:0 14px;display:grid;grid-template-columns:220px minmax(0,1fr) 220px;gap:16px}.sidebar{position:sticky;top:82px;align-self:start}.nav-list{display:grid;gap:5px}.nav-btn{position:relative;width:100%;border:0;border-radius:10px;padding:11px;display:flex;align-items:center;gap:11px;color:var(--t);background:transparent;text-align:right}.nav-btn:hover,.nav-btn.active{background:var(--p);color:white}.nav-btn i{width:20px;text-align:center}.main-column{min-width:0;display:grid;gap:14px;align-content:start}.right-column{display:grid;gap:14px;align-content:start}.page-title{font-size:21px;margin:0 0 12px}
+.nbadge{background:var(--danger);color:#fff;border-radius:99px;font-size:10px;min-width:17px;height:17px;line-height:17px;text-align:center;padding:0 4px;font-style:normal;font-weight:bold}
+.boot-screen{min-height:100vh;min-height:100dvh;display:grid;place-items:center;text-align:center;background:var(--bg);color:var(--p)}.boot-screen .boot-brand{font-size:30px;font-weight:900}.boot-screen .boot-note{font-size:13px;color:var(--m);margin-top:8px}.boot-spinner{width:24px;height:24px;border:3px solid var(--b);border-top-color:var(--p);border-radius:50%;margin:18px auto 0;animation:bootspin .8s linear infinite}@keyframes bootspin{to{transform:rotate(360deg)}}.auth-screen{min-height:100vh;display:grid;place-items:center;padding:18px;background:linear-gradient(140deg,var(--bg),#e0f2fe)}.auth-card{width:100%;max-width:440px;display:grid;gap:14px}.auth-card h1{text-align:center;margin:0}.auth-card .brand{text-align:center;font-size:34px}.auth-card label{display:grid;gap:5px}.auth-card .btn.full{width:100%}
+.post{display:grid;gap:11px}.post-body{white-space:pre-wrap;overflow-wrap:anywhere}.post-image{width:100%;max-height:500px;object-fit:contain;border-radius:11px;background:var(--bg)}.post-actions{display:flex;gap:7px;flex-wrap:wrap;border-top:1px solid var(--b);padding-top:9px}.action-btn{border:0;border-radius:9px;padding:7px 10px;background:var(--bg);color:var(--m)}.action-btn.liked{color:#cf465b}.action-btn.active{background:var(--p);color:#fff}.comment-list{display:grid;gap:7px}.comment{background:var(--bg);border-radius:10px;padding:8px 10px;overflow-wrap:anywhere}.comment-form{display:flex;gap:7px}.comment-form .field{min-width:0}.feed-empty{text-align:center;padding:28px 12px;color:var(--m)}
+.feature-actions{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}.feature-actions>.btn{flex:1 1 220px;min-width:0;min-height:44px;white-space:normal}
+.video-url-label{display:block;margin:8px 0}.post-video{position:relative;width:100%;aspect-ratio:16/9;margin:10px 0;overflow:hidden;border-radius:12px;background:#000}.post-video iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.post-video-file{display:block;width:100%;max-height:520px;border-radius:12px;background:#000;margin:10px 0}.video-link-card{padding:12px;margin:10px 0;border:1px solid var(--b);border-radius:12px;background:var(--bg)}.video-link-card p{margin:0 0 5px}.video-link-card a{color:var(--p);font-weight:bold;overflow-wrap:anywhere}
+.quoted{box-shadow:none;background:var(--bg);padding:12px}
+.skeleton{height:130px;border-radius:var(--r);background:linear-gradient(90deg,var(--s) 25%,var(--bg) 50%,var(--s) 75%);background-size:200% 100%;animation:shimmer 1.3s infinite;border:1px solid var(--b)}@keyframes shimmer{to{background-position:-200% 0}}
+.person-row{display:flex;align-items:center;gap:9px;padding:10px 0;border-bottom:1px solid var(--b)}.person-row:last-child{border-bottom:0}.person-row.unread{background:var(--p-soft);border-radius:10px;padding:10px}.person-info{flex:1;min-width:0}.person-info strong{display:block;overflow-wrap:anywhere}.person-actions{display:flex;gap:5px;flex-wrap:wrap}
+.chat-layout{display:grid;grid-template-columns:190px minmax(0,1fr);gap:10px;min-height:430px}.chat-rooms{border-left:1px solid var(--b);padding-left:9px}.chat-room{padding:9px;border-radius:10px;cursor:pointer;overflow-wrap:anywhere}.chat-room:hover,.chat-room.active{background:var(--bg)}.chat-room .last{display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.chat-box{display:flex;flex-direction:column;min-height:430px;min-width:0}#chat-messages{flex:1;overflow:auto;display:flex;flex-direction:column;gap:8px;padding:12px 0;max-height:60vh}.message{max-width:82%;padding:9px 12px;border-radius:12px;background:var(--bg);overflow-wrap:anywhere;white-space:pre-wrap}.message.mine{align-self:flex-start;background:var(--p);color:#fff}.message-time{display:block;font-size:10px;opacity:.75;margin-top:3px}.chat-form{display:flex;gap:7px}.chat-form .field{min-width:0}
+.profile-head{text-align:center;display:grid;justify-items:center;gap:7px}.profile-bio{white-space:pre-wrap;overflow-wrap:anywhere}
+#modal-root{position:fixed;inset:0;z-index:100;background:#0009;display:grid;place-items:center;padding:14px}.modal{width:100%;max-width:560px;max-height:90vh;overflow:auto;background:var(--s);border-radius:17px;padding:19px;box-shadow:var(--shadow)}.modal-head{display:flex;align-items:center;justify-content:space-between;gap:10px;margin-bottom:13px}.modal-head h2{font-size:20px;margin:0}.setting-section{border-bottom:1px solid var(--b);padding:12px 0;display:grid;gap:9px}.setting-section:last-child{border-bottom:0}.setting-row{display:flex;align-items:center;justify-content:space-between;gap:10px}.setting-row p{margin:2px 0 0;font-size:12px;color:var(--m)}
+.toast{position:fixed;bottom:22px;left:50%;transform:translateX(-50%);background:#0c2736;color:white;padding:11px 16px;border-radius:11px;z-index:200;max-width:90vw;box-shadow:var(--shadow)}.bottom-nav{display:none}
+@media(max-width:1000px){.app-layout{grid-template-columns:190px minmax(0,1fr)}.right-column{display:none}}
+@media(max-width:680px){.app-layout{min-height:calc(100dvh - 145px)}.topbar-inner{gap:7px;padding:8px}.brand{font-size:19px}.search-wrap{max-width:none}.app-layout{display:block;margin:12px auto;padding:0 9px 78px}.sidebar,.right-column{display:none}.bottom-nav{display:flex;position:fixed;z-index:25;bottom:0;right:0;left:0;justify-content:space-around;background:var(--s);border-top:1px solid var(--b);padding:5px 2px env(safe-area-inset-bottom);transition:transform .12s ease;will-change:transform}.keyboard-open .bottom-nav{transform:translateY(110%);pointer-events:none}.bottom-nav .nav-btn{width:auto;padding:6px 8px;flex-direction:column;gap:1px;font-size:10px}.bottom-nav .nav-btn i{font-size:16px}.bottom-nav .nbadge{position:absolute;top:0;right:4px}.chat-layout{grid-template-columns:100px minmax(0,1fr);gap:6px}.chat-rooms{padding-left:5px}.chat-room{padding:6px 3px;font-size:11px}.card{padding:12px}}
+.install-banner{position:fixed;z-index:150;right:10px;left:10px;bottom:12px;max-width:520px;margin:auto;display:flex;align-items:center;gap:10px;background:var(--s);color:var(--t);border:1px solid var(--b);border-radius:14px;padding:10px 12px;box-shadow:0 8px 28px #0003}.install-banner img{width:40px;height:40px;border-radius:10px;flex-shrink:0}.install-banner .ib-text{flex:1;min-width:0;font-size:13px;line-height:1.5}.install-banner .ib-text strong{display:block;font-size:14px}.install-banner .btn{padding:7px 12px;white-space:nowrap}.install-banner .ib-close{border:0;background:none;color:var(--m);font-size:20px;line-height:1;padding:4px 6px}
+@media(max-width:680px){.install-banner{bottom:76px}}
+.welcome-note{display:flex;align-items:center;gap:10px;padding:10px 12px;margin-bottom:12px;font-size:13.5px;line-height:1.7}.welcome-note .wn-text{flex:1;min-width:0}.welcome-note strong{color:var(--p)}.sg-btn{width:34px;height:34px;flex-shrink:0;border:0;border-radius:9px;background:var(--p);color:#fff;font-size:15px;display:inline-flex;align-items:center;justify-content:center}.sg-btn:active{transform:scale(.94)}.welcome-note .ib-close{flex-shrink:0}
+.auth-card label.consent{display:flex;align-items:flex-start;gap:8px;font-size:13px;line-height:1.8}.consent input{width:18px;height:18px;margin-top:4px;flex-shrink:0}.consent .link-btn{display:inline;font-size:13px;color:var(--p);text-decoration:underline}.auth-legal{text-align:center;margin:0;font-size:12px}.auth-legal .link-btn{display:inline;font-size:12px;color:var(--m);text-decoration:underline;font-weight:normal}
+.legal-body h3{font-size:16px;margin:16px 0 4px;color:var(--p)}.legal-body p,.legal-body li{font-size:14px;line-height:1.9;margin:4px 0}.legal-body ul{padding-inline-start:20px;margin:4px 0}.legal-note{background:var(--p-soft);border-radius:10px;padding:8px 11px;font-size:13px}
+.comment-tools{display:inline-flex;gap:14px;margin-inline-start:12px}.comment-tools .link-btn{font-weight:normal;text-decoration:underline;font-size:12px}
+
+.post-stats{display:flex;justify-content:space-between;align-items:center;gap:8px;color:var(--m);font-size:13px}.stat-btn{border:0;background:none;color:var(--m);padding:2px 0;font:inherit;cursor:pointer}.stat-btn:hover{text-decoration:underline}.stat-heart{display:inline-grid;place-items:center;width:18px;height:18px;border-radius:50%;background:#cf465b;color:#fff;font-size:10px;vertical-align:middle}
+.comment{display:flex;gap:8px;align-items:flex-start;background:none;padding:0}.comment-av{padding:0;border:0;background:none;flex:none}.avatar.sm{width:32px;height:32px}.comment-main{min-width:0;flex:1}.comment-bubble{background:var(--bg);border-radius:14px;padding:7px 11px;display:inline-block;max-width:100%;overflow-wrap:anywhere}.comment-bubble strong{display:block;font-size:13px}.comment-meta{padding:2px 8px}
+.notif-row{display:flex;align-items:center;gap:10px;width:100%;text-align:start;border:0;border-bottom:1px solid var(--b);background:none;padding:11px 8px;border-radius:0;color:inherit;font:inherit;cursor:pointer}.notif-row:last-child{border-bottom:0}.notif-row.unread{background:var(--p-soft);border-radius:10px}.notif-row:active{filter:brightness(.96)}.notif-ic{flex:none;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:var(--bg);color:var(--p)}.notif-ic.like{color:#cf465b}.notif-dot{flex:none;width:10px;height:10px;border-radius:50%;background:var(--p)}
+.likers{display:grid;gap:2px}.liker-row{display:flex;align-items:center;gap:10px;border:0;background:none;padding:8px 4px;color:inherit;font:inherit;text-align:start;cursor:pointer;border-radius:10px}.liker-row:hover{background:var(--bg)}.liker-heart{margin-inline-start:auto;color:#cf465b}
+
+.flag-note{background:#fff4d6;color:#7a5a00;border-radius:10px;padding:8px 10px;font-size:13px}body.dark .flag-note{background:#3b3216;color:#f1d98a}.post.flagged{opacity:.85}
+.report-reasons{display:grid;gap:6px}.report-reason{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--b);border-radius:10px;cursor:pointer}.report-reason input{margin:0}
+.mod-banner{background:#cf465b;color:#fff;text-align:center;padding:9px 12px;font-size:14px;position:sticky;top:0;z-index:50}
+.admin-list{display:grid;gap:10px}.admin-card{border:1px solid var(--b);border-radius:12px;padding:11px;display:grid;gap:7px}.admin-text{background:var(--bg);border-radius:10px;padding:8px 10px;overflow-wrap:anywhere}.chips{display:flex;gap:5px;flex-wrap:wrap}.chip{background:var(--p-soft);color:var(--p);border-radius:999px;padding:2px 9px;font-size:12px}
+/* Icons: Font Awesome Free 7.1 (c) Fonticons, Inc. - CC BY 4.0 - https://fontawesome.com/license/free */
+.fa-solid,.fa-regular{display:inline-block;width:1.1em;height:1.1em;vertical-align:-.17em;background-color:currentColor;-webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat;font-style:normal;flex:none}
+.fa-solid.fa-thumbs-up{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M80 160c17.7 0 32 14.3 32 32v256c0 17.7-14.3 32-32 32H32c-17.7 0-32-14.3-32-32V192c0-17.7 14.3-32 32-32zM270.6 16c27.3 0 49.4 22.1 49.4 49.4v4.2c0 6.8-1.3 13.6-3.8 19.9L288 160h160c26.5 0 48 21.5 48 48 0 19.7-11.9 36.6-28.9 44 17 7.4 28.9 24.3 28.9 44 0 23.4-16.8 42.9-39 47.1 4.4 7.3 7 15.8 7 24.9 0 22.2-15 40.8-35.4 46.3 2.2 5.5 3.4 11.5 3.4 17.7 0 26.5-21.5 48-48 48h-87.9c-36.3 0-71.6-12.4-99.9-35.1l-12.2-9.7c-15.2-12.1-24-30.5-24-50V198.6c0-14.9 3.5-29.6 10.1-42.9l56.2-112.4c8.4-16.7 25.5-27.3 44.3-27.3%22/%3E%3C/svg%3E")}
+.fa-solid.fa-heart{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22m241 87.1 15 20.7 15-20.7C296 52.5 336.2 32 378.9 32 452.4 32 512 91.6 512 165.1v2.6c0 112.2-139.9 242.5-212.9 298.2-12.4 9.4-27.6 14.1-43.1 14.1s-30.8-4.6-43.1-14.1C139.9 410.2 0 279.9 0 167.7v-2.6C0 91.6 59.6 32 133.1 32 175.8 32 216 52.5 241 87.1%22/%3E%3C/svg%3E")}
+.fa-solid.fa-retweet{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 576 512%22%3E%3Cpath d=%22M118.6 41.4c-12.5-12.5-32.8-12.5-45.3 0l-64 64c-9.2 9.2-11.9 22.9-6.9 34.9S19.1 160 32 160h32v224c0 53 43 96 96 96h128c17.7 0 32-14.3 32-32s-14.3-32-32-32H160c-17.7 0-32-14.3-32-32V160h32c12.9 0 24.6-7.8 29.6-19.8s2.2-25.7-6.9-34.9l-64-64zm338.8 429.2c12.5 12.5 32.8 12.5 45.3 0l64-64c9.2-9.2 11.9-22.9 6.9-34.9S556.9 352 544 352h-32V128c0-53-43-96-96-96H288c-17.7 0-32 14.3-32 32s14.3 32 32 32h128c17.7 0 32 14.3 32 32v224h-32c-12.9 0-24.6 7.8-29.6 19.8s-2.2 25.7 6.9 34.9l64 64z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-bell{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M224 0c-17.7 0-32 14.3-32 32v3.2C119 50 64 114.6 64 192v21.7c0 48.1-16.4 94.8-46.4 132.4l-9.8 12.2C2.7 364.6 0 372.4 0 380.5 0 400.1 15.9 416 35.5 416h376.9c19.6 0 35.5-15.9 35.5-35.5 0-8.1-2.7-15.9-7.8-22.2l-9.8-12.2c-29.9-37.6-46.3-84.3-46.3-132.4V192c0-77.4-55-142-128-156.8V32c0-17.7-14.3-32-32-32m-62 464c7.1 27.6 32.2 48 62 48s54.9-20.4 62-48z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-user-group{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 576 512%22%3E%3Cpath d=%22M64 128a112 112 0 1 1 224 0 112 112 0 1 1-224 0M0 464c0-97.2 78.8-176 176-176s176 78.8 176 176v6c0 23.2-18.8 42-42 42H42c-23.2 0-42-18.8-42-42zM432 64a96 96 0 1 1 0 192 96 96 0 1 1 0-192m0 240c79.5 0 144 64.5 144 144v22.4c0 23-18.6 41.6-41.6 41.6H389.6c6.6-12.5 10.4-26.8 10.4-42v-6c0-51.5-17.4-98.9-46.5-136.7 22.6-14.7 49.6-23.3 78.5-23.3%22/%3E%3C/svg%3E")}
+.fa-solid.fa-user{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M224 248a120 120 0 1 0 0-240 120 120 0 1 0 0 240m-29.7 56C95.8 304 16 383.8 16 482.3c0 16.4 13.3 29.7 29.7 29.7h356.6c16.4 0 29.7-13.3 29.7-29.7 0-98.5-79.8-178.3-178.3-178.3z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-shield-halved{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M256 0c4.6 0 9.2 1 13.4 2.9l188.4 79.9c22 9.3 38.4 31 38.3 57.2-.5 99.2-41.3 280.7-213.6 363.2-16.7 8-36.1 8-52.8 0C57.3 420.7 16.6 239.2 16.1 140c-.1-26.2 16.3-47.9 38.3-57.2L242.7 2.9C246.9 1 251.4 0 256 0m0 66.8v378.1c138-66.8 175.1-214.8 176-303.4L256 66.9z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-share-nodes{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M384 192c53 0 96-43 96-96S437 0 384 0s-96 43-96 96c0 5.4.5 10.8 1.3 16l-129.7 72.1c-16.9-15-39.2-24.1-63.6-24.1-53 0-96 43-96 96s43 96 96 96c24.4 0 46.6-9.1 63.6-24.1L289.3 400c-.9 5.2-1.3 10.5-1.3 16 0 53 43 96 96 96s96-43 96-96-43-96-96-96c-24.4 0-46.6 9.1-63.6 24.1L190.7 272c.9-5.2 1.3-10.5 1.3-16s-.5-10.8-1.3-16l129.7-72.1c16.9 15 39.2 24.1 63.6 24.1%22/%3E%3C/svg%3E")}
+.fa-solid.fa-paper-plane{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 576 512%22%3E%3Cpath d=%22M536.4-26.3c9.8-3.5 20.6-1 28 6.3s9.8 18.2 6.3 28l-178 496.9c-5 13.9-18.1 23.1-32.8 23.1-14.2 0-27-8.6-32.3-21.7l-64.2-158c-4.5-11-2.5-23.6 5.2-32.6l94.5-112.4c5.1-6.1 4.7-15-.9-20.6s-14.6-6-20.6-.9l-112.4 94.3c-9.1 7.6-21.6 9.6-32.6 5.2L38.1 216.8c-13.1-5.3-21.7-18.1-21.7-32.3 0-14.7 9.2-27.8 23.1-32.8z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-image{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M64 32C28.7 32 0 60.7 0 96v320c0 35.3 28.7 64 64 64h320c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64zm64 80a48 48 0 1 1 0 96 48 48 0 1 1 0-96m144 112c8.4 0 16.1 4.4 20.5 11.5l88 144c4.5 7.4 4.7 16.7.5 24.3S368.7 416 360 416H88c-8.9 0-17.2-5-21.3-12.9s-3.5-17.5 1.6-24.8l56-80c4.5-6.4 11.8-10.2 19.7-10.2s15.2 3.8 19.7 10.2l26.4 37.8 61.4-100.5c4.4-7.1 12.1-11.5 20.5-11.5z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-house{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M277.8 8.6c-12.3-11.4-31.3-11.4-43.5 0l-224 208c-9.6 9-12.8 22.9-8 35.1S18.8 272 32 272h16v176c0 35.3 28.7 64 64 64h288c35.3 0 64-28.7 64-64V272h16c13.2 0 25-8.1 29.8-20.3s1.6-26.2-8-35.1zM240 320h32c26.5 0 48 21.5 48 48v96H192v-96c0-26.5 21.5-48 48-48%22/%3E%3C/svg%3E")}
+.fa-solid.fa-gear{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M195.1 9.5c3-14.8 16.1-25.5 31.3-25.5h59.8c15.2 0 28.3 10.7 31.3 25.5l14.5 70c14.1 6 27.3 13.7 39.3 22.8l67.8-22.5c14.4-4.8 30.2 1.2 37.8 14.4l29.9 51.8c7.6 13.2 4.9 29.8-6.5 39.9L447 233.3c.9 7.4 1.3 15 1.3 22.7s-.5 15.3-1.3 22.7l53.4 47.5c11.4 10.1 14 26.8 6.5 39.9L477 417.9c-7.6 13.1-23.4 19.2-37.8 14.4l-67.8-22.5c-12.1 9.1-25.3 16.7-39.3 22.8l-14.4 69.9c-3.1 14.9-16.2 25.5-31.3 25.5h-59.8c-15.2 0-28.3-10.7-31.3-25.5l-14.4-69.9c-14.1-6-27.2-13.7-39.3-22.8l-68.1 22.5c-14.4 4.8-30.2-1.2-37.8-14.4L5.8 366.1c-7.6-13.2-4.9-29.8 6.5-39.9l53.4-47.5c-.9-7.4-1.3-15-1.3-22.7s.5-15.3 1.3-22.7l-53.4-47.5C.9 175.7-1.7 159 5.8 145.9l29.9-51.8c7.6-13.2 23.4-19.2 37.8-14.4l67.8 22.5c12.1-9.1 25.3-16.7 39.3-22.8zM256.3 336a80 80 0 1 0-.6-160 80 80 0 1 0 .6 160%22/%3E%3C/svg%3E")}
+.fa-solid.fa-flag{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M64 32C64 14.3 49.7 0 32 0S0 14.3 0 32v448c0 17.7 14.3 32 32 32s32-14.3 32-32V358.4l62.7-18.8c41.9-12.6 87.1-8.7 126.2 10.9 42.7 21.4 92.5 24 137.2 7.2l37.1-13.9c12.5-4.7 20.8-16.6 20.8-30V66.1c0-23-24.2-38-44.8-27.7l-11.8 5.9c-44.9 22.5-97.8 22.5-142.8 0-36.4-18.2-78.3-21.8-117.2-10.1L64 54.4z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-download{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M256 32c0-17.7-14.3-32-32-32s-32 14.3-32 32v210.7l-41.4-41.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3l96 96c12.5 12.5 32.8 12.5 45.3 0l96-96c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L256 242.7zM64 320c-35.3 0-64 28.7-64 64v32c0 35.3 28.7 64 64 64h320c35.3 0 64-28.7 64-64v-32c0-35.3-28.7-64-64-64h-46.9l-56.6 56.6c-31.2 31.2-81.9 31.2-113.1 0L110.9 320zm304 56a24 24 0 1 1 0 48 24 24 0 1 1 0-48%22/%3E%3C/svg%3E")}
+.fa-solid.fa-comments{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 576 512%22%3E%3Cpath d=%22M384 144c0 97.2-86 176-192 176-26.7 0-52.1-5-75.2-14l-81.6 43.2c-9.3 4.9-20.7 3.2-28.2-4.2s-9.2-18.9-4.2-28.2l35.6-67.2C14.3 220.2 0 183.6 0 144 0 46.8 86-32 192-32s192 78.8 192 176m0 368c-94.1 0-172.4-62.1-188.8-144 120-1.5 224.3-86.9 235.8-202.7 83.3 19.2 145 88.3 145 170.7 0 39.6-14.3 76.2-38.4 105.6l35.6 67.2c4.9 9.3 3.2 20.7-4.2 28.2s-18.9 9.2-28.2 4.2L459.2 498c-23.1 9-48.5 14-75.2 14%22/%3E%3C/svg%3E")}
+.fa-solid.fa-comment{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M512 240c0 132.5-114.6 240-256 240-37.1 0-72.3-7.4-104.1-20.7L33.5 510.1c-9.4 4-20.2 1.7-27.1-5.8s-8.4-18.5-3.6-27.5l48.8-92.2C19.2 344.3 0 294.3 0 240 0 107.5 114.6 0 256 0s256 107.5 256 240%22/%3E%3C/svg%3E")}
+.fa-solid.fa-xmark{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 384 512%22%3E%3Cpath d=%22M55.1 73.4c-12.5-12.5-32.8-12.5-45.3 0s-12.5 32.8 0 45.3L147.2 256 9.9 393.4c-12.5 12.5-12.5 32.8 0 45.3s32.8 12.5 45.3 0l137.3-137.4 137.4 137.3c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L237.8 256l137.3-137.4c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0L192.5 210.7z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-user-plus{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 640 512%22%3E%3Cpath d=%22M136 128a120 120 0 1 1 240 0 120 120 0 1 1-240 0M48 482.3C48 383.8 127.8 304 226.3 304h59.4c98.5 0 178.3 79.8 178.3 178.3 0 16.4-13.3 29.7-29.7 29.7H77.7C61.3 512 48 498.7 48 482.3M544 96c13.3 0 24 10.7 24 24v48h48c13.3 0 24 10.7 24 24s-10.7 24-24 24h-48v48c0 13.3-10.7 24-24 24s-24-10.7-24-24v-48h-48c-13.3 0-24-10.7-24-24s10.7-24 24-24h48v-48c0-13.3 10.7-24 24-24%22/%3E%3C/svg%3E")}
+.fa-solid.fa-user-check{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 640 512%22%3E%3Cpath d=%22M286 304c98.5 0 178.3 79.8 178.3 178.3 0 16.4-13.3 29.7-29.7 29.7H78c-16.4 0-29.7-13.3-29.7-29.7 0-98.5 79.8-178.3 178.3-178.3zm299.7-198.1c7.8-10.7 22.8-13.1 33.5-5.3s13.1 22.8 5.3 33.5L522.1 274.9c-4.2 5.7-10.7 9.4-17.7 9.8s-14-2.2-18.9-7.3l-46.4-48c-9.2-9.5-9-24.7.6-33.9 9.5-9.2 24.7-8.9 33.9.6l26.5 27.4 85.6-117.7zM256.3 248a120 120 0 1 1 0-240 120 120 0 1 1 0 240%22/%3E%3C/svg%3E")}
+.fa-solid.fa-triangle-exclamation{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M256 0c14.7 0 28.2 8.1 35.2 21l216 400c6.7 12.4 6.4 27.4-.8 39.5S486.1 480 472 480H40c-14.1 0-27.2-7.4-34.4-19.5s-7.5-27.1-.8-39.5l216-400c7-12.9 20.5-21 35.2-21m0 352a32 32 0 1 0 0 64 32 32 0 1 0 0-64m0-192c-18.2 0-32.7 15.5-31.4 33.7l7.4 104c.9 12.5 11.4 22.3 23.9 22.3 12.6 0 23-9.7 23.9-22.3l7.4-104c1.3-18.2-13.1-33.7-31.4-33.7z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-trash-can{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M136.7 5.9C141.1-7.2 153.3-16 167.1-16H281c13.8 0 26 8.8 30.4 21.9L320 32h96c17.7 0 32 14.3 32 32s-14.3 32-32 32H32C14.3 96 0 81.7 0 64s14.3-32 32-32h96zM32 144h384v304c0 35.3-28.7 64-64 64H96c-35.3 0-64-28.7-64-64zm88 64c-13.3 0-24 10.7-24 24v192c0 13.3 10.7 24 24 24s24-10.7 24-24V232c0-13.3-10.7-24-24-24m104 0c-13.3 0-24 10.7-24 24v192c0 13.3 10.7 24 24 24s24-10.7 24-24V232c0-13.3-10.7-24-24-24m104 0c-13.3 0-24 10.7-24 24v192c0 13.3 10.7 24 24 24s24-10.7 24-24V232c0-13.3-10.7-24-24-24%22/%3E%3C/svg%3E")}
+.fa-solid.fa-scale-balanced{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 640 512%22%3E%3Cpath d=%22M384 32h128c17.7 0 32 14.3 32 32s-14.3 32-32 32H398.4c-5.2 25.8-22.9 47.1-46.4 57.3V448h160c17.7 0 32 14.3 32 32s-14.3 32-32 32H128c-17.7 0-32-14.3-32-32s14.3-32 32-32h160V153.3c-23.5-10.3-41.2-31.6-46.4-57.3H128c-17.7 0-32-14.3-32-32s14.3-32 32-32h128c14.6-19.4 37.8-32 64-32s49.4 12.6 64 32m55.6 288h144.8L512 195.8zm72.4 96c-62.9 0-115.2-34-126-78.9-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8L631.3 305c5.7 9.8 9.3 21.1 6.7 32.1-10.8 44.8-63.1 78.9-126 78.9M126.8 195.8 54.4 320h144.9zM.9 337.1c-2.6-11 1-22.3 6.7-32.1l95.2-163.2c5-8.6 14.2-13.8 24.1-13.8s19.1 5.3 24.1 13.8L246.2 305c5.7 9.8 9.3 21.1 6.7 32.1-10.8 44.8-63.1 78.9-126 78.9S11.7 382 .9 337.1%22/%3E%3C/svg%3E")}
+.fa-solid.fa-pen-to-square{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M471.6 21.7c-21.9-21.9-57.3-21.9-79.2 0L368 46.1l97.9 97.9 24.4-24.4c21.9-21.9 21.9-57.3 0-79.2zm-299.2 220c-6.1 6.1-10.8 13.6-13.5 21.9l-29.6 88.8c-2.9 8.6-.6 18.1 5.8 24.6s15.9 8.7 24.6 5.8l88.8-29.6c8.2-2.7 15.7-7.4 21.9-13.5L432 177.9 334.1 80zM96 64c-53 0-96 43-96 96v256c0 53 43 96 96 96h256c53 0 96-43 96-96v-96c0-17.7-14.3-32-32-32s-32 14.3-32 32v96c0 17.7-14.3 32-32 32H96c-17.7 0-32-14.3-32-32V160c0-17.7 14.3-32 32-32h96c17.7 0 32-14.3 32-32s-14.3-32-32-32z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-pen{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M352.9 21.2 308 66.1 445.9 204l44.9-44.9c13.6-13.5 21.2-31.9 21.2-51.1s-7.6-37.6-21.2-51.1l-35.7-35.7C441.6 7.6 423.2 0 404 0s-37.6 7.6-51.1 21.2M274.1 100 58.9 315.1c-10.7 10.7-18.5 24.1-22.6 38.7L.9 481.6c-2.3 8.3 0 17.3 6.2 23.4s15.1 8.5 23.4 6.2l127.8-35.5c14.6-4.1 27.9-11.8 38.7-22.6l215-215.2z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-link{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 576 512%22%3E%3Cpath d=%22M419.5 96c-16.6 0-32.7 4.5-46.8 12.7-15.8-16-34.2-29.4-54.5-39.5 28.2-24 64.1-37.2 101.3-37.2C505.9 32 576 102 576 188.5c0 41.5-16.5 81.3-45.8 110.6l-71.1 71.1C429.8 399.5 390 416 348.5 416 262.1 416 192 346 192 259.5c0-1.5 0-3 .1-4.5.5-17.7 15.2-31.6 32.9-31.1s31.6 15.2 31.1 32.9v2.6c0 51.1 41.4 92.5 92.5 92.5 24.5 0 48-9.7 65.4-27.1l71.1-71.1c17.3-17.3 27.1-40.9 27.1-65.4 0-51.1-41.4-92.5-92.5-92.5zm-144.3 77.3c-1.9-.8-3.8-1.9-5.5-3.1-12.6-6.5-27-10.2-42.1-10.2-24.5 0-48 9.7-65.4 27.1l-71.1 71.1C73.8 275.5 64 299.1 64 323.6c0 51.1 41.4 92.5 92.5 92.5 16.5 0 32.6-4.4 46.7-12.6 15.8 16 34.2 29.4 54.6 39.5-28.2 23.9-64 37.2-101.3 37.2C70.1 480.2 0 410.2 0 323.7c0-41.5 16.5-81.3 45.8-110.6l71.1-71.1c29.3-29.3 69.1-45.8 110.6-45.8 86.6 0 156.5 70.6 156.5 156.9v3.9c-.4 17.7-15.1 31.6-32.8 31.2s-31.6-15.1-31.2-32.8v-2.3c0-33.7-18-63.3-44.8-79.6z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-lightbulb{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 384 512%22%3E%3Cpath d=%22M292.9 384c7.3-22.3 21.9-42.5 38.4-59.9C364 289.7 384 243.2 384 192 384 86 298 0 192 0S0 86 0 192c0 51.2 20 97.7 52.7 132.1 16.5 17.4 31.2 37.6 38.4 59.9h201.7zm-4.9 48H96v16c0 44.2 35.8 80 80 80h32c44.2 0 80-35.8 80-80zM184 112c-39.8 0-72 32.2-72 72 0 13.3-10.7 24-24 24s-24-10.7-24-24c0-66.3 53.7-120 120-120 13.3 0 24 10.7 24 24s-10.7 24-24 24%22/%3E%3C/svg%3E")}
+.fa-solid.fa-eye-slash{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 576 512%22%3E%3Cpath d=%22M41-24.9c-9.4-9.4-24.6-9.4-33.9 0S-2.3-.3 7 9.1l528 528c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-96.4-96.4c2.7-2.4 5.4-4.8 8-7.2 46.8-43.5 78.1-95.4 93-131.1 3.3-7.9 3.3-16.7 0-24.6-14.9-35.7-46.2-87.7-93-131.1-47.1-43.7-111.8-80.6-192.6-80.6-56.8 0-105.6 18.2-146 44.2zm163.5 163.6C228 121.9 256.9 112 288 112c79.5 0 144 64.5 144 144 0 31.1-9.9 59.9-26.7 83.5l-34.7-34.7c12.7-21.4 17-47.7 10.1-73.7-13.7-51.2-66.4-81.6-117.6-67.9-8.6 2.3-16.7 5.7-24 10l-34.7-34.7zm120.8 256.4c-11.9 3.2-24.4 4.9-37.3 4.9-79.5 0-144-64.5-144-144 0-12.9 1.7-25.4 4.9-37.3l-79.5-79.5C36.8 176 14.4 215 2.5 243.7c-3.3 7.9-3.3 16.7 0 24.6 14.9 35.7 46.2 87.7 93 131.1 47.1 43.7 111.8 80.6 192.6 80.6 37.3 0 71.2-7.9 101.5-20.6l-64.2-64.2z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-envelope{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M48 64C21.5 64 0 85.5 0 112c0 15.1 7.1 29.3 19.2 38.4l208 156a48 48 0 0 0 57.6 0l208-156c12.1-9.1 19.2-23.3 19.2-38.4 0-26.5-21.5-48-48-48zM0 196v188c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V196L313.6 344.8c-34.1 25.6-81.1 25.6-115.2 0z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-display{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M448 96v256H64V96zM64 32C28.7 32 0 60.7 0 96v256c0 35.3 28.7 64 64 64h144l-16 48h-72c-13.3 0-24 10.7-24 24s10.7 24 24 24h272c13.3 0 24-10.7 24-24s-10.7-24-24-24h-72l-16-48h144c35.3 0 64-28.7 64-64V96c0-35.3-28.7-64-64-64z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-database{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M448 205.8c-14.8 9.8-31.8 17.7-49.5 24-47 16.8-108.7 26.2-174.5 26.2s-127.6-9.5-174.5-26.2c-17.6-6.3-34.7-14.2-49.5-24V288c0 44.2 100.3 80 224 80s224-35.8 224-80zm0-77.8V80c0-44.2-100.3-80-224-80S0 35.8 0 80v48c0 44.2 100.3 80 224 80s224-35.8 224-80m-49.5 261.8C351.6 406.5 289.9 416 224 416s-127.6-9.5-174.5-26.2c-17.6-6.3-34.7-14.2-49.5-24V432c0 44.2 100.3 80 224 80s224-35.8 224-80v-66.2c-14.8 9.8-31.8 17.7-49.5 24%22/%3E%3C/svg%3E")}
+.fa-solid.fa-copy{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M192 0c-35.3 0-64 28.7-64 64v256c0 35.3 28.7 64 64 64h192c35.3 0 64-28.7 64-64V119.4c0-17.4-7.1-34.1-19.7-46.2l-57.7-55.4A64.1 64.1 0 0 0 326.3 0zM64 128c-35.3 0-64 28.7-64 64v256c0 35.3 28.7 64 64 64h192c35.3 0 64-28.7 64-64v-16h-64v16H64V192h16v-64z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-chevron-left{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 320 512%22%3E%3Cpath d=%22M9.4 233.4c-12.5 12.5-12.5 32.8 0 45.3l192 192c12.5 12.5 32.8 12.5 45.3 0s12.5-32.8 0-45.3L77.3 256 246.6 86.6c12.5-12.5 12.5-32.8 0-45.3s-32.8-12.5-45.3 0l-192 192z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-earth-americas{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22m55.7 199.7 30.9 30.9c6 6 14.1 9.4 22.6 9.4h21.5c8.5 0 16.6 3.4 22.6 9.4l29.3 29.3c6 6 9.4 14.1 9.4 22.6v37.5c0 8.5 3.4 16.6 9.4 22.6l13.3 13.3c6 6 9.4 14.1 9.4 22.6V416c0 17.7 14.3 32 32 32s32-14.3 32-32v-2.7c0-8.5 3.4-16.6 9.4-22.6l45.3-45.3c6-6 9.4-14.1 9.4-22.6v-34.7c0-17.7-14.3-32-32-32h-82.7c-8.5 0-16.6-3.4-22.6-9.4l-16-16c-4.2-4.2-6.6-10-6.6-16 0-12.5 10.1-22.6 22.6-22.6h34.7c12.5 0 22.6-10.1 22.6-22.6 0-6-2.4-11.8-6.6-16l-19.7-19.7c-3.9-3.8-5.9-8.7-5.9-13.8s2-10 5.7-13.7L263 89c5.8-5.8 9.1-13.7 9.1-21.9 0-7.2-2.4-13.7-6.4-18.9-3.2-.1-6.4-.2-9.6-.2-95.4 0-175.7 64.2-200.3 151.7zM464 256c0-34.6-8.4-67.2-23.4-95.8-6.4.9-12.7 3.9-17.9 9.1l-13.4 13.4c-6 6-9.4 14.1-9.4 22.6V240c0 17.7 14.3 32 32 32H456c2.5 0 5-.3 7.3-.8.4-5 .5-10.1.5-15.2zM0 256a256 256 0 1 1 512 0 256 256 0 1 1-512 0%22/%3E%3C/svg%3E")}
+.fa-solid.fa-lock{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 384 512%22%3E%3Cpath d=%22M128 96v64h128V96c0-35.3-28.7-64-64-64s-64 28.7-64 64m-64 64V96c0-70.7 57.3-128 128-128S320 25.3 320 96v64c35.3 0 64 28.7 64 64v224c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64V224c0-35.3 28.7-64 64-64%22/%3E%3C/svg%3E")}
+.fa-solid.fa-comment-slash{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 576 512%22%3E%3Cpath d=%22M41-25c-9.4-9.3-24.6-9.3-34 0S-2.3-.4 7 9l528 528c9.4 9.4 24.6 9.4 33.9 0s9.4-24.6 0-33.9l-96.6-96.6c44.4-43.2 71.6-101.8 71.6-166.5 0-132.5-114.6-240-256-240-63 0-120.8 21.4-165.4 56.8zm19.4 155C42.2 163 32 200.3 32 239.9c0 54.3 19.2 104.3 51.6 144.5l-48.8 92.3c-4.8 9-3.3 20 3.6 27.5s17.7 9.8 27.1 5.8l118.4-50.7C215.7 472.6 251 480 288 480c36.4 0 70.9-7.1 102.3-19.9l-330-330z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-reply{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M204.2 18.4c12 5 19.8 16.6 19.8 29.6v80h112c97.2 0 176 78.8 176 176 0 113.3-81.5 163.9-100.2 174.1-2.5 1.4-5.3 1.9-8.1 1.9-10.9 0-19.7-8.9-19.7-19.7 0-7.5 4.3-14.4 9.8-19.5 9.4-8.8 22.2-26.4 22.2-56.7 0-53-43-96-96-96h-96v80c0 12.9-7.8 24.6-19.8 29.6s-25.7 2.2-34.9-6.9l-160-160c-12.5-12.5-12.5-32.8 0-45.3l160-160c9.2-9.2 22.9-11.9 34.9-6.9z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-ellipsis{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M0 256a56 56 0 1 1 112 0 56 56 0 1 1-112 0m168 0a56 56 0 1 1 112 0 56 56 0 1 1-112 0m224-56a56 56 0 1 1 0 112 56 56 0 1 1 0-112%22/%3E%3C/svg%3E")}
+.fa-solid.fa-gavel{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 576 512%22%3E%3Cpath d=%22m169.6 153.4-18.7-18.7c-12.5-12.5-12.5-32.8 0-45.3L265.6-25.4c12.5-12.5 32.8-12.5 45.3 0l18.7 18.8c12.5 12.5 12.5 32.8 0 45.3L214.9 153.4c-12.5 12.5-32.8 12.5-45.3 0M276 211.7l-31.4-31.4 112-112L476 187.7l-112 112-31.4-31.4-232 232c-15.6 15.6-40.9 15.6-56.6 0s-15.6-40.9 0-56.6zm114.9 162.9c-12.5-12.5-12.5-32.8 0-45.3l114.7-114.7c12.5-12.5 32.8-12.5 45.3 0l18.7 18.7c12.5 12.5 12.5 32.8 0 45.3L454.9 393.4c-12.5 12.5-32.8 12.5-45.3 0l-18.7-18.7z%22/%3E%3C/svg%3E")}
+.fa-solid.fa-circle-check{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M256 512a256 256 0 1 1 0-512 256 256 0 1 1 0 512m118-366.3c-10.7-7.8-25.7-5.4-33.5 5.3L221.1 315.2 169 263.1c-9.4-9.4-24.6-9.4-33.9 0s-9.4 24.6 0 33.9l72 72c5 5 11.8 7.5 18.8 7s13.4-4.1 17.5-9.8l135.9-187c7.8-10.7 5.4-25.7-5.3-33.5%22/%3E%3C/svg%3E")}
+.fa-solid.fa-eye{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 576 512%22%3E%3Cpath d=%22M288 32c-80.8 0-145.5 36.8-192.6 80.6-46.8 43.5-78.1 95.4-93 131.1-3.3 7.9-3.3 16.7 0 24.6 14.9 35.7 46.2 87.7 93 131.1C142.5 443.1 207.2 480 288 480s145.5-36.8 192.6-80.6c46.8-43.5 78.1-95.4 93-131.1 3.3-7.9 3.3-16.7 0-24.6-14.9-35.7-46.2-87.7-93-131.1C433.5 68.9 368.8 32 288 32M144 256a144 144 0 1 1 288 0 144 144 0 1 1-288 0m144-64c0 35.3-28.7 64-64 64-11.5 0-22.3-3-31.7-8.4-1 10.9-.1 22.1 2.9 33.2 13.7 51.2 66.4 81.6 117.6 67.9s81.6-66.4 67.9-117.6c-12.2-45.7-55.5-74.8-101.1-70.8 5.3 9.3 8.4 20.1 8.4 31.7%22/%3E%3C/svg%3E")}
+.fa-solid.fa-face-smile{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M256 512a256 256 0 1 0 0-512 256 256 0 1 0 0 512m-90.6-190.1c20.4 28 53.4 46.1 90.6 46.1s70.2-18.1 90.6-46.1c7.8-10.7 22.8-13.1 33.5-5.3s13.1 22.8 5.3 33.5C356.3 390 309.2 416 256 416s-100.3-26-129.4-65.9c-7.8-10.7-5.4-25.7 5.3-33.5s25.7-5.4 33.5 5.3M144 208a32 32 0 1 1 64 0 32 32 0 1 1-64 0m192-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64%22/%3E%3C/svg%3E")}
+.fa-regular.fa-face-smile{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M464 256a208 208 0 1 0-416 0 208 208 0 1 0 416 0M0 256a256 256 0 1 1 512 0 256 256 0 1 1-512 0m177.3 63.4c15 15.6 41.1 32.6 78.7 32.6s63.7-17 78.7-32.6c9.2-9.6 24.4-9.9 33.9-.7s9.9 24.4.7 33.9c-22.1 23-60 47.4-113.3 47.4s-91.2-24.4-113.3-47.4c-9.2-9.6-8.9-24.8.7-33.9s24.8-8.9 33.9.7M144 208a32 32 0 1 1 64 0 32 32 0 1 1-64 0m192-32a32 32 0 1 1 0 64 32 32 0 1 1 0-64%22/%3E%3C/svg%3E")}
+.fa-regular.fa-thumbs-up{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M171.5 38.8C192.3 4 236.5-10 274 7.6l7.2 3.8C316 32.3 330 76.5 312.4 114l-14.1 30H408l7.4.4c36.3 3.7 64.6 34.4 64.6 71.6 0 13.2-3.6 25.4-9.8 36 6.1 10.6 9.7 22.8 9.8 36 0 18.3-6.9 34.8-18 47.5 1.3 5.3 2 10.8 2 16.5 0 25.1-12.9 47-32.2 59.9-1.9 35.5-29.4 64.2-64.4 67.7l-7.4.4H255.9c-18 0-35.9-3.4-52.6-9.9l-7.1-3-.7-.3-6.6-3.2-.7-.3-12.2-6.5c-12.3-6.5-23.3-14.7-32.9-24.1-4.1 26.9-27.3 47.4-55.3 47.4h-32c-30.9 0-56-25.1-56-56L0 200c0-30.9 25.1-56 56-56h32c10.8 0 20.9 3.1 29.5 8.5L167.6 46l.6-1.2 2.7-5 .6-.9zM56 192c-4.4 0-8 3.6-8 8v224c0 4.4 3.6 8 8 8h32c4.4 0 8-3.6 8-8V200c0-4.4-3.6-8-8-8zM253.6 51c-14.8-6.9-32.3-1.6-40.7 12l-2.2 4-56.8 120.9c-3.5 7.5-5.5 15.5-6 23.7l-.1 4.2v112.9l.2 7.9c2.4 32.7 21.4 62.1 50.7 77.7l11.5 6.1 6.3 3.1c12.4 5.6 25.8 8.5 39.4 8.5H360l2.4-.1c12.1-1.2 21.6-11.5 21.6-23.9l-.2-2.6c-.1-.9-.2-1.7-.4-2.6-2.7-12.1 4.3-24.2 16-28 9.7-3.1 16.6-12.2 16.6-22.8 0-4.3-1.1-8.2-3.1-11.8-6.3-11.1-2.8-25.2 8-32 6.8-4.3 11.2-11.8 11.2-20.2 0-7.1-3.1-13.5-8.2-18-5.2-4.6-8.2-11.1-8.2-18s3-13.4 8.2-18c5.1-4.5 8.2-10.9 8.2-18l-.1-2.4c-1.1-11.3-10.1-20.3-21.4-21.4l-2.4-.1H260.7c-8.2 0-15.8-4.2-20.2-11.1s-5-15.7-1.5-23.1l30-64.3c7-15 1.4-32.7-12.5-41z%22/%3E%3C/svg%3E")}
+.fa-regular.fa-bell{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M224 0c-13.3 0-24 10.7-24 24v9.7C118.6 45.3 56 115.4 56 200v14.5c0 37.7-10 74.7-29 107.3L5.1 359.2C1.8 365 0 371.5 0 378.2 0 399.1 16.9 416 37.8 416h372.4c20.9 0 37.8-16.9 37.8-37.8 0-6.7-1.8-13.3-5.1-19L421 321.7c-19-32.6-29-69.6-29-107.3v-14.5c0-84.6-62.6-154.7-144-166.3v-9.7c0-13.3-10.7-24-24-24zm168.4 368H55.5l12.9-22.1C91.7 306 104 260.6 104 214.5V200c0-66.3 53.7-120 120-120s120 53.7 120 120v14.5c0 46.2 12.3 91.5 35.5 131.4zm-236.3 96c9.9 28 36.6 48 67.9 48s58-20 67.9-48z%22/%3E%3C/svg%3E")}
+.fa-regular.fa-comment{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M51.9 384.9C19.3 344.6 0 294.4 0 240 0 107.5 114.6 0 256 0s256 107.5 256 240-114.6 240-256 240c-36.5 0-71.2-7.2-102.6-20L37 509.9c-3.7 1.6-7.5 2.1-11.5 2.1C11.4 512 0 500.6 0 486.5c0-4.3 1.1-8.5 3.1-12.2zm37.3-30.2c12.2 15.1 14.1 36.1 4.8 53.2L76 441l58.5-25.1c11.8-5.1 25.2-5.2 37.1-.3 25.7 10.5 54.2 16.4 84.3 16.4 117.8 0 208-88.8 208-192S373.8 48 256 48 48 136.8 48 240c0 42.8 15.1 82.4 41.2 114.7%22/%3E%3C/svg%3E")}
+.fa-regular.fa-copy{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M384 336H192c-8.8 0-16-7.2-16-16V64c0-8.8 7.2-16 16-16h133.5c4.2 0 8.3 1.7 11.3 4.7l58.5 58.5c3 3 4.7 7.1 4.7 11.3V320c0 8.8-7.2 16-16 16m-192 48h192c35.3 0 64-28.7 64-64V122.5c0-17-6.7-33.3-18.7-45.3l-58.6-58.5C358.7 6.7 342.5 0 325.5 0H192c-35.3 0-64 28.7-64 64v256c0 35.3 28.7 64 64 64M64 128c-35.3 0-64 28.7-64 64v256c0 35.3 28.7 64 64 64h192c35.3 0 64-28.7 64-64v-16h-48v16c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192c0-8.8 7.2-16 16-16h16v-48z%22/%3E%3C/svg%3E")}
+.fa-regular.fa-envelope{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M61.4 64C27.5 64 0 91.5 0 125.4c0 .9 0 1.7.1 2.6H0v256c0 35.3 28.7 64 64 64h384c35.3 0 64-28.7 64-64V128h-.1c0-.9.1-1.7.1-2.6 0-33.9-27.5-61.4-61.4-61.4zM464 192.3V384c0 8.8-7.2 16-16 16H64c-8.8 0-16-7.2-16-16V192.3l154.8 117.4c31.4 23.9 74.9 23.9 106.4 0zM48 125.4c0-7.4 6-13.4 13.4-13.4h389.2c7.4 0 13.4 6 13.4 13.4 0 4.2-2 8.2-5.3 10.7L280.2 271.5c-14.3 10.8-34.1 10.8-48.4 0L53.3 136.1c-3.3-2.5-5.3-6.5-5.3-10.7%22/%3E%3C/svg%3E")}
+.fa-regular.fa-flag{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M48 24C48 10.7 37.3 0 24 0S0 10.7 0 24v464c0 13.3 10.7 24 24 24s24-10.7 24-24V388l80.3-20.1c41.1-10.3 84.6-5.5 122.5 13.4 44.2 22.1 95.5 24.8 141.7 7.4l34.7-13c12.5-4.7 20.8-16.6 20.8-30V66c0-23-24.2-38-44.8-27.7l-9.6 4.8c-46.3 23.2-100.8 23.2-147.1 0-35.1-17.6-75.4-22-113.5-12.5L48 52zm0 77.5 96.6-24.2c27-6.7 55.5-3.6 80.4 8.8 54.9 27.4 118.7 29.7 175 6.8v241.8l-24.4 9.1c-33.7 12.6-71.2 10.7-103.4-5.4-48.2-24.1-103.3-30.1-155.6-17.1L48 338.5z%22/%3E%3C/svg%3E")}
+.fa-regular.fa-image{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M64 80c-8.8 0-16 7.2-16 16v320c0 8.8 7.2 16 16 16h320c8.8 0 16-7.2 16-16V96c0-8.8-7.2-16-16-16zM0 96c0-35.3 28.7-64 64-64h320c35.3 0 64 28.7 64 64v320c0 35.3-28.7 64-64 64H64c-35.3 0-64-28.7-64-64zm128 32a32 32 0 1 1 0 64 32 32 0 1 1 0-64m136 72c8.5 0 16.4 4.5 20.7 11.8l80 136c4.4 7.4 4.4 16.6.1 24.1S352.6 384 344 384H104c-8.9 0-17.2-5-21.3-12.9s-3.5-17.5 1.6-24.8l56-80c4.5-6.4 11.8-10.2 19.7-10.2s15.2 3.8 19.7 10.2l17.2 24.6 46.5-79c4.3-7.3 12.2-11.8 20.7-11.8z%22/%3E%3C/svg%3E")}
+.fa-regular.fa-lightbulb{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 384 512%22%3E%3Cpath d=%22M296.5 291.1C321 265.2 336 230.4 336 192c0-79.5-64.5-144-144-144S48 112.5 48 192c0 38.4 15 73.2 39.5 99.1 21.3 22.4 44.9 54 53.3 92.9h102.4c8.4-39 32-70.5 53.3-92.9m34.8 33C307.7 349 288 379.4 288 413.7V432c0 44.2-35.8 80-80 80h-32c-44.2 0-80-35.8-80-80v-18.3c0-34.3-19.7-64.7-43.3-89.6C20 289.7 0 243.2 0 192 0 86 86 0 192 0s192 86 192 192c0 51.2-20 97.7-52.7 132.1M144 184c0 13.3-10.7 24-24 24s-24-10.7-24-24c0-48.6 39.4-88 88-88 13.3 0 24 10.7 24 24s-10.7 24-24 24c-22.1 0-40 17.9-40 40%22/%3E%3C/svg%3E")}
+.fa-regular.fa-pen-to-square{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M441 58.9 453.1 71c9.4 9.4 9.4 24.6 0 33.9L424 134.1 377.9 88 407 58.9c9.4-9.4 24.6-9.4 33.9 0zM209.8 256.2 344 121.9l46.1 46.1-134.3 134.2c-2.9 2.9-6.5 5-10.4 6.1L186.9 325l16.7-58.5c1.1-3.9 3.2-7.5 6.1-10.4zM373.1 25 175.8 222.2c-8.7 8.7-15 19.4-18.3 31.1l-28.6 100c-2.4 8.4-.1 17.4 6.1 23.6s15.2 8.5 23.6 6.1l100-28.6c11.8-3.4 22.5-9.7 31.1-18.3L487 138.9c28.1-28.1 28.1-73.7 0-101.8L474.9 25c-28.1-28.1-73.7-28.1-101.8 0M88 64c-48.6 0-88 39.4-88 88v272c0 48.6 39.4 88 88 88h272c48.6 0 88-39.4 88-88V312c0-13.3-10.7-24-24-24s-24 10.7-24 24v112c0 22.1-17.9 40-40 40H88c-22.1 0-40-17.9-40-40V152c0-22.1 17.9-40 40-40h112c13.3 0 24-10.7 24-24s-10.7-24-24-24z%22/%3E%3C/svg%3E")}
+.fa-regular.fa-trash-can{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 448 512%22%3E%3Cpath d=%22M166.2-16c-13.3 0-25.3 8.3-30 20.8L120 48H24C10.7 48 0 58.7 0 72s10.7 24 24 24h400c13.3 0 24-10.7 24-24s-10.7-24-24-24h-96L311.8 4.8c-4.7-12.5-16.6-20.8-30-20.8zM32 144v304c0 35.3 28.7 64 64 64h256c35.3 0 64-28.7 64-64V144h-48v304c0 8.8-7.2 16-16 16H96c-8.8 0-16-7.2-16-16V144zm160 72c0-13.3-10.7-24-24-24s-24 10.7-24 24v176c0 13.3 10.7 24 24 24s24-10.7 24-24zm112 0c0-13.3-10.7-24-24-24s-24 10.7-24 24v176c0 13.3 10.7 24 24 24s24-10.7 24-24z%22/%3E%3C/svg%3E")}
+.fa-regular.fa-heart{--ic:url("data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 512 512%22%3E%3Cpath d=%22M378.9 80c-27.3 0-53 13.1-69 35.2l-34.4 47.6c-4.5 6.2-11.7 9.9-19.4 9.9s-14.9-3.7-19.4-9.9l-34.4-47.6c-16-22.1-41.7-35.2-69-35.2-47 0-85.1 38.1-85.1 85.1 0 49.9 32 98.4 68.1 142.3 41.1 50 91.4 94 125.9 120.3 3.2 2.4 7.9 4.2 14 4.2s10.8-1.8 14-4.2c34.5-26.3 84.8-70.4 125.9-120.3 36.2-43.9 68.1-92.4 68.1-142.3 0-47-38.1-85.1-85.1-85.1zM271 87.1C296 52.5 336.2 32 378.9 32 452.4 32 512 91.6 512 165.1c0 68.6-42.9 128.9-79.1 172.8-44.1 53.6-97.3 100.1-133.8 127.9-12.3 9.4-27.5 14.1-43.1 14.1s-30.8-4.7-43.1-14.1C176.4 438 123.2 391.5 79.1 338 42.9 294.1 0 233.7 0 165.1 0 91.6 59.6 32 133.1 32 175.8 32 216 52.5 241 87.1l15 20.7z%22/%3E%3C/svg%3E")}
+
+.icon-btn{position:relative}.icon-btn .nbadge{position:absolute;top:-6px;inset-inline-end:-6px}
+.react-picker{display:flex;gap:2px;flex-wrap:wrap;background:var(--s);border:1px solid var(--b);border-radius:99px;padding:4px 8px;box-shadow:var(--shadow);width:max-content;max-width:100%}
+.react-pick{border:0;background:none;font-size:25px;line-height:1;padding:4px 5px;border-radius:50%;cursor:pointer;transition:transform .12s}.react-pick:hover,.react-pick:active{transform:scale(1.25)}.react-pick.sel{background:var(--p-soft)}
+.emo{font-size:15px;line-height:1;font-style:normal}.react-more{padding:7px 9px}.action-btn.reacted{color:var(--p);font-weight:bold}.action-btn.report-post:hover{color:var(--danger)}
+.stat-reacts{display:inline-flex;align-items:center;font-size:15px;margin-inline-end:4px}
+.post-actions{gap:5px}.post-actions .action-btn{display:inline-flex;align-items:center;gap:5px;padding:7px 9px}@media(max-width:480px){.report-post .lbl,.share-post .lbl{display:none}.post-actions{gap:4px}.post-actions .action-btn{padding:7px 7px;font-size:13px;gap:4px}}
+.reply-banner{display:flex;align-items:center;gap:8px;background:var(--p-soft);border-radius:10px;padding:6px 10px;font-size:13px}.reply-banner .link-btn{margin-inline-start:auto;font-size:15px}
+.replies{margin-inline-start:40px;display:grid;gap:7px;border-inline-start:2px solid var(--b);padding-inline-start:8px;margin-top:4px}
+.comment-tools .link-btn.on{color:#cf465b;font-weight:bold;text-decoration:none}.c-lk{font-size:12px;margin-inline-start:6px;background:var(--bg);border:1px solid var(--b);border-radius:99px;padding:0 6px}
+.mention{color:var(--p);font-weight:bold}
+.vis-select{width:auto;padding:8px 10px}.vis-tag{color:var(--m);font-size:12px}
+.comments-closed{text-align:center;color:var(--m);font-size:13px;padding:6px}
+.edit-opts{display:grid;gap:10px}.edit-opts label{display:grid;gap:4px;font-size:14px}.edit-opts .chk{display:flex;align-items:center;gap:8px}
+.heal-banner{position:fixed;z-index:300;top:0;right:0;left:0;background:#b45309;color:#fff;padding:10px 12px;text-align:center;font-size:14px}.heal-banner button{margin-inline-start:10px}
+.flag-note .btn{margin-top:6px;padding:5px 10px;font-size:13px}
+.liker-emo{margin-inline-start:auto;font-size:20px}.likers-sum{display:flex;gap:6px;flex-wrap:wrap;padding:0 4px 8px}
+
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
+/* سبب تكبير/توسّع الشاشة: عنصر طويل يوسّع العمود أكثر من عرض الهاتف */
+.app-layout>*,.main-column,.page,.main-column>*,.card,.post,.post>*,.row>*,.comment-main,.person-info,.setting-row>*{min-width:0}
+.card,.post,.page-title{max-width:100%}
+.link-btn,.person-info strong,.notif-row strong,.chat-room,.liker-row strong{overflow-wrap:anywhere;word-break:break-word;white-space:normal}
+.row.wrap,.row{min-width:0}
+img,video,canvas,svg{max-width:100%}
+button,a,.btn,.nav-btn,.action-btn,.field{touch-action:pan-x pan-y}
+input,textarea,select{font-size:16px}
+body{-webkit-tap-highlight-color:transparent}
+</style>
+</head>
+<body>
+<section id="boot-screen" class="boot-screen" role="status" aria-live="polite"><div><div class="boot-brand">كلمات</div><div class="boot-note">جارٍ تجهيز مساحتك الفكرية…</div><div class="boot-spinner" aria-hidden="true"></div></div></section>
+
+<section id="auth-screen" class="auth-screen hidden">
+<form id="auth-form" class="card auth-card">
+<div class="brand">كلمات</div><h1 id="auth-title">مرحبًا بك في كلمات</h1>
+<label id="name-field" class="hidden">الاسم<input id="auth-name" class="field" maxlength="60" autocomplete="name" placeholder="اسمك"></label>
+<label>البريد الإلكتروني<input id="auth-email" class="field" type="email" required autocomplete="email" placeholder="name@example.com"></label>
+<label>كلمة المرور<input id="auth-password" class="field" type="password" required minlength="6" autocomplete="current-password" placeholder="6 أحرف على الأقل"></label>
+<label id="consent-field" class="consent hidden"><input id="auth-consent" type="checkbox"><span>أوافق على <button type="button" class="link-btn" data-legal="terms">شروط الاستخدام</button> و<button type="button" class="link-btn" data-legal="privacy">سياسة الخصوصية</button>، وأؤكد أن عمري 13 سنة فأكثر.</span></label>
+<button id="auth-submit-btn" class="btn full" type="submit">تسجيل الدخول</button>
+<button id="auth-reset" type="button" class="link-btn small muted" style="text-align:center">نسيت كلمة المرور؟</button>
+<p style="text-align:center;margin:0"><span id="auth-switch-text">ليس لديك حساب؟</span> <button id="auth-switch" type="button" class="btn secondary">إنشاء حساب</button></p>
+<p class="auth-legal"><button type="button" class="link-btn" data-legal="terms">شروط الاستخدام</button> · <button type="button" class="link-btn" data-legal="privacy">سياسة الخصوصية</button></p>
+</form></section>
+
+<section id="verify-screen" class="auth-screen hidden">
+<div class="card auth-card" style="text-align:center">
+<div class="brand">كلمات</div><h1>أكّد بريدك الإلكتروني</h1>
+<p class="muted" style="margin:0">أرسلنا رابط التأكيد إلى:</p><strong id="verify-email" dir="ltr" style="overflow-wrap:anywhere"></strong>
+<p class="muted small" style="margin:0">افتح الرسالة واضغط على الرابط، ثم عد إلى هنا. إن لم تجدها فتفقّد مجلد البريد المزعج (Spam).</p>
+<button id="verify-check" class="btn full" type="button">تحققتُ من البريد</button>
+<button id="verify-resend" class="btn secondary full" type="button">إعادة إرسال الرابط</button>
+<button id="verify-logout" class="link-btn small muted" type="button" style="text-align:center">تسجيل الخروج أو تغيير البريد</button>
+</div></section>
+
+<div id="app" class="hidden">
+<header class="topbar"><div class="topbar-inner">
+<button id="logo-main-btn" class="brand" style="border:0;background:none" aria-label="الرئيسية">كلمات</button>
+<div class="search-wrap"><input id="global-search-input" class="field" placeholder="ابحث عن الأعضاء بالاسم..." autocomplete="off"><div id="search-results-dropdown" class="hidden"></div></div>
+<button id="settings-open-btn" class="btn secondary icon-btn" title="الإعدادات" aria-label="الإعدادات"><i class="fa-solid fa-gear"></i><em class="nbadge admin-badge hidden"></em></button>
+<button id="header-profile-btn" class="btn secondary icon-btn" title="ملفي الشخصي" aria-label="ملفي الشخصي"><img id="header-user-avatar" class="avatar" alt="صورتي" style="width:28px;height:28px"></button>
+</div><div id="offline-bar" class="offline-bar hidden">أنت غير متصل بالإنترنت — تُعرض آخر المنشورات المحفوظة، وستُرسل تغييراتك عند عودة الاتصال.</div></header>
+<div class="app-layout">
+<aside class="sidebar"><div class="card" style="margin-bottom:12px"><div class="row"><img id="menu-user-avatar" class="avatar" alt=""><div style="min-width:0"><strong id="menu-profile-name"></strong></div></div></div>
+<nav class="card nav-list"><button class="nav-btn active" data-page="home"><i class="fa-solid fa-house"></i> الرئيسية</button><button class="nav-btn" data-page="chat"><i class="fa-solid fa-comments"></i> المحادثات</button><button class="nav-btn" data-page="friends"><i class="fa-solid fa-user-group"></i> الأصدقاء</button><button class="nav-btn" data-page="notifications"><i class="fa-solid fa-bell"></i> الإشعارات <em class="nbadge hidden"></em></button><button class="nav-btn" data-page="profile"><i class="fa-solid fa-user"></i> ملفي الشخصي</button><button class="nav-btn" id="sidebar-settings-btn"><i class="fa-solid fa-gear"></i> الإعدادات</button></nav></aside>
+<main class="main-column">
+<section id="page-home" class="page"><h2 class="page-title">الرئيسية</h2>
+<div id="welcome-note" class="card welcome-note hidden"><div class="wn-text"><strong>أهلًا بك في كلمات 👋</strong> شاركنا اقتراحك لنطوّر المنصة معًا.</div><button id="suggest-btn" class="sg-btn" type="button" title="أرسل اقتراحك" aria-label="أرسل اقتراحك"><i class="fa-regular fa-lightbulb"></i></button><button id="welcome-close" class="ib-close" type="button" aria-label="إغلاق">×</button></div>
+<div class="feature-actions"><button id="publish-main-btn" class="btn" type="button">➕ النشر</button><button id="profile-settings-btn" class="btn secondary" type="button">⚙️ الملف الشخصي (الجنس والحالة والعنوان)</button></div>
+<form id="new-post-form" class="card post" style="margin-bottom:14px"><div class="row"><img id="post-user-avatar" class="avatar" alt=""><strong>ماذا يدور في فكرك؟</strong></div>
+<textarea id="new-post-text" class="field" rows="3" maxlength="5000" placeholder="شارك فكرة أو خاطرة أو سؤالًا..."></textarea>
+<label class="video-url-label">رابط فيديو (اختياري)<input id="new-post-video-url" class="field" type="url" inputmode="url" maxlength="1000" placeholder="https://youtu.be/... أو رابط فيديو مباشر"></label>
+<div id="media-preview-container" class="hidden"><img id="media-preview-content" class="post-image" alt="معاينة الصورة"><button id="remove-media-btn" class="btn secondary" type="button">إزالة الصورة</button></div>
+<input id="post-media-file" class="hidden" type="file" accept="image/*"><div class="row between wrap"><button id="attach-media-trigger" class="btn secondary" type="button"><i class="fa-regular fa-image"></i> إرفاق صورة</button><span class="row"><select id="new-post-vis" class="field vis-select" aria-label="من يرى المنشور"><option value="public">🌍 عام</option><option value="friends">👥 الأصدقاء</option><option value="me">🔒 أنا فقط</option></select><button id="publish-post-btn" class="btn" type="submit">نشر</button></span></div><p class="muted small" style="margin:0">تُضغط الصور تلقائيًا، ويمكنك إضافة رابط يوتيوب أو فيسبوك أو فيديو مباشر.</p></form>
+<div id="posts-feed" class="main-column"><div class="skeleton"></div><div class="skeleton"></div></div></section>
+<section id="page-chat" class="page hidden"><h2 class="page-title">المحادثات</h2><div class="card chat-layout"><div class="chat-rooms"><strong>المحادثات</strong><div id="chat-rooms-list" style="margin-top:8px"></div></div><div class="chat-box"><div id="chat-heading" class="muted">اختر صديقًا لبدء المحادثة</div><div id="chat-messages"><div class="feed-empty">لا توجد محادثة محددة.</div></div><form id="chat-form" class="chat-form"><input id="chat-input" class="field" maxlength="2000" placeholder="اكتب رسالة..." disabled><button id="chat-send-btn" class="btn" type="submit" disabled aria-label="إرسال"><i class="fa-solid fa-paper-plane"></i></button></form></div></div></section>
+<section id="page-friends" class="page hidden"><h2 class="page-title">الأصدقاء والطلبات</h2><div class="card" style="margin-bottom:14px"><h3 style="margin-top:0">طلبات الصداقة</h3><div id="friend-requests-list"><div class="feed-empty">جارٍ التحميل...</div></div></div><div class="card"><h3 style="margin-top:0">قائمة الأصدقاء</h3><div class="setting-row" style="margin-bottom:10px"><div><strong>ظهور قائمة أصدقائك</strong><p id="hide-friends-state"></p></div><button id="hide-friends-btn" class="btn secondary" type="button">إخفاء القائمة</button></div><div id="friends-list"><div class="feed-empty">جارٍ التحميل...</div></div></div></section>
+<section id="page-notifications" class="page hidden"><h2 class="page-title">الإشعارات</h2><div id="notifications-list" class="card"><div class="feed-empty">لا توجد إشعارات.</div></div></section>
+<section id="page-profile" class="page hidden"><div class="card profile-head"><img id="profile-view-avatar" class="avatar big" alt=""><h2 id="profile-view-name" style="margin:0"></h2><div id="profile-view-meta" class="muted small"></div><p id="profile-view-bio" class="profile-bio"></p><div id="profile-actions" class="row wrap" style="justify-content:center"></div></div><h3>منشورات العضو</h3><div id="user-profile-posts-feed" class="main-column"></div></section>
+</main>
+<aside class="right-column"><div class="card"><h3 style="margin-top:0">مرحبًا بك في كلمات</h3><p class="muted small">مساحة عربية للفكر والمعرفة والحوار المحترم.</p><button class="btn secondary" data-page="friends" style="width:100%">اكتشف الأصدقاء</button></div><div class="card"><h3 style="margin-top:0">الخصوصية</h3><p class="muted small">أدر قائمة الحظر من مركز الإعدادات.</p><button class="btn secondary" id="right-settings-btn" style="width:100%">فتح الإعدادات</button></div></aside>
+</div>
+<nav class="bottom-nav"><button class="nav-btn active" data-page="home"><i class="fa-solid fa-house"></i> الرئيسية</button><button class="nav-btn" data-page="chat"><i class="fa-solid fa-comments"></i> الرسائل</button><button class="nav-btn" data-page="friends"><i class="fa-solid fa-user-group"></i> الأصدقاء</button><button class="nav-btn" data-page="notifications"><i class="fa-solid fa-bell"></i> التنبيهات <em class="nbadge hidden"></em></button><button class="nav-btn" data-page="profile"><i class="fa-solid fa-user"></i> ملفي</button></nav>
+</div>
+<div id="modal-root" class="hidden"></div><div id="install-banner" class="install-banner hidden" role="dialog" aria-label="تثبيت كلمات"><img src="./kalimat_192x192-1.png" alt=""><div class="ib-text"><strong>ثبّت كلمات على شاشتك</strong>افتحها كتطبيق بضغطة واحدة دون المتصفح.</div><button id="install-banner-btn" class="btn" type="button">تثبيت</button><button id="install-banner-close" class="ib-close" type="button" aria-label="إغلاق">×</button></div>
+<div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
+
+<script>
+/* شبكة أمان: إن تعذّر تشغيل التطبيق تظهر رسالة واضحة بدل شاشة التحميل الأبدية */
+(function(){
+ var err="";
+ addEventListener("error",function(e){err=(e.message||"خطأ")+(e.lineno?" (سطر "+e.lineno+")":"")});
+ setTimeout(function(){
+  var b=document.getElementById("boot-screen"),n=b&&b.querySelector(".boot-note");
+  if(b&&n&&!b.classList.contains("hidden"))n.textContent="تعذّر تشغيل التطبيق. حدّث الصفحة، وإن تكرر ذلك فأرسل هذه الرسالة للمطوّر: "+(err||"لا يوجد خطأ ظاهر؛ غالبًا نسخة قديمة أو ناقصة من الملف");
+ },12000);
+})();
+</script>
+<script type="module">
+import{initializeApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import{getAuth,onAuthStateChanged,createUserWithEmailAndPassword,signInWithEmailAndPassword,signOut,updateProfile,sendPasswordResetEmail,sendEmailVerification,reload,deleteUser,reauthenticateWithCredential,EmailAuthProvider}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import{initializeFirestore,getFirestore,persistentLocalCache,persistentMultipleTabManager,doc,getDoc,getDocFromServer,setDoc,updateDoc,addDoc,collection,query,where,orderBy,limit,startAfter,startAt,endAt,onSnapshot,serverTimestamp,arrayUnion,arrayRemove,deleteDoc,deleteField,getDocs,writeBatch,increment,getCountFromServer}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+
+/* ============ إعدادات Firebase ============ */
+const firebaseConfig={apiKey:"AIzaSyAPjMSa60LLeM0gse8UEfr21xly0dCk5gM",authDomain:"gogi1982-1982.firebaseapp.com",projectId:"gogi1982-1982",storageBucket:"gogi1982-1982.firebasestorage.app",messagingSenderId:"233752528773",appId:"1:233752528773:web:b77ec97d0c83c7a23966ec",measurementId:"G-P4VE7LJMDD"};
+
+/* ============ إصلاح ذاتي لتخزين Firestore المحلي ============ */
+const HEAL_KEY="kalimat-heal";
+try{
+ if(localStorage.getItem(HEAL_KEY)==="1"){
+  localStorage.removeItem(HEAL_KEY);
+  if(indexedDB.databases){
+   const l=await indexedDB.databases();
+   await Promise.race([
+    Promise.all(l.filter(d=>/^firestore\//.test(d.name||"")).map(d=>new Promise(r=>{const q=indexedDB.deleteDatabase(d.name);q.onsuccess=q.onerror=q.onblocked=()=>r()}))),
+    new Promise(r=>setTimeout(r,2500))
+   ]);
+  }
+ }
+}catch(e){console.warn(e)}
+function healFirestore(){try{localStorage.setItem(HEAL_KEY,"1")}catch{}location.reload()}
+function showHealBanner(){
+ if(document.getElementById("heal-banner"))return;
+ const d=document.createElement("div");d.id="heal-banner";d.className="heal-banner";
+ d.innerHTML='حدث خلل في التخزين المحلي للمتصفح. <button class="btn" type="button" id="heal-btn">إصلاح وإعادة التحميل</button>';
+ document.body.appendChild(d);document.getElementById("heal-btn").onclick=healFirestore;
+}
+const isAssertErr=m=>/INTERNAL ASSERTION FAILED|Unexpected state/i.test(String(m||""));
+function onFatal(m){
+ if(!isAssertErr(m))return;
+ let n=0;try{n=+sessionStorage.getItem("kalimat-heal-n")||0;sessionStorage.setItem("kalimat-heal-n",String(n+1))}catch{}
+ if(n<1)healFirestore();else showHealBanner();
+}
+addEventListener("error",e=>onFatal(e.message||e.error?.message));
+addEventListener("unhandledrejection",e=>onFatal(e.reason?.message||e.reason));
+const fb=initializeApp(firebaseConfig);
+const auth=getAuth(fb);
+let db;
+try{
+  db=initializeFirestore(fb,{localCache:persistentLocalCache({tabManager:persistentMultipleTabManager()})});
+}catch(e){
+  console.warn("التخزين المحلي الدائم غير متاح، سيُستخدم الوضع العادي",e);
+  db=getFirestore(fb);
+}
+
+/* ============ ثوابت وأدوات ============ */
+const OFFLINE_DB="kalimat-offline-v2",OFFLINE_POST_LIMIT=40,PAGE_SIZE=20,MORE_SIZE=15,USER_TTL=5*60*1000;
+const $=id=>document.getElementById(id);
+const DEFAULT_AVATAR="data:image/svg+xml;charset=UTF-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" rx="50" fill="#dbeafe"/><circle cx="50" cy="36" r="19" fill="#0284c7"/><path d="M15 100c2-26 17-38 35-38s33 12 35 38" fill="#0284c7"/></svg>');
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const br=v=>esc(v).replace(/\n/g,"<br>");
+const asArray=v=>Array.isArray(v)?v:[];
+/* رابط صورة آمن: https أو صورة base64 فقط، وإلا فارغ */
+const safeUrlRaw=v=>{const s=String(v||"");return /^(https:\/\/|data:image\/(jpeg|png|webp|gif);base64,)/i.test(s)?s:""};
+const safeVideoUrl=v=>{try{const u=new URL(String(v||"").trim());return u.protocol==="https:"?u.href:""}catch{return ""}};
+function videoHtmlForPost(p){
+ const raw=safeVideoUrl(p?.videoUrl);if(!raw)return "";
+ let u;try{u=new URL(raw)}catch{return ""}
+ const host=u.hostname.toLowerCase().replace(/^www\./,"");
+ let id="";
+ if(host==="youtu.be")id=u.pathname.split("/").filter(Boolean)[0]||"";
+ else if(host==="youtube.com"||host.endsWith(".youtube.com")){id=u.searchParams.get("v")||u.pathname.match(/^\/(?:embed|shorts|live)\/([^/]+)/)?.[1]||""}
+ if(/^[A-Za-z0-9_-]{11}$/.test(id))return `<div class="post-video"><iframe src="https://www.youtube-nocookie.com/embed/${id}" title="فيديو يوتيوب" loading="lazy" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" referrerpolicy="strict-origin-when-cross-origin" allowfullscreen></iframe></div>`;
+ if(host==="facebook.com"||host.endsWith(".facebook.com")||host==="fb.watch")return `<div class="video-link-card"><p>🎥 فيديو من فيسبوك</p><a href="${esc(raw)}" target="_blank" rel="noopener noreferrer">فتح الفيديو على فيسبوك ↗</a></div>`;
+ if(/\.(mp4|webm|ogg)$/i.test(u.pathname))return `<video class="post-video-file" src="${esc(raw)}" controls playsinline preload="metadata">عذرًا، لا يدعم متصفحك تشغيل هذا الفيديو.</video>`;
+ return `<div class="video-link-card"><p>🎥 فيديو عبر رابط خارجي</p><a href="${esc(raw)}" target="_blank" rel="noopener noreferrer">مشاهدة الفيديو ↗</a></div>`;
+}
+const rawAvatar=u=>safeUrlRaw(u?.thumb||u?.photoURL||u?.avatar)||DEFAULT_AVATAR;
+const rawBigAvatar=u=>safeUrlRaw(u?.photoURL)||rawAvatar(u);
+const avatarOf=u=>esc(rawAvatar(u));
+const nameOf=u=>u?.displayName||u?.name||"عضو";
+const authorUid=p=>p?.uid||p?.author?.uid||p?.userId;
+const ms=v=>{if(!v)return 0;if(typeof v==="number")return v;if(typeof v.toMillis==="function")return v.toMillis();if(v.seconds)return v.seconds*1000;if(v instanceof Date)return v.getTime();const t=Date.parse(v);return isNaN(t)?0:t};
+const snapDoc=d=>({id:d.id,...d.data({serverTimestamps:"estimate"})});
+const online=()=>navigator.onLine!==false;
+function timeLabel(ts){try{const t=ms(ts);return t?new Date(t).toLocaleString("ar",{dateStyle:"medium",timeStyle:"short"}):"الآن"}catch{return""}}
+
+/* ============ الحالة العامة ============ */
+let currentUser=null,currentUserData={},viewedProfile=null,authMode="login",selectedImage="";
+let isAdmin=false,myMod=null,modStarted=false;
+let activeChatId=null,activeChatUser=null,unsubs=[],unsubMessages=null,installPrompt=null,toastTimer=null;
+let registering=false,lastPostAt=0,currentPageName="home",handlingPopState=false;
+let livePosts=[],olderPosts=[],lastLiveDoc=null,olderCursor=null,feedHasMore=true,loadingMore=false;
+let profilePosts=[],profileReq=0,notifs=[],unreadCount=0,modalPostId=null,saveTimer=null;
+const postsCache=new Map(),userCache=new Map(),profileCache=new Map(),repostImg=new Map(),expandedComments=new Set(),openComments=new Set(),pageScroll={},commentsByPost=new Map(),commentSubs=new Map();
+const expandedReplies=new Set(),replyTarget=new Map();let pickerFor=null,adminPending=0;
+let requestsStarted=false,friendsStarted=false,notificationsStarted=false,chatRoomsStarted=false,ownDocStarted=false;
+
+/* ============ رسائل الخطأ والإشعارات المنبثقة ============ */
+const ERR={
+ "auth/invalid-credential":"البريد أو كلمة المرور غير صحيحة.","auth/user-not-found":"لا يوجد حساب بهذا البريد.","auth/wrong-password":"كلمة المرور غير صحيحة.",
+ "auth/email-already-in-use":"هذا البريد مسجل بالفعل.","auth/weak-password":"كلمة المرور يجب ألا تقل عن 6 أحرف.","auth/invalid-email":"صيغة البريد غير صحيحة.",
+ "auth/too-many-requests":"محاولات كثيرة؛ حاول لاحقًا.","auth/requires-recent-login":"سجّل الدخول من جديد ثم أعد المحاولة.","auth/network-request-failed":"تعذر الاتصال بالإنترنت.",
+ "permission-denied":"لا توجد صلاحية لهذا الإجراء. راجع قواعد Firestore.","unavailable":"تعذر الاتصال؛ تحقق من الإنترنت.",
+ "resource-exhausted":"انتهت الحصة اليومية المجانية للخدمة؛ ستعود غدًا.","failed-precondition":"يلزم إنشاء فهرس في Firestore (راجع Console).",
+ "unauthenticated":"انتهت الجلسة؛ سجّل الدخول مجددًا.","not-found":"العنصر غير موجود.","deadline-exceeded":"استغرق الطلب وقتًا طويلًا؛ حاول مجددًا."
+};
+function toast(s){const t=$("toast");t.textContent=s;t.classList.remove("hidden");clearTimeout(toastTimer);toastTimer=setTimeout(()=>t.classList.add("hidden"),3500)}
+function showError(e){console.error(e);const code=e?.code||"";if(isAssertErr(e?.message)){onFatal(e.message);return toast("حدث خلل في التخزين المحلي؛ جارٍ إصلاحه.")}toast(ERR[code]||(code?"حدث خطأ غير متوقع ("+code+")":(e?.message||"حدث خطأ؛ حاول مجددًا.")))}
+let lastListenErr=0;
+function listenErr(name){return e=>{console.warn("listener:"+name,e);if(Date.now()-lastListenErr>15000&&["permission-denied","resource-exhausted"].includes(e?.code)){lastListenErr=Date.now();showError(e)}}}
+function needOnline(){if(online())return false;toast("هذا الإجراء يحتاج إلى اتصال بالإنترنت.");return true}
+
+/* ============ التخزين دون اتصال (IndexedDB) ============ */
+let idbPromise=null;
+function idb(){
+ if(idbPromise)return idbPromise;
+ idbPromise=new Promise(resolve=>{
+  try{
+   if(!("indexedDB" in window))return resolve(null);
+   const r=indexedDB.open(OFFLINE_DB,1);
+   r.onupgradeneeded=()=>{const d=r.result;if(!d.objectStoreNames.contains("posts"))d.createObjectStore("posts",{keyPath:"id"});if(!d.objectStoreNames.contains("profiles"))d.createObjectStore("profiles",{keyPath:"uid"})};
+   r.onsuccess=()=>resolve(r.result);r.onerror=()=>resolve(null);r.onblocked=()=>resolve(null);
+  }catch{resolve(null)}
+ });
+ return idbPromise;
+}
+const txDone=tx=>new Promise(res=>{tx.oncomplete=()=>res(true);tx.onerror=()=>res(false);tx.onabort=()=>res(false)});
+function cacheSafeValue(v){
+ if(v&&typeof v.toMillis==="function")return v.toMillis();
+ if(Array.isArray(v))return v.map(cacheSafeValue);
+ if(v&&typeof v==="object"&&!(v instanceof Date)){const o={};for(const [k,x] of Object.entries(v)){if(typeof x!=="function"&&x!==undefined)o[k]=cacheSafeValue(x)}return o}
+ return v;
+}
+async function saveOfflinePosts(posts){
+ const d=await idb();if(!d)return;
+ try{const tx=d.transaction("posts","readwrite"),s=tx.objectStore("posts");s.clear();posts.slice(0,OFFLINE_POST_LIMIT).forEach(p=>{if(p?.id)s.put(cacheSafeValue(p))});await txDone(tx)}catch(e){console.warn("تعذر حفظ المنشورات محليًا",e)}
+}
+async function getOfflinePosts(){
+ const d=await idb();if(!d)return[];
+ return new Promise(resolve=>{try{const r=d.transaction("posts","readonly").objectStore("posts").getAll();r.onsuccess=()=>resolve((r.result||[]).sort((a,b)=>ms(b.createdAt)-ms(a.createdAt)));r.onerror=()=>resolve([])}catch{resolve([])}});
+}
+async function clearOfflinePosts(){const d=await idb();if(!d)return;try{const tx=d.transaction("posts","readwrite");tx.objectStore("posts").clear();await txDone(tx)}catch{}}
+async function saveOfflineProfile(p,full=true){
+ if(!p?.uid)return;const d=await idb();if(!d)return;
+ const safe={uid:p.uid,name:p.name||"",displayName:p.displayName||p.name||"",thumb:p.thumb||"",bio:p.bio||"",gender:p.gender||"",status:p.status||"",address:p.address||""};
+ if(full){safe.photoURL=p.photoURL||"";safe.friends=asArray(p.friends);safe.blockedUsers=asArray(p.blockedUsers)}
+ try{const tx=d.transaction("profiles","readwrite");tx.objectStore("profiles").put(safe);await txDone(tx)}catch{}
+}
+async function getOfflineProfile(uid){
+ const d=await idb();if(!d)return null;
+ return new Promise(resolve=>{try{const r=d.transaction("profiles","readonly").objectStore("profiles").get(uid);r.onsuccess=()=>resolve(r.result||null);r.onerror=()=>resolve(null)}catch{resolve(null)}});
+}
+function scheduleSave(){clearTimeout(saveTimer);saveTimer=setTimeout(()=>saveOfflinePosts(allPosts()),1500)}
+
+/* ============ المستخدمون (مع ذاكرة مؤقتة لتوفير القراءات) ============ */
+async function fetchUser(uid){
+ if(!uid)return null;
+ const c=userCache.get(uid);
+ if(c&&Date.now()-c.t<USER_TTL)return c.u;
+ try{
+  const s=await getDoc(doc(db,"users",uid));
+  const u=s.exists()?{uid,...s.data()}:null;
+  userCache.set(uid,{u,t:u?Date.now():Date.now()-USER_TTL+30000});
+  if(u)saveOfflineProfile(u,false);
+  return u;
+ }catch(e){
+  if(c)return c.u;
+  const off=await getOfflineProfile(uid);
+  if(off){userCache.set(uid,{u:off,t:Date.now()-USER_TTL+30000});return off}
+  console.warn("تعذر جلب المستخدم",e);return null;
+ }
+}
+const isBlocked=uid=>asArray(currentUserData.blockedUsers).includes(uid);
+const blockedBy=(uid,u)=>asArray(u?.blockedUsers).includes(uid);
+const newUserDoc=(uid,name)=>({uid,name,displayName:name,nameLower:name.toLowerCase(),photoURL:"",thumb:"",bio:"",gender:"",status:"",address:"",friends:[],blockedUsers:[],createdAt:serverTimestamp()});
+
+/* ============ الشاشات والتنقل ============ */
+function showAuth(){$("boot-screen").classList.add("hidden");$("verify-screen").classList.add("hidden");$("auth-screen").classList.remove("hidden");$("app").classList.add("hidden")}
+function showApp(){$("boot-screen").classList.add("hidden");$("auth-screen").classList.add("hidden");$("verify-screen").classList.add("hidden");$("app").classList.remove("hidden")}
+/* تأكيد البريد: يُطلب من الحسابات الجديدة فقط (المنشأة بعد هذا التاريخ)؛ الحسابات القديمة تبقى تعمل. ضع 0 لإلزام الجميع */
+const VERIFY_FROM=Date.parse("2026-10-06T07:00:00Z");
+const needsVerify=u=>!!u&&!u.emailVerified&&new Date(u.metadata?.creationTime).getTime()>=VERIFY_FROM;
+function showVerify(u){
+ $("boot-screen").classList.add("hidden");$("auth-screen").classList.add("hidden");$("app").classList.add("hidden");
+ $("verify-email").textContent=u.email||"";$("verify-screen").classList.remove("hidden");
+}
+let resendUntil=0,verifyBusy=false;
+async function checkVerified(silent){
+ const u=auth.currentUser;if(!u||verifyBusy)return;verifyBusy=true;
+ try{
+  await reload(u);
+  if(u.emailVerified){await u.getIdToken(true);location.reload();return}
+  if(!silent)toast("لم يتم التأكيد بعد. اضغط الرابط في رسالة البريد ثم حاول مجددًا.");
+ }catch(e){if(!silent)showError(e)}
+ finally{verifyBusy=false}
+}
+$("verify-check").onclick=()=>checkVerified(false);
+$("verify-resend").onclick=async()=>{
+ const u=auth.currentUser;if(!u)return;
+ const wait=Math.ceil((resendUntil-Date.now())/1000);
+ if(wait>0)return toast("انتظر "+wait+" ثانية قبل إعادة الإرسال.");
+ try{await sendEmailVerification(u);resendUntil=Date.now()+60000;toast("تم إرسال رابط جديد إلى بريدك.")}catch(e){showError(e)}
+};
+$("verify-logout").onclick=()=>signOut(auth).catch(showError);
+document.addEventListener("visibilitychange",()=>{if(!document.hidden&&!$("verify-screen").classList.contains("hidden"))checkVerified(true)});
+setTimeout(()=>{if(!$("boot-screen").classList.contains("hidden")&&!currentUser)showAuth()},8000);
+function updateNet(){$("offline-bar").classList.toggle("hidden",online())}
+addEventListener("online",updateNet);addEventListener("offline",updateNet);updateNet();
+
+function setAuthMode(mode){
+ authMode=mode;const r=mode==="register";
+ $("auth-title").textContent=r?"إنشاء حساب جديد":"مرحبًا بك في كلمات";
+ $("auth-submit-btn").textContent=r?"إنشاء الحساب":"تسجيل الدخول";
+ $("auth-switch-text").textContent=r?"لديك حساب بالفعل؟":"ليس لديك حساب؟";
+ $("auth-switch").textContent=r?"تسجيل الدخول":"إنشاء حساب";
+ $("name-field").classList.toggle("hidden",!r);$("auth-name").required=r;
+ $("auth-password").autocomplete=r?"new-password":"current-password";
+ $("auth-reset").classList.toggle("hidden",r);
+ $("consent-field").classList.toggle("hidden",!r);$("auth-consent").required=r;
+}
+$("auth-switch").addEventListener("click",()=>setAuthMode(authMode==="login"?"register":"login"));
+$("auth-reset").addEventListener("click",async()=>{
+ const email=$("auth-email").value.trim();
+ if(!email)return toast("اكتب بريدك الإلكتروني أولًا.");
+ try{await sendPasswordResetEmail(auth,email);toast("إن كان البريد مسجلًا فسيصلك رابط إعادة التعيين.")}catch(e){showError(e)}
+});
+$("auth-form").addEventListener("submit",async e=>{
+ e.preventDefault();
+ const email=$("auth-email").value.trim().toLowerCase(),password=$("auth-password").value,name=$("auth-name").value.trim(),b=$("auth-submit-btn");
+ b.disabled=true;
+ try{
+  if(authMode==="register"){
+   if(name.length<2)throw Error("يرجى إدخال اسم من حرفين على الأقل.");
+   if(!$("auth-consent").checked)throw Error("يلزم الموافقة على شروط الاستخدام وسياسة الخصوصية.");
+   registering=true;
+   const c=await createUserWithEmailAndPassword(auth,email,password);
+   try{await updateProfile(c.user,{displayName:name})}catch(x){console.warn(x)}
+   try{await sendEmailVerification(c.user);resendUntil=Date.now()+60000}catch(x){console.warn(x)}
+   await setDoc(doc(db,"users",c.user.uid),newUserDoc(c.user.uid,name));
+   registering=false;toast("تم إنشاء الحساب. أرسلنا رابط التأكيد إلى بريدك.");
+  }else await signInWithEmailAndPassword(auth,email,password);
+ }catch(err){registering=false;showError(err)}
+ finally{b.disabled=false}
+});
+
+onAuthStateChanged(auth,async user=>{
+ clearSubs();currentUser=user;
+ if(!user){
+  currentUserData={};livePosts=[];olderPosts=[];lastLiveDoc=null;olderCursor=null;feedHasMore=true;profilePosts=[];notifs=[];unreadCount=0;
+  postsCache.clear();userCache.clear();profileCache.clear();authorTried.clear();updateBadge();showAuth();return;
+ }
+ if(needsVerify(user)){showVerify(user);return}
+ currentUserData={uid:user.uid,name:user.displayName||"عضو",displayName:user.displayName||"عضو",photoURL:"",thumb:"",bio:"",friends:[],blockedUsers:[]};
+ const [prof,cached]=await Promise.all([getOfflineProfile(user.uid),getOfflinePosts()]);
+ if(prof)currentUserData={...currentUserData,...prof,uid:user.uid};
+ currentUserData.friends=asArray(currentUserData.friends);currentUserData.blockedUsers=asArray(currentUserData.blockedUsers);
+ showApp();updateAccountUI();
+ currentPageName="home";history.replaceState({...(history.state||{}),kalimatPage:"home"},"",location.href);
+ if(cached.length){livePosts=cached;registerPosts(cached)}
+ showPage("home",true,true);renderHome();
+ startFeed();startOwnDoc();startNotifications();startModeration();
+ openPostFromHash();
+});
+
+function updateAccountUI(){
+ const u=currentUserData;
+ $("menu-profile-name").textContent=nameOf(u);
+ ["menu-user-avatar","header-user-avatar","post-user-avatar"].forEach(id=>{$(id).src=rawAvatar(u)});
+ updateFriendsPrivacyUI();
+}
+function subscribe(fn){if(typeof fn==="function")unsubs.push(fn)}
+function clearSubs(){
+ unsubs.forEach(f=>{try{f()}catch{}});unsubs=[];
+ commentSubs.forEach(f=>{try{f()}catch{}});commentSubs.clear();commentsByPost.clear();openComments.clear();
+ if(unsubMessages){try{unsubMessages()}catch{}}unsubMessages=null;
+ activeChatId=null;activeChatUser=null;
+ requestsStarted=friendsStarted=notificationsStarted=chatRoomsStarted=ownDocStarted=false;
+ modStarted=false;isAdmin=false;myMod=null;
+}
+
+function showPage(p,preserve=false,fromHistory=false){
+ if(!currentUser)return;
+ const target=$("page-"+p);if(!target)return;
+ const current=document.querySelector(".page:not(.hidden)");
+ if(current)pageScroll[current.id]=window.scrollY||0;
+ const changed=currentPageName!==p;currentPageName=p;
+ if(!fromHistory&&changed&&!handlingPopState)history.pushState({kalimatPage:p},"",location.href.split("#")[0]);
+ document.querySelectorAll(".page").forEach(x=>x.classList.toggle("hidden",x!==target));
+ document.querySelectorAll("[data-page]").forEach(x=>x.classList.toggle("active",x.dataset.page===p));
+ requestAnimationFrame(()=>window.scrollTo(0,pageScroll[target.id]||0));
+ if(p==="friends"){startRequests();loadFriends()}
+ if(p==="notifications")renderNotifications();
+ if(p==="chat")startChatRooms();
+ if(p==="profile"&&!preserve)openUserProfile(currentUser.uid);
+}
+document.querySelectorAll("[data-page]").forEach(b=>b.addEventListener("click",()=>showPage(b.dataset.page)));
+history.replaceState({...(history.state||{}),kalimatPage:"home"},"",location.href);
+window.addEventListener("popstate",e=>{
+ if(modalOpen){hideModalDom();return}
+ if(!$("app").classList.contains("hidden")&&e.state?.kalimatPage){handlingPopState=true;showPage(e.state.kalimatPage,true,true);handlingPopState=false}
+});
+
+/* ============ النوافذ المنبثقة (بدون تعارض مع زر الرجوع) ============ */
+let modalOpen=false,modalResolve=null,modalTempComments=null;
+function hideModalDom(){
+ modalOpen=false;modalPostId=null;
+ if(modalTempComments){const t=modalTempComments;modalTempComments=null;openComments.delete(t);stopComments(t);const pp=postsCache.get(t);if(pp)setPostLocal(pp)}
+ const r=$("modal-root");r.classList.add("hidden");r.innerHTML="";r.onclick=null;
+ if(modalResolve){modalResolve();modalResolve=null}
+}
+function showModal(title,content){
+ const r=$("modal-root");
+ if(!modalOpen){history.pushState({kalimatModal:true,kalimatPage:currentPageName},"",location.href);modalOpen=true}
+ r.innerHTML=`<div class="modal" role="dialog" aria-modal="true"><div class="modal-head"><h2>${esc(title)}</h2><button class="btn secondary icon-btn" id="modal-close" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button></div>${content}</div>`;
+ r.classList.remove("hidden");
+ $("modal-close").onclick=()=>closeModal();
+ r.onclick=e=>{if(e.target===r)closeModal()};
+}
+function closeModal(){
+ if(!modalOpen)return Promise.resolve();
+ return new Promise(res=>{
+  modalResolve=res;history.back();
+  setTimeout(()=>{if(modalResolve)hideModalDom()},400);
+ });
+}
+
+/* ============ الصور ============ */
+function loadImageSrc(src){return new Promise((ok,no)=>{const i=new Image();i.onload=()=>ok(i);i.onerror=()=>no(Error("تعذر قراءة الصورة."));i.src=src})}
+async function loadImageFile(file){const u=URL.createObjectURL(file);try{return await loadImageSrc(u)}finally{URL.revokeObjectURL(u)}}
+function drawToCanvas(img,w,h,square){
+ const c=document.createElement("canvas");c.width=w;c.height=h;
+ const x=c.getContext("2d");if(!x)throw Error("تعذر تجهيز الصورة على هذا الجهاز.");
+ x.fillStyle="#fff";x.fillRect(0,0,w,h);
+ if(square){const s=Math.min(img.naturalWidth,img.naturalHeight);x.drawImage(img,(img.naturalWidth-s)/2,(img.naturalHeight-s)/2,s,s,0,0,w,h)}else x.drawImage(img,0,0,w,h);
+ return c;
+}
+const dataBytes=d=>Math.ceil((d.length-d.indexOf(",")-1)*.75);
+async function compressImage(file,{maxSide,maxBytes,square=false}){
+ if(!file.type.startsWith("image/"))throw Error("اختر ملف صورة صالحًا.");
+ if(file.size>15*1024*1024)throw Error("الملف كبير جدًا (الحد 15 ميغابايت).");
+ const img=await loadImageFile(file);
+ let side=maxSide;
+ for(let attempt=0;attempt<4;attempt++){
+  let w,h;
+  if(square){w=h=side}else{const k=Math.min(1,side/Math.max(img.naturalWidth,img.naturalHeight));w=Math.max(1,Math.round(img.naturalWidth*k));h=Math.max(1,Math.round(img.naturalHeight*k))}
+  const c=drawToCanvas(img,w,h,square);
+  for(let q=.85;q>=.3;q-=.1){const d=c.toDataURL("image/jpeg",q);if(dataBytes(d)<=maxBytes)return d}
+  side=Math.round(side*.75);
+ }
+ throw Error("تعذر ضغط الصورة للحجم المطلوب؛ جرّب صورة أخرى.");
+}
+async function thumbFromDataUrl(url){
+ const img=await loadImageSrc(url),c=drawToCanvas(img,72,72,true);
+ for(const q of [.75,.6,.45]){const d=c.toDataURL("image/jpeg",q);if(dataBytes(d)<=8000)return d}
+ return "";
+}
+
+/* ============ المنشورات ============ */
+function registerPosts(list){list.forEach(p=>{if(p?.id)postsCache.set(p.id,p)})}
+function allPosts(){
+ const m=new Map();for(const p of [...olderPosts,...livePosts])m.set(p.id,p);
+ return [...m.values()].sort((a,b)=>ms(b.createdAt)-ms(a.createdAt));
+}
+function myAuthor(){return{uid:currentUser.uid,displayName:nameOf(currentUserData),thumb:currentUserData.thumb||""}}
+function slimAuthor(a){
+ a=a||{};const t=safeUrlRaw(a.thumb||a.photoURL);
+ return{uid:a.uid||"",displayName:nameOf(a),thumb:t&&t.length<9000?t:""};
+}
+function startFeed(){
+ subscribe(onSnapshot(query(collection(db,"posts"),orderBy("createdAt","desc"),limit(PAGE_SIZE)),s=>{
+  if(s.empty&&s.metadata.fromCache&&livePosts.length)return;
+  livePosts=s.docs.map(snapDoc);lastLiveDoc=s.docs[s.docs.length-1]||null;
+  if(!olderPosts.length)feedHasMore=s.docs.length>=PAGE_SIZE;
+  registerPosts(livePosts);renderHome();scheduleSave();
+ },listenErr("feed")));
+}
+async function loadMore(){
+ if(loadingMore||!feedHasMore)return;
+ if(needOnline())return;
+ const cursor=olderCursor||lastLiveDoc;
+ if(!cursor)return toast("جارٍ تحديث المنشورات؛ حاول بعد لحظات.");
+ loadingMore=true;const btn=$("load-more-btn");if(btn){btn.disabled=true;btn.textContent="جارٍ التحميل..."}
+ try{
+  const s=await getDocs(query(collection(db,"posts"),orderBy("createdAt","desc"),startAfter(cursor),limit(MORE_SIZE)));
+  const list=s.docs.map(snapDoc);
+  olderPosts=[...olderPosts,...list];
+  if(s.docs.length)olderCursor=s.docs[s.docs.length-1];
+  feedHasMore=s.docs.length>=MORE_SIZE;registerPosts(list);
+ }catch(e){showError(e)}
+ finally{loadingMore=false;renderHome()}
+}
+
+/* صورة واسم صاحب المنشور تُؤخذ من بياناته الحالية (لا من نسخة قديمة محفوظة داخل المنشور) */
+const authorTried=new Set();let authorRenderT=null;
+function liveAuthor(a,uid){
+ a=a||{};
+ if(currentUser&&uid===currentUser.uid)return{...a,uid,displayName:nameOf(currentUserData),thumb:currentUserData.thumb||"",photoURL:currentUserData.photoURL||""};
+ const c=userCache.get(uid);
+ if(c?.u)return{...a,uid,displayName:nameOf(c.u),thumb:c.u.thumb||"",photoURL:c.u.photoURL||""};
+ return a;
+}
+async function hydrateAuthors(list){
+ /* نجلب فقط أصحاب المنشورات الذين لا تتوفر لهم صورة، بحد أقصى 10 في كل مرة لتوفير القراءات */
+ const need=[];
+ for(const p of list){
+  const uid=authorUid(p);
+  if(!uid||uid===currentUser.uid||authorTried.has(uid)||userCache.has(uid))continue;
+  if(safeUrlRaw(p.author?.thumb||p.author?.photoURL))continue;
+  authorTried.add(uid);need.push(uid);
+  if(need.length>=10)break;
+ }
+ if(!need.length)return;
+ await Promise.all(need.map(fetchUser));
+ clearTimeout(authorRenderT);authorRenderT=setTimeout(renderAll,200);
+}
+/* ===== التفاعلات والظهور ===== */
+const REACTIONS=[["like","👍","أعجبني"],["love","❤️","أحببته"],["insight","💡","ملهم"],["laugh","😂","أضحكني"],["wow","😮","مدهش"],["sad","😢","أحزنني"]];
+const REACT_MAP=Object.fromEntries(REACTIONS.map(r=>[r[0],r]));
+const reactionOf=(p,uid)=>{const r=p.reactions&&p.reactions[uid];if(REACT_MAP[r])return r;return asArray(p.likes).includes(uid)?"love":""};
+function reactionStats(p){
+ const c={};for(const u of asArray(p.likes)){const r=reactionOf(p,u)||"love";c[r]=(c[r]||0)+1}
+ const top=Object.entries(c).sort((a,b)=>b[1]-a[1]).slice(0,3).map(x=>x[0]);
+ return{total:asArray(p.likes).length,counts:c,top};
+}
+function canSeePost(p){
+ if(!currentUser)return false;
+ const o=authorUid(p),v=p.visibility||"public";
+ if(o===currentUser.uid||v==="public")return true;
+ if(v==="friends")return asArray(currentUserData.friends).includes(o);
+ return false;
+}
+const VIS_LABEL={public:["fa-earth-americas","عام"],friends:["fa-user-group","الأصدقاء"],me:["fa-lock","أنا فقط"]};
+const cleanBio=b=>{const t=String(b||"");if(!/واح[ةتا]/.test(t))return t;return t.split(/\n/).map(l=>l.split(/(?<=[.!؟،])/).filter(x=>!/واح[ةتا]/.test(x)).join("")).join("\n").trim()};
+const commenterName=c=>{const u=c.uid===currentUser.uid?currentUserData:(userCache.get(c.uid)?.u||null);return u?nameOf(u):(c.name||"عضو")};
+function renderPost(p){
+ if(!canSeePost(p))return "";
+ const uid=authorUid(p),author=liveAuthor(p.author,uid),likes=asArray(p.likes),comments=postComments(p).filter(c=>!isBlocked(c.uid)),totalComments=(p.commentCount||0)+asArray(p.comments).length;
+ const me=currentUser.uid,own=uid===me,expanded=expandedComments.has(p.id),mine=reactionOf(p,me),st=reactionStats(p);
+ const flagged=(p.reportCount||0)>=REPORT_HIDE;
+ if(flagged&&!own&&!isAdmin)return `<article class="card post flagged" data-post-id="${esc(p.id)}"><div class="muted"><i class="fa-solid fa-eye-slash"></i> أُخفي هذا المنشور مؤقتًا بانتظار مراجعة الإدارة بعد بلاغات من الأعضاء.</div></article>`;
+ let appealHtml="";
+ if(flagged&&own){appealHtml=p.appealRejected?'<div class="small">راجعت الإدارة اعتراضك وبقي المنشور مخفيًا.</div>':(p.appealed?'<div class="small">أُرسل اعتراضك وهو بانتظار مراجعة الإدارة.</div>':'<button class="btn secondary appeal-post" type="button"><i class="fa-solid fa-scale-balanced"></i> اعتراض</button>')}
+ const flagNote=flagged?`<div class="flag-note"><i class="fa-solid fa-flag"></i> ${own?"منشورك مخفي عن الأعضاء مؤقتًا بانتظار مراجعة الإدارة بعد بلاغات.":"منشور مُبلَّغ عنه ("+(p.reportCount||0)+" بلاغات) ويظهر لك بصفتك مشرفًا."}${appealHtml}</div>`:"";
+ let body;
+ if(p.repostOf){
+  const o=p.originalPost||{},oa=liveAuthor(o.author,o.uid||o.author?.uid),oimg=safeUrlRaw(o.image)||repostImg.get(p.repostOf)||"";
+  const imgHtml=oimg?`<img class="post-image" src="${esc(oimg)}" alt="صورة المنشور الأصلي" loading="lazy" decoding="async">`:(o.hasImage&&!repostImg.has(p.repostOf)?`<div class="repost-img" data-orig="${esc(p.repostOf)}"></div>`:"");
+  body=`<div class="muted small"><i class="fa-solid fa-retweet"></i> أعاد ${esc(nameOf(author))} نشر هذا المنشور</div><div class="card post quoted"><div class="row"><img class="avatar" src="${avatarOf(oa)}" alt="" loading="lazy" decoding="async"><div><button type="button" class="open-profile link-btn" data-uid="${esc(o.uid||oa.uid||"")}">${esc(nameOf(oa))}</button><div class="muted small">المنشور الأصلي</div></div></div>${o.text?`<div class="post-body">${br(o.text)}</div>`:""}${imgHtml}</div>`;
+ }else{
+  const img=safeUrlRaw(p.image);
+  body=(p.text?`<div class="post-body">${br(p.text)}</div>`:"")+(img?`<img class="post-image" src="${esc(img)}" alt="صورة المنشور" loading="lazy" decoding="async">`:"")+videoHtmlForPost(p);
+ }
+ const open=openComments.has(p.id),closed=!!p.commentsOff;
+ /* التعليقات والردود */
+ const ids=new Set(comments.map(c=>c.id)),tops=comments.filter(c=>!c.parentId||!ids.has(c.parentId)),reps=new Map();
+ comments.forEach(c=>{if(c.parentId&&ids.has(c.parentId)){if(!reps.has(c.parentId))reps.set(c.parentId,[]);reps.get(c.parentId).push(c)}});
+ const shown=expanded?tops:tops.slice(-3);
+ const toggle=tops.length>3?`<button type="button" class="link-btn small muted toggle-comments">${expanded?"إخفاء التعليقات القديمة":"عرض كل التعليقات ("+tops.length+")"}</button>`:"";
+ const commentsHtml=toggle+shown.map(c=>{
+  const rs=reps.get(c.id)||[];let r="";
+  if(rs.length)r=expandedReplies.has(c.id)?`<div class="replies">${rs.map(x=>commentHtml(x,own,closed)).join("")}</div>`:`<div class="replies"><button type="button" class="link-btn small muted toggle-replies" data-cid="${esc(c.id)}">عرض ${rs.length} ${rs.length===1?"رد":"ردود"}</button></div>`;
+  return commentHtml(c,own,closed)+r;
+ }).join("");
+ const rt=replyTarget.get(p.id);
+ const formHtml=closed?'<div class="comments-closed"><i class="fa-solid fa-comment-slash"></i> أغلق صاحب المنشور التعليقات.</div>':`${rt?`<div class="reply-banner">الرد على <strong>${esc(rt.name)}</strong><button type="button" class="link-btn cancel-reply" aria-label="إلغاء الرد">✕</button></div>`:""}<form class="comment-form"><input class="field comment-input" maxlength="1000" placeholder="${rt?"اكتب ردًا...":"اكتب تعليقًا..."}" aria-label="تعليق"><button class="btn" type="submit" aria-label="إرسال التعليق"><i class="fa-solid fa-paper-plane"></i></button></form>`;
+ const vis=p.visibility||"public",vt=VIS_LABEL[vis]||VIS_LABEL.public;
+ const visTag=(vis!=="public"||own)?` · <span class="vis-tag"><i class="fa-solid ${vt[0]}"></i> ${vt[1]}</span>`:"";
+ const picker=pickerFor===p.id?`<div class="react-picker">${REACTIONS.map(r=>`<button type="button" class="react-pick ${mine===r[0]?"sel":""}" data-r="${r[0]}" title="${r[2]}" aria-label="${r[2]}">${r[1]}</button>`).join("")}</div>`:"";
+ const likeBtn=mine?`<button class="action-btn reacted like-post" type="button"><span class="emo">${REACT_MAP[mine][1]}</span> ${REACT_MAP[mine][2]}</button>`:`<button class="action-btn like-post" type="button"><i class="fa-regular fa-thumbs-up"></i> إعجاب</button>`;
+ const statsLeft=st.total?`<button type="button" class="stat-btn show-likers"><span class="stat-reacts">${st.top.map(k=>REACT_MAP[k][1]).join("")}</span> ${st.total}</button>`:"<span></span>";
+ return `<article class="card post" data-post-id="${esc(p.id)}"><div class="row between"><div class="row"><img class="avatar" src="${avatarOf(author)}" alt="" loading="lazy" decoding="async"><div><button type="button" class="open-profile link-btn" data-uid="${esc(uid||"")}">${esc(nameOf(author))}</button><div class="muted small">${esc(timeLabel(p.createdAt))}${p.editedAt?" · معدّل":""}${visTag}</div></div></div>${own?`<div class="row"><button class="btn secondary edit-post" type="button" title="تعديل المنشور" aria-label="تعديل المنشور"><i class="fa-regular fa-pen-to-square"></i></button><button class="btn secondary delete-post" type="button" title="حذف المنشور" aria-label="حذف المنشور"><i class="fa-regular fa-trash-can"></i></button></div>`:""}</div>${flagNote}${body}${(st.total||totalComments)?`<div class="post-stats">${statsLeft}${totalComments?`<button type="button" class="stat-btn focus-comment">${totalComments} تعليق</button>`:""}</div>`:""}<div class="post-actions">${likeBtn}<button class="action-btn react-more" type="button" title="اختر تفاعلًا" aria-label="اختر تفاعلًا"><i class="fa-regular fa-face-smile"></i></button><button class="action-btn focus-comment ${open?"active":""}" type="button"><i class="fa-regular fa-comment"></i> تعليق</button>${vis==="public"?`<button class="action-btn share-post" type="button" aria-label="مشاركة" title="مشاركة"><i class="fa-solid fa-share-nodes"></i><span class="lbl"> مشاركة</span></button>`:""}${own?"":`<button class="action-btn report-post" type="button" aria-label="إبلاغ عن المنشور"><i class="fa-regular fa-flag"></i><span class="lbl"> إبلاغ</span></button>`}</div>${picker}${open?`<div class="comment-list">${commentsHtml}</div>${formHtml}`:""}</article>`;
+}
+function renderFeed(el,posts,withMore){
+ /* الحفاظ على نص التعليق قيد الكتابة عند تحديث القائمة */
+ const drafts={};let focusId=null,focusPos=0;
+ el.querySelectorAll("article[data-post-id]").forEach(a=>{const i=a.querySelector(".comment-input");if(i&&i.value)drafts[a.dataset.postId]=i.value;if(i&&document.activeElement===i){focusId=a.dataset.postId;focusPos=i.selectionStart||0}});
+ const list=posts.filter(p=>!isBlocked(authorUid(p))&&canSeePost(p));
+ let html=list.length?list.map(renderPost).join(""):'<div class="card feed-empty">لا توجد منشورات بعد. كن أول من يشارك فكرة!</div>';
+ if(withMore&&list.length&&feedHasMore)html+='<button id="load-more-btn" class="btn secondary" type="button">تحميل المزيد</button>';
+ el.innerHTML=html;
+ el.querySelectorAll("article[data-post-id]").forEach(a=>{
+  const id=a.dataset.postId,i=a.querySelector(".comment-input");
+  if(i&&drafts[id]!==undefined)i.value=drafts[id];
+  if(i&&focusId===id){i.focus();try{i.setSelectionRange(focusPos,focusPos)}catch{}}
+ });
+ hydrateReposts(el);
+ hydrateAuthors(list);
+}
+async function hydrateReposts(el){
+ for(const box of el.querySelectorAll(".repost-img[data-orig]")){
+  const id=box.dataset.orig;
+  if(repostImg.has(id))continue;
+  repostImg.set(id,"");
+  try{
+   let p=postsCache.get(id);
+   if(!p||p.image===undefined){const s=await getDoc(doc(db,"posts",id));if(s.exists()){p={id,...s.data()};postsCache.set(id,p)}}
+   const u=safeUrlRaw(p?.image);
+   if(u){repostImg.set(id,u);document.querySelectorAll(`.repost-img[data-orig="${CSS.escape(id)}"]`).forEach(b=>{b.innerHTML=`<img class="post-image" src="${esc(u)}" alt="" loading="lazy" decoding="async">`})}
+  }catch(e){repostImg.delete(id)}
+ }
+}
+function renderHome(){renderFeed($("posts-feed"),allPosts(),true)}
+function renderProfileFeed(){renderFeed($("user-profile-posts-feed"),profilePosts,false)}
+function refreshModalPost(){
+ if(!modalOpen||!modalPostId)return;
+ const box=$("modal-post"),p=postsCache.get(modalPostId);
+ if(box&&p){const i=box.querySelector(".comment-input"),v=i?i.value:"",f=i&&document.activeElement===i,pos=i?i.selectionStart:0;box.innerHTML=renderPost(p);const j=box.querySelector(".comment-input");if(j&&v){j.value=v}if(j&&f){j.focus();try{j.setSelectionRange(pos,pos)}catch{}}}
+}
+function renderAll(){renderHome();if(!$("page-profile").classList.contains("hidden"))renderProfileFeed();refreshModalPost()}
+
+function setPostLocal(np){
+ postsCache.set(np.id,np);
+ const rep=a=>a.map(p=>p.id===np.id?np:p);
+ livePosts=rep(livePosts);olderPosts=rep(olderPosts);profilePosts=rep(profilePosts);
+ renderAll();
+}
+function removePostLocal(id){
+ postsCache.delete(id);
+ const f=a=>a.filter(p=>p.id!==id);
+ livePosts=f(livePosts);olderPosts=f(olderPosts);profilePosts=f(profilePosts);
+ profileCache.clear();renderAll();scheduleSave();
+ if(modalPostId===id)closeModal();
+}
+function addNotification(toUid,type,text,postId){
+ if(!toUid||toUid===currentUser.uid)return;
+ const data={from:currentUser.uid,type,text,read:false,createdAt:serverTimestamp()};
+ if(postId)data.postId=String(postId);
+ addDoc(collection(db,"users",toUid,"notifications"),data).catch(e=>console.warn("تعذر إرسال الإشعار",e));
+}
+function showPicker(id){pickerFor=id;const p=postsCache.get(id);if(p)setPostLocal(p)}
+function closePicker(){if(!pickerFor)return;pickerFor=null;document.querySelectorAll(".react-picker").forEach(x=>x.remove())}
+function setReaction(id,type){
+ if(checkBan())return;
+ const p=postsCache.get(id);if(!p)return;
+ const uid=currentUser.uid,likes=asArray(p.likes),has=likes.includes(uid),cur=reactionOf(p,uid);
+ const reactions={...(p.reactions||{})};
+ const remove=cur===type;let nl=likes,patch;
+ if(remove){delete reactions[uid];nl=likes.filter(x=>x!==uid);patch={likes:arrayRemove(uid),["reactions."+uid]:deleteField()}}
+ else{reactions[uid]=type;patch={["reactions."+uid]:type};if(!has){nl=[...likes,uid];patch.likes=arrayUnion(uid)}}
+ pickerFor=null;
+ setPostLocal({...p,likes:nl,reactions});
+ updateDoc(doc(db,"posts",id),patch).catch(e=>{setPostLocal(p);showError(e)});
+ if(!remove&&!has&&!likeNotified.has(id)){likeNotified.add(id);addNotification(authorUid(p),"like",nameOf(currentUserData)+" تفاعل "+REACT_MAP[type][1]+" مع منشورك.",id)}
+}
+const toggleLike=id=>{const p=postsCache.get(id);if(!p)return;setReaction(id,reactionOf(p,currentUser.uid)||"like")};
+const likeNotified=new Set();
+function toggleCommentLike(pid,cid){
+ const c=(commentsByPost.get(pid)||[]).find(x=>x.id===cid);if(!c||c.legacy)return;
+ if(checkBan())return;
+ const uid=currentUser.uid,has=asArray(c.likes).includes(uid);
+ updateDoc(doc(db,"posts",pid,"comments",cid),{likes:has?arrayRemove(uid):arrayUnion(uid)}).catch(showError);
+ const k=pid+"/"+cid;
+ if(!has&&c.uid!==uid&&!likeNotified.has(k)){likeNotified.add(k);addNotification(c.uid,"like",nameOf(currentUserData)+" أعجب بتعليقك.",pid)}
+}
+function startReply(pid,cid){
+ const c=(commentsByPost.get(pid)||[]).find(x=>x.id===cid);if(!c)return;
+ replyTarget.set(pid,{parentId:c.parentId||c.id,uid:c.uid,name:commenterName(c)});
+ const p=postsCache.get(pid);if(p)setPostLocal(p);
+ setTimeout(()=>document.querySelector(`article[data-post-id="${CSS.escape(pid)}"] .comment-input`)?.focus(),60);
+}
+function addComment(id,input){
+ const text=input.value.trim();if(!text)return;
+ if(checkBan())return;
+ const p=postsCache.get(id);if(!p)return toast("لم يعد هذا المنشور متاحًا.");
+ if(p.commentsOff)return toast("التعليقات مغلقة على هذا المنشور.");
+ if((p.commentCount||0)+asArray(p.comments).length>=300)return toast("وصل المنشور إلى الحد الأقصى من التعليقات.");
+ const rt=replyTarget.get(id);
+ input.value="";
+ const data={uid:currentUser.uid,name:nameOf(currentUserData).slice(0,60),text:text.slice(0,1000),createdAt:serverTimestamp(),likes:[]};
+ if(rt){data.parentId=String(rt.parentId).slice(0,40);data.replyTo=String(rt.name).slice(0,60)}
+ const b=writeBatch(db);
+ b.set(doc(collection(db,"posts",id,"comments")),data);
+ b.update(doc(db,"posts",id),{commentCount:increment(1)});
+ b.commit().catch(showError);
+ if(rt){
+  expandedReplies.add(rt.parentId);replyTarget.delete(id);
+  addNotification(rt.uid,"comment",nameOf(currentUserData)+" ردّ على تعليقك.",id);
+  if(authorUid(p)!==rt.uid)addNotification(authorUid(p),"comment",nameOf(currentUserData)+" علّق على منشورك.",id);
+  setPostLocal(p);
+ }else addNotification(authorUid(p),"comment",nameOf(currentUserData)+" علّق على منشورك.",id);
+}
+async function deletePost(id){
+ if(!confirm("هل تريد حذف المنشور؟"))return;
+ stopComments(id);
+ removePostLocal(id);
+ try{
+  if(online()){try{await deleteAllByQuery(query(collection(db,"posts",id,"comments"),limit(400)),400)}catch(e){console.warn(e)}}
+  await deleteDoc(doc(db,"posts",id));
+  toast("تم حذف المنشور.");
+ }catch(e){showError(e)}
+}
+
+function openPublishModal(){
+ const form=$("new-post-form");if(!form)return;
+ form.scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"center"});
+ setTimeout(()=>$("new-post-text")?.focus({preventScroll:true}),80);
+}
+$("publish-main-btn").addEventListener("click",openPublishModal);
+$("profile-settings-btn").addEventListener("click",()=>editOwnProfile());
+
+$("new-post-form").addEventListener("submit",e=>{
+ e.preventDefault();
+ if(checkBan())return;
+ const text=$("new-post-text").value.trim();
+ const videoRaw=$("new-post-video-url").value.trim();
+ const videoUrl=videoRaw?safeVideoUrl(videoRaw):"";
+ if(videoRaw&&!videoUrl)return toast("أدخل رابط فيديو صحيحًا وآمنًا يبدأ بـ https://.");
+ if(!text&&!selectedImage&&!videoUrl)return toast("اكتب نصًا أو أرفق صورة أو أضف رابط فيديو أولًا.");
+ if(Date.now()-lastPostAt<3000)return toast("انتظر لحظات قبل النشر مجددًا.");
+ lastPostAt=Date.now();
+ const vis=$("new-post-vis").value;const data={uid:currentUser.uid,author:myAuthor(),text,image:selectedImage||"",videoUrl,likes:[],comments:[],reactions:{},visibility:["public","friends","me"].includes(vis)?vis:"public",commentsOff:false,createdAt:serverTimestamp()};
+ $("new-post-text").value="";$("new-post-video-url").value="";selectedImage="";$("media-preview-container").classList.add("hidden");$("media-preview-content").src="";$("post-media-file").value="";
+ addDoc(collection(db,"posts"),data).catch(showError);
+ toast(online()?"تم نشر المنشور.":"سيُنشر المنشور عند عودة الاتصال.");
+});
+$("attach-media-trigger").onclick=()=>$("post-media-file").click();
+$("remove-media-btn").onclick=()=>{selectedImage="";$("post-media-file").value="";$("media-preview-container").classList.add("hidden")};
+$("post-media-file").addEventListener("change",async e=>{
+ const f=e.target.files?.[0];if(!f)return;
+ try{
+  selectedImage=await compressImage(f,{maxSide:1280,maxBytes:150*1024});
+  $("media-preview-content").src=selectedImage;$("media-preview-container").classList.remove("hidden");toast("تم تجهيز الصورة.");
+ }catch(err){selectedImage="";e.target.value="";showError(err)}
+});
+
+async function copyText(text,success){
+ try{
+  if(navigator.clipboard?.writeText){await navigator.clipboard.writeText(text);toast(success);return true}
+  const t=document.createElement("textarea");t.value=text;t.style.position="fixed";t.style.opacity="0";document.body.appendChild(t);t.select();
+  const ok=document.execCommand("copy");t.remove();toast(ok?success:"تعذر النسخ في هذا المتصفح.");return ok;
+ }catch{toast("تعذر النسخ في هذا المتصفح.");return false}
+}
+const postShareText=p=>[p.text||"",p.image?"صورة مرفقة في كلمات":""].filter(Boolean).join("\n");
+function openShareOptions(id){
+ const p=postsCache.get(id);if(!p)return toast("لم يعد هذا المنشور متاحًا.");
+ const url=location.origin+location.pathname+"#post-"+id;
+ showModal("مشاركة المنشور",`<div class="setting-section"><button class="btn" id="share-repost"><i class="fa-solid fa-retweet"></i> إعادة النشر في كلمات</button><button class="btn secondary" id="share-copy-text"><i class="fa-regular fa-copy"></i> نسخ نص المنشور</button><button class="btn secondary" id="share-copy-link"><i class="fa-solid fa-link"></i> نسخ رابط المنشور</button><button class="btn secondary" id="share-external"><i class="fa-solid fa-share-nodes"></i> مشاركة خارجية</button>${safeUrlRaw(p.image)?'<button class="btn secondary" id="share-save-image"><i class="fa-solid fa-download"></i> حفظ الصورة</button>':''}</div><p class="muted small">إعادة النشر تُظهر المنشور الأصلي وصاحبه ولا تنسخ صورته، فتوفّر المساحة.</p>`);
+ $("share-repost").onclick=()=>{
+  if(checkBan())return;
+  if(authorUid(p)===currentUser.uid)return toast("هذا منشورك بالفعل؛ لا حاجة لإعادة نشره.");
+  if(p.repostOf)return toast("هذا منشور معاد نشره بالفعل؛ افتح المنشور الأصلي لإعادة نشره.");
+  if((p.visibility||"public")!=="public")return toast("لا يمكن إعادة نشر منشور غير عام.");
+  addDoc(collection(db,"posts"),{uid:currentUser.uid,author:myAuthor(),text:"",image:"",repostOf:id,originalPost:{uid:authorUid(p),author:slimAuthor(p.author),text:p.text||"",hasImage:!!safeUrlRaw(p.image)},likes:[],comments:[],createdAt:serverTimestamp()}).catch(showError);
+  addNotification(authorUid(p),"repost",nameOf(currentUserData)+" أعاد نشر منشورك.",id);
+  closeModal();toast(online()?"تمت إعادة النشر.":"ستتم إعادة النشر عند عودة الاتصال.");
+ };
+ $("share-copy-text").onclick=()=>copyText(postShareText(p),"تم نسخ نص المنشور.");
+ $("share-copy-link").onclick=()=>copyText(url,"تم نسخ رابط المنشور.");
+ $("share-external").onclick=async()=>{
+  try{if(navigator.share)await navigator.share({title:"كلمات",text:postShareText(p)||"منشور من كلمات",url});else await copyText([postShareText(p),url].filter(Boolean).join("\n"),"تم نسخ النص والرابط للمشاركة.")}
+  catch(err){if(err?.name!=="AbortError")showError(err)}
+ };
+ $("share-save-image")?.addEventListener("click",()=>{
+  try{const a=document.createElement("a");a.href=safeUrlRaw(p.image);a.download="kalimat-image.jpg";a.rel="noopener";document.body.appendChild(a);a.click();a.remove();toast("إذا لم يبدأ الحفظ، افتح الصورة واضغط مطولًا لحفظها.")}catch(err){showError(err)}
+ });
+}
+async function openPostModal(id,withComments){
+ try{
+  let p=postsCache.get(id);
+  if(!p){const s=await getDoc(doc(db,"posts",id));if(!s.exists())return toast("المنشور غير موجود أو حُذف.");p={id,...s.data()};postsCache.set(id,p)}
+  if(!canSeePost(p))return toast("هذا المنشور غير متاح لك.");
+  if(modalOpen)await closeModal();
+  modalTempComments=null;
+  if(withComments&&!openComments.has(id)){openComments.add(id);startComments(id);modalTempComments=id}
+  modalPostId=id;showModal("منشور",`<div id="modal-post">${renderPost(p)}</div>`);modalPostId=id;
+  hydrateReposts($("modal-post"));
+ }catch(e){showError(e)}
+}
+async function openPostFromHash(){
+ const m=/^#post-(.+)$/.exec(location.hash);if(!m)return;
+ await openPostModal(decodeURIComponent(m[1]),false);
+ history.replaceState(history.state,"",location.href.split("#")[0]);
+}
+
+/* ============ الملف الشخصي ============ */
+async function openUserProfile(uid){
+ try{
+  if(modalOpen)await closeModal();
+  const own=uid===currentUser.uid;
+  let u=own?currentUserData:await fetchUser(uid);
+  if(!u&&!own)u=fallbackUser(uid);
+  if(!u)return toast("لم يتم العثور على العضو.");
+  if(!own&&(isBlocked(uid)||blockedBy(currentUser.uid,u)))return toast("لا يمكن عرض الملف بسبب إعدادات الحظر.");
+  viewedProfile=u;showPage("profile",true);
+  $("profile-view-avatar").src=rawBigAvatar(u);$("profile-view-name").textContent=nameOf(u);
+  const meta=$("profile-view-meta");
+  if(u.missing)meta.textContent="";
+  else{
+   const n=asArray(u.friends).length,canSee=own||!u.hideFriends;
+   meta.innerHTML=canSee?`<button type="button" class="link-btn" id="profile-friends-link" style="color:var(--p);text-decoration:underline">عدد الأصدقاء: ${n}</button>`:`عدد الأصدقاء: ${n} · القائمة مخفية`;
+   if(canSee)$("profile-friends-link").onclick=()=>openFriendsOf(u);
+  }
+  $("profile-view-bio").textContent=u.missing?"لم يُكمل هذا العضو إعداد ملفه بعد.":(cleanBio(u.bio)||"لم يضف نبذة شخصية بعد.");
+  const actions=$("profile-actions");
+  if(own){
+   actions.innerHTML='<button id="edit-profile-btn" class="btn"><i class="fa-solid fa-pen"></i> تعديل الملف</button>';
+   $("edit-profile-btn").onclick=editOwnProfile;
+  }else{
+   const isFriend=asArray(currentUserData.friends).includes(uid);
+   actions.innerHTML=`<button class="btn" id="profile-message-btn">مراسلة</button>${isFriend?'<button class="btn secondary" id="remove-friend-btn">إزالة صديق</button>':(u.missing?'':'<button class="btn secondary" id="add-friend-btn">إضافة صديق</button>')}<button class="btn secondary" id="profile-block-btn">${isBlocked(uid)?"إلغاء الحظر":"حظر العضو"}</button>${u.missing?"":'<button class="btn secondary" id="profile-report-btn"><i class="fa-regular fa-flag"></i> إبلاغ</button>'}`;
+   $("profile-report-btn")?.addEventListener("click",()=>openReport("user",null,null,uid));
+   $("profile-message-btn").onclick=()=>openChatWith(u);
+   $("profile-block-btn").onclick=()=>isBlocked(uid)?unblockUser(uid):blockUser(uid);
+   $("add-friend-btn")?.addEventListener("click",()=>sendFriendRequest(u));
+   $("remove-friend-btn")?.addEventListener("click",()=>removeFriend(uid));
+  }
+  loadProfilePosts(uid);
+ }catch(e){showError(e)}
+}
+function fallbackUser(uid){
+ for(const p of postsCache.values()){
+  if(authorUid(p)===uid&&p.author){const a=p.author;return{uid,name:nameOf(a),displayName:nameOf(a),thumb:a.thumb||"",photoURL:a.photoURL||"",bio:"",friends:[],blockedUsers:[],missing:true}}
+ }
+ return null;
+}
+async function loadProfilePosts(uid){
+ const req=++profileReq,box=$("user-profile-posts-feed");
+ const c=profileCache.get(uid);
+ if(c&&Date.now()-c.t<120000){profilePosts=c.list;registerPosts(c.list);renderProfileFeed();return}
+ profilePosts=[];box.innerHTML='<div class="skeleton"></div>';
+ const sortDesc=l=>l.sort((a,b)=>ms(b.createdAt)-ms(a.createdAt));
+ try{
+  let s;
+  try{s=await getDocs(query(collection(db,"posts"),where("uid","==",uid),orderBy("createdAt","desc"),limit(20)))}
+  catch(e){
+   if(e?.code!=="failed-precondition")throw e;
+   console.warn("أنشئ الفهرس المركب (uid + createdAt) من الرابط في الرسالة التالية:",e.message);
+   s=await getDocs(query(collection(db,"posts"),where("uid","==",uid),limit(40)));
+  }
+  if(req!==profileReq)return;
+  const list=sortDesc(s.docs.map(snapDoc));
+  profilePosts=list;registerPosts(list);profileCache.set(uid,{list,t:Date.now()});renderProfileFeed();
+ }catch(e){
+  if(req!==profileReq)return;
+  console.warn("تعذر جلب منشورات العضو",e);
+  profilePosts=allPosts().filter(p=>authorUid(p)===uid);renderProfileFeed();
+  if(online())showError(e);
+ }
+}
+async function editOwnProfile(){
+ const u=currentUserData;let newPhoto=null;
+ showModal("تعديل الملف الشخصي",`<form id="edit-profile-form" class="post"><label>الاسم<input class="field" name="name" required maxlength="60" value="${esc(nameOf(u))}"></label><label>نبذة عنك<textarea class="field" name="bio" rows="4" maxlength="500">${esc(u.bio||"")}</textarea></label><div class="setting-section"><strong>بيانات إضافية للملف الشخصي</strong><label>الجنس<select class="field" name="gender"><option value="" ${!u.gender?"selected":""}>لم أحدد</option><option value="ذكر" ${u.gender==="ذكر"?"selected":""}>ذكر</option><option value="أنثى" ${u.gender==="أنثى"?"selected":""}>أنثى</option></select></label><label>الحالة الاجتماعية<select class="field" name="status"><option value="" ${!u.status?"selected":""}>لم أحدد</option><option value="عازب/ة" ${u.status==="عازب/ة"?"selected":""}>عازب/ة</option><option value="مرتبط/ة" ${u.status==="مرتبط/ة"?"selected":""}>مرتبط/ة</option><option value="متزوج/ة" ${u.status==="متزوج/ة"?"selected":""}>متزوج/ة</option></select></label><label>العنوان (المدينة / الدولة)<input class="field" name="address" maxlength="120" value="${esc(u.address||"")}" placeholder="مثال: بيروت، لبنان"></label></div><div class="setting-section"><strong>صورة الملف الشخصي</strong><div class="row"><img id="profile-edit-preview" class="avatar big" src="${esc(rawBigAvatar(u))}" alt="معاينة صورة الملف الشخصي"><div class="post" style="flex:1"><button class="btn secondary" id="profile-pick-image" type="button"><i class="fa-regular fa-image"></i> اختيار صورة من المعرض</button><button class="btn secondary" id="profile-remove-image" type="button">إزالة الصورة</button></div></div><input id="profile-image-file" class="hidden" type="file" accept="image/jpeg,image/png,image/webp,image/gif"><p class="muted small" style="margin:0">تُقصّ الصورة إلى مربع وتُضغط تلقائيًا (نحو 45 كيلوبايت) لتبقى المنصة سريعة ومجانية.</p></div><button class="btn" id="profile-save-btn" type="submit">حفظ التغييرات</button></form>`);
+ $("profile-pick-image").onclick=()=>$("profile-image-file").click();
+ $("profile-remove-image").onclick=()=>{newPhoto={photoURL:"",thumb:""};$("profile-edit-preview").src=DEFAULT_AVATAR;$("profile-image-file").value=""};
+ $("profile-image-file").onchange=async e=>{
+  const file=e.target.files?.[0];if(!file)return;
+  const btn=$("profile-pick-image");btn.disabled=true;
+  try{
+   const big=await compressImage(file,{maxSide:320,maxBytes:45*1024,square:true});
+   const thumb=await thumbFromDataUrl(big);
+   newPhoto={photoURL:big,thumb};$("profile-edit-preview").src=big;toast("تم تجهيز الصورة وضغطها.");
+  }catch(err){showError(err);e.target.value=""}
+  finally{btn.disabled=false}
+ };
+ $("edit-profile-form").onsubmit=async e=>{
+  e.preventDefault();
+  const f=e.currentTarget,n=f.elements.name.value.trim(),bio=f.elements.bio.value.trim();
+  if(n.length<2)return toast("يرجى إدخال اسم من حرفين على الأقل.");
+  const gender=["","ذكر","أنثى"].includes(f.elements.gender.value)?f.elements.gender.value:"";
+  const status=["","عازب/ة","مرتبط/ة","متزوج/ة"].includes(f.elements.status.value)?f.elements.status.value:"";
+  const address=String(f.elements.address.value||"").trim().slice(0,120);
+  const patch={name:n,displayName:n,nameLower:n.toLowerCase(),bio,gender,status,address,...(newPhoto||{})};
+  const {nameLower,...local}=patch;
+  currentUserData={...currentUserData,...local};
+  updateAccountUI();saveOfflineProfile(currentUserData);
+  updateDoc(doc(db,"users",currentUser.uid),patch).catch(showError);
+  updateProfile(currentUser,{displayName:n}).catch(()=>{});
+  await closeModal();await openUserProfile(currentUser.uid);
+  toast(online()?"تم تحديث الملف.":"سيُحفظ التحديث عند عودة الاتصال.");
+ };
+}
+let ownDocMissing=false;
+async function ensureOwnDoc(){
+ if(!currentUser||!ownDocMissing||registering)return;
+ const ref=doc(db,"users",currentUser.uid);
+ try{
+  const s=await getDocFromServer(ref);
+  if(s.exists()){ownDocMissing=false;return}
+  const d=newUserDoc(currentUser.uid,nameOf(currentUserData));
+  d.bio=String(currentUserData.bio||"").slice(0,500);
+  d.gender=["","ذكر","أنثى"].includes(currentUserData.gender)?currentUserData.gender:"";
+  d.status=["","عازب/ة","مرتبط/ة","متزوج/ة"].includes(currentUserData.status)?currentUserData.status:"";
+  d.address=String(currentUserData.address||"").slice(0,120);
+  const ph=safeUrlRaw(currentUserData.photoURL),th=safeUrlRaw(currentUserData.thumb);
+  d.photoURL=ph&&ph.length<=120000?ph:"";d.thumb=th&&th.length<=12000?th:"";
+  d.friends=asArray(currentUserData.friends);d.blockedUsers=asArray(currentUserData.blockedUsers);
+  await setDoc(ref,d);ownDocMissing=false;
+ }catch(e){console.warn("تعذر إنشاء ملف العضو",e)}
+}
+addEventListener("online",()=>{if(ownDocMissing)ensureOwnDoc()});
+function startOwnDoc(){
+ if(ownDocStarted)return;ownDocStarted=true;
+ const ref=doc(db,"users",currentUser.uid);let first=true;
+ subscribe(onSnapshot(ref,s=>{
+  if(s.exists()){
+   const d=s.data({serverTimestamps:"estimate"});
+   currentUserData={...currentUserData,...d,uid:currentUser.uid};
+   currentUserData.friends=asArray(currentUserData.friends);currentUserData.blockedUsers=asArray(currentUserData.blockedUsers);
+   if(first){first=false;migrateOwnDoc(d)}
+   updateAccountUI();saveOfflineProfile(currentUserData);renderAll();
+   if(!$("page-friends").classList.contains("hidden"))loadFriends();
+  }else if(first&&!registering){
+   ownDocMissing=true;
+   if(online()){first=false;ensureOwnDoc()}
+  }
+ },listenErr("ownDoc")));
+}
+async function migrateOwnDoc(d){
+ /* ترقية بيانات الحسابات القديمة مرة واحدة: حقل البحث، صورة مصغّرة، وإخفاء البريد من الملف العام */
+ try{
+  const patch={};
+  if(!d.nameLower)patch.nameLower=nameOf(d).toLowerCase();
+  if(d.photoURL&&!d.thumb){const t=await thumbFromDataUrl(d.photoURL).catch(()=>"");if(t)patch.thumb=t}
+  if(d.email!==undefined)patch.email=deleteField();
+  if(/واح[ةتا]/.test(d.bio||""))patch.bio=cleanBio(d.bio).slice(0,500);
+  if(Object.keys(patch).length)updateDoc(doc(db,"users",currentUser.uid),patch).catch(e=>console.warn("تعذرت ترقية الحساب",e));
+ }catch(e){console.warn(e)}
+}
+
+/* ============ الأصدقاء والحظر ============ */
+function sendFriendRequest(u){
+ if(needOnline())return;
+ if(isBlocked(u.uid)||blockedBy(currentUser.uid,u))return toast("لا يمكن إرسال الطلب بسبب الحظر.");
+ if(asArray(currentUserData.friends).includes(u.uid))return toast("هذا العضو صديق بالفعل.");
+ const ref=doc(db,"friendRequests",currentUser.uid+"_"+u.uid);
+ getDoc(ref).then(async s=>{
+  if(s.exists()&&s.data().status==="pending")return toast("الطلب مرسل بالفعل.");
+  await setDoc(ref,{from:currentUser.uid,to:u.uid,status:"pending",fromName:nameOf(currentUserData),toName:nameOf(u),createdAt:serverTimestamp()});
+  addNotification(u.uid,"friend_request",nameOf(currentUserData)+" أرسل إليك طلب صداقة.");
+  toast("تم إرسال الطلب.");
+ }).catch(showError);
+}
+function startRequests(){
+ if(requestsStarted)return;requestsStarted=true;
+ subscribe(onSnapshot(query(collection(db,"friendRequests"),where("to","==",currentUser.uid),where("status","==","pending")),async s=>{
+  const items=await Promise.all(s.docs.map(async d=>({...d.data(),id:d.id,user:await fetchUser(d.data().from)})));
+  const vis=items.filter(r=>r.user&&!isBlocked(r.from)&&!blockedBy(currentUser.uid,r.user));
+  $("friend-requests-list").innerHTML=vis.length?vis.map(r=>`<div class="person-row"><img class="avatar" src="${avatarOf(r.user)}" alt=""><div class="person-info"><strong>${esc(nameOf(r.user))}</strong><span class="muted small">طلب صداقة</span></div><div class="person-actions"><button class="btn accept-request" data-id="${esc(r.id)}" data-uid="${esc(r.from)}">قبول</button><button class="btn secondary reject-request" data-id="${esc(r.id)}">رفض</button></div></div>`).join(""):'<div class="feed-empty">لا توجد طلبات جديدة.</div>';
+ },listenErr("requests")));
+}
+async function acceptRequest(id,uid){
+ if(needOnline())return;
+ try{
+  const b=writeBatch(db);
+  b.update(doc(db,"friendRequests",id),{status:"accepted"});
+  b.update(doc(db,"users",currentUser.uid),{friends:arrayUnion(uid)});
+  b.update(doc(db,"users",uid),{friends:arrayUnion(currentUser.uid)});
+  b.set(doc(collection(db,"users",uid,"notifications")),{from:currentUser.uid,type:"friend_accepted",text:nameOf(currentUserData)+" قبل طلب صداقتك.",read:false,createdAt:serverTimestamp()});
+  await b.commit();
+  userCache.delete(uid);toast("تم قبول طلب الصداقة.");
+ }catch(e){showError(e)}
+}
+function rejectRequest(id){updateDoc(doc(db,"friendRequests",id),{status:"rejected"}).then(()=>toast("تم رفض الطلب.")).catch(showError)}
+async function loadFriends(){
+ const el=$("friends-list");
+ const us=await Promise.all(asArray(currentUserData.friends).map(fetchUser));
+ const list=us.filter(u=>u&&!isBlocked(u.uid)&&!blockedBy(currentUser.uid,u));
+ el.innerHTML=list.length?list.map(u=>`<div class="person-row"><img class="avatar" src="${avatarOf(u)}" alt=""><div class="person-info"><strong>${esc(nameOf(u))}</strong></div><div class="person-actions"><button class="btn secondary friend-profile" data-uid="${esc(u.uid)}">الملف</button><button class="btn friend-chat" data-uid="${esc(u.uid)}">مراسلة</button></div></div>`).join(""):'<div class="feed-empty">لم تضف أصدقاء بعد.</div>';
+}
+async function removeFriend(uid){
+ if(needOnline())return;
+ if(!confirm("هل تريد إزالة هذا العضو من أصدقائك؟"))return;
+ try{
+  const b=writeBatch(db);
+  b.update(doc(db,"users",currentUser.uid),{friends:arrayRemove(uid)});
+  b.update(doc(db,"users",uid),{friends:arrayRemove(currentUser.uid)});
+  await b.commit();userCache.delete(uid);toast("تمت إزالة الصديق.");
+  openUserProfile(uid);
+ }catch(e){showError(e)}
+}
+function blockUser(uid){
+ if(uid===currentUser.uid)return;
+ if(!confirm("حظر هذا العضو؟ سيختفي محتواه من تجربتك."))return;
+ currentUserData.blockedUsers=[...new Set([...asArray(currentUserData.blockedUsers),uid])];
+ updateDoc(doc(db,"users",currentUser.uid),{blockedUsers:arrayUnion(uid)}).catch(showError);
+ saveOfflineProfile(currentUserData);renderAll();showPage("home");toast("تم حظر العضو.");
+}
+function unblockUser(uid){
+ currentUserData.blockedUsers=asArray(currentUserData.blockedUsers).filter(x=>x!==uid);
+ updateDoc(doc(db,"users",currentUser.uid),{blockedUsers:arrayRemove(uid)}).catch(showError);
+ saveOfflineProfile(currentUserData);renderAll();toast("تم إلغاء الحظر.");
+}
+
+/* ============ البحث (استعلام بادئة فعّال بدل قراءة 100 مستخدم) ============ */
+let searchTimer,searchSeq=0;const searchCache=new Map();
+$("global-search-input").addEventListener("input",()=>{clearTimeout(searchTimer);searchTimer=setTimeout(searchUsers,400)});
+document.addEventListener("click",e=>{if(!e.target.closest(".search-wrap"))$("search-results-dropdown").classList.add("hidden")});
+async function searchUsers(){
+ const term=$("global-search-input").value.trim().toLowerCase(),el=$("search-results-dropdown");
+ if(term.length<2){el.classList.add("hidden");return}
+ if(needOnline())return;
+ const seq=++searchSeq;
+ try{
+  let us=searchCache.get(term);
+  if(!us){
+   const s=await getDocs(query(collection(db,"users"),orderBy("nameLower"),startAt(term),endAt(term+"\uf8ff"),limit(10)));
+   us=s.docs.map(d=>({uid:d.id,...d.data()}));searchCache.set(term,us);
+  }
+  if(seq!==searchSeq)return;
+  const list=us.filter(u=>u.uid!==currentUser.uid&&!isBlocked(u.uid)&&!blockedBy(currentUser.uid,u));
+  el.innerHTML=list.length?list.map(u=>`<div class="search-result" data-search-uid="${esc(u.uid)}"><img class="avatar" src="${avatarOf(u)}" alt=""><div><strong>${esc(nameOf(u))}</strong></div></div>`).join(""):'<div class="search-result muted">لا توجد نتائج.</div>';
+  el.classList.remove("hidden");
+ }catch(e){showError(e)}
+}
+$("search-results-dropdown").addEventListener("click",e=>{
+ const i=e.target.closest("[data-search-uid]");
+ if(i){$("search-results-dropdown").classList.add("hidden");$("global-search-input").value="";openUserProfile(i.dataset.searchUid)}
+});
+
+/* ============ الإشعارات (مجموعة فرعية لكل مستخدم) ============ */
+function updateBadge(){document.querySelectorAll(".nbadge:not(.admin-badge)").forEach(b=>{b.textContent=unreadCount>9?"9+":String(unreadCount);b.classList.toggle("hidden",!unreadCount)})}
+function startNotifications(){
+ if(notificationsStarted)return;notificationsStarted=true;
+ subscribe(onSnapshot(query(collection(db,"users",currentUser.uid,"notifications"),orderBy("createdAt","desc"),limit(30)),s=>{
+  notifs=s.docs.map(snapDoc);unreadCount=notifs.filter(n=>!n.read).length;updateBadge();
+  if(!$("page-notifications").classList.contains("hidden"))renderNotifications();
+ },listenErr("notifications")));
+}
+const NOTIF_ICON={comment:"fa-regular fa-comment",like:"fa-solid fa-heart",repost:"fa-solid fa-retweet",friend_request:"fa-solid fa-user-plus",friend_accepted:"fa-solid fa-user-check",warning:"fa-solid fa-triangle-exclamation",moderation:"fa-solid fa-shield-halved"};
+function renderNotifications(){
+ const el=$("notifications-list");
+ if(!notifs.length){el.innerHTML='<div class="feed-empty">لا توجد إشعارات.</div>';return}
+ el.innerHTML=(unreadCount?'<div style="padding-bottom:8px"><button class="btn secondary" id="mark-all-read">تعليم الكل كمقروء</button></div>':"")+notifs.map(n=>{
+  const ic=NOTIF_ICON[n.type]||"fa-regular fa-bell",hint=n.postId?"اضغط لعرض المنشور":(n.type==="friend_request"?"اضغط لعرض الطلبات":"");
+  return `<button type="button" class="notif-row ${n.read?"":"unread"}" data-nid="${esc(n.id)}" data-post="${esc(n.postId||"")}" data-type="${esc(n.type||"")}"><span class="notif-ic ${esc(n.type||"")}"><i class="${ic}"></i></span><span class="person-info"><strong>${esc(n.text||"إشعار جديد")}</strong><span class="muted small">${esc(timeLabel(n.createdAt))}${hint?" · "+hint:""}</span></span>${n.read?"":'<span class="notif-dot" aria-label="غير مقروء"></span>'}<i class="fa-solid fa-chevron-left muted small"></i></button>`;
+ }).join("");
+}
+async function openNotification(nid){
+ const n=notifs.find(x=>x.id===nid);if(!n)return;
+ if(!n.read)markNotification(nid);
+ if(n.postId){await openPostModal(n.postId,true);return}
+ if(n.type==="friend_request"||n.type==="friend_accepted")showPage("friends");
+}
+function markNotification(id){updateDoc(doc(db,"users",currentUser.uid,"notifications",id),{read:true}).catch(showError)}
+function markAllRead(){
+ const b=writeBatch(db);let n=0;
+ notifs.filter(x=>!x.read).forEach(x=>{b.update(doc(db,"users",currentUser.uid,"notifications",x.id),{read:true});n++});
+ if(n)b.commit().catch(showError);
+}
+
+/* ============ المحادثات ============ */
+const chatIdFor=(a,b)=>[a,b].sort().join("_");
+function startChatRooms(){
+ if(chatRoomsStarted)return;chatRoomsStarted=true;
+ subscribe(onSnapshot(query(collection(db,"chats"),where("members","array-contains",currentUser.uid)),async s=>{
+  const rooms=await Promise.all(s.docs.map(async d=>{
+   const r={id:d.id,...d.data({serverTimestamps:"estimate"})},uid=asArray(r.members).find(x=>x!==currentUser.uid);
+   return{...r,otherId:uid,other:uid?await fetchUser(uid):null};
+  }));
+  const list=rooms.filter(r=>r.other&&!isBlocked(r.otherId)&&!blockedBy(currentUser.uid,r.other)).sort((a,b)=>ms(b.updatedAt)-ms(a.updatedAt));
+  $("chat-rooms-list").innerHTML=list.length?list.map(r=>`<div class="chat-room ${r.id===activeChatId?"active":""}" data-chat-uid="${esc(r.otherId)}"><div class="row"><img class="avatar" style="width:30px;height:30px" src="${avatarOf(r.other)}" alt=""><div style="min-width:0"><strong>${esc(nameOf(r.other))}</strong><span class="last muted small">${esc(r.lastText||"")}</span></div></div></div>`).join(""):'<div class="muted small">لا توجد محادثات بعد.</div>';
+ },listenErr("chats")));
+}
+$("chat-rooms-list").addEventListener("click",async e=>{const i=e.target.closest("[data-chat-uid]");if(i){const u=await fetchUser(i.dataset.chatUid);if(u)openChatWith(u)}});
+async function openChatWith(u){
+ if(!u||u.uid===currentUser.uid)return;
+ if(isBlocked(u.uid)||blockedBy(currentUser.uid,u))return toast("لا يمكن بدء محادثة بسبب الحظر.");
+ if(modalOpen)await closeModal();
+ const id=chatIdFor(currentUser.uid,u.uid);
+ if(unsubMessages){try{unsubMessages()}catch{}unsubMessages=null}
+ activeChatId=id;activeChatUser=u;
+ showPage("chat");
+ $("chat-heading").textContent="المحادثة مع "+nameOf(u);
+ $("chat-input").disabled=false;$("chat-send-btn").disabled=false;
+ const box=$("chat-messages");box.innerHTML='<div class="feed-empty">جارٍ تحميل الرسائل...</div>';
+ let firstLoad=true;
+ unsubMessages=onSnapshot(query(collection(db,"chats",id,"messages"),orderBy("createdAt","desc"),limit(50)),s=>{
+  if(activeChatId!==id)return;
+  const near=firstLoad||box.scrollHeight-box.scrollTop-box.clientHeight<140;firstLoad=false;
+  const docs=s.docs.slice().reverse();
+  box.innerHTML=docs.map(d=>{const m=d.data({serverTimestamps:"estimate"});return`<div class="message ${m.uid===currentUser.uid?"mine":""}">${br(m.text||"")}<span class="message-time">${esc(timeLabel(m.createdAt))}</span></div>`}).join("")||'<div class="feed-empty">ابدأ المحادثة برسالة لطيفة.</div>';
+  if(near)box.scrollTop=box.scrollHeight;
+ },listenErr("messages"));
+ /* تحديث قائمة الغرف فورًا لإبراز الغرفة النشطة */
+ document.querySelectorAll(".chat-room").forEach(r=>r.classList.toggle("active",r.dataset.chatUid===u.uid));
+}
+$("chat-form").addEventListener("submit",e=>{
+ e.preventDefault();
+ const text=$("chat-input").value.trim();
+ if(!text||!activeChatId||!activeChatUser)return;
+ if(checkBan())return;
+ if(isBlocked(activeChatUser.uid)||blockedBy(currentUser.uid,activeChatUser))return toast("لا يمكن إرسال الرسالة بسبب الحظر.");
+ const id=activeChatId,members=[currentUser.uid,activeChatUser.uid].sort();
+ const batch=writeBatch(db);
+ batch.set(doc(collection(db,"chats",id,"messages")),{uid:currentUser.uid,text,createdAt:serverTimestamp()});
+ batch.set(doc(db,"chats",id),{members,updatedAt:serverTimestamp(),lastText:text.slice(0,80),lastUid:currentUser.uid},{merge:true});
+ $("chat-input").value="";
+ batch.commit().catch(showError);
+});
+
+/* ============ الإعدادات والمظهر والتثبيت ============ */
+function applyTheme(t){const dark=t==="dark"||(t==="system"&&matchMedia("(prefers-color-scheme: dark)").matches);document.body.classList.toggle("dark",!!dark);document.querySelector('meta[name="theme-color"]').content=dark?"#0b1720":"#0284c7"}
+function setTheme(t){try{localStorage.setItem("kalimat-theme",t)}catch{}applyTheme(t)}
+const savedTheme=()=>{try{return localStorage.getItem("kalimat-theme")||"system"}catch{return"system"}};
+applyTheme(savedTheme());
+matchMedia("(prefers-color-scheme: dark)").addEventListener?.("change",()=>{if(savedTheme()==="system")applyTheme("system")});
+function openSettings(){
+ const blocked=asArray(currentUserData.blockedUsers);
+ showModal("مركز الإعدادات",`<div class="setting-section"><div class="setting-row"><div><strong>الحساب</strong><p>إدارة ملفك وتسجيل الخروج.</p></div><button class="btn secondary" id="settings-profile">تعديل الملف</button></div><div class="setting-row"><div><strong>تسجيل الخروج</strong><p>الخروج من الحساب الحالي.</p></div><button class="btn danger" id="settings-logout">خروج</button></div></div><div class="setting-section"><strong><i class="fa-solid fa-display"></i> المظهر</strong><div class="setting-row"><div><strong>الوضع الليلي</strong><p>تبديل ألوان المنصة.</p></div><button class="btn secondary" id="settings-theme">${document.body.classList.contains("dark")?"الوضع الفاتح":"الوضع الداكن"}</button></div><div class="setting-row"><div><strong>مظهر الجهاز</strong><p>اتباع إعداد الجهاز.</p></div><button class="btn secondary" id="settings-system">تلقائي</button></div></div><div class="setting-section"><div class="setting-row"><div><strong><i class="fa-solid fa-download"></i> تثبيت التطبيق</strong><p>إضافة كلمات إلى الشاشة الرئيسية.</p></div><button class="btn gold" id="settings-install">تثبيت</button></div><p class="muted small">يحتاج التثبيت إلى HTTPS ومتصفح يدعم تطبيقات الويب.</p></div><div class="setting-section"><div class="setting-row"><div><strong><i class="fa-solid fa-shield-halved"></i> الخصوصية والحظر</strong><p>${blocked.length} عضوًا محظورًا.</p></div><button class="btn secondary" id="settings-blocked">إدارة الحظر</button></div></div><div class="setting-section"><strong>الإشعارات</strong><p class="muted small">الإشعارات الحالية داخل المنصة. إشعارات الهاتف تحتاج إعدادًا إضافيًا.</p><button class="btn secondary" id="settings-notifications">عرض الإشعارات</button></div><div class="setting-section"><strong><i class="fa-solid fa-scale-balanced"></i> المساعدة والقانونية</strong><div class="setting-row"><div><strong>شروط الاستخدام</strong></div><button class="btn secondary" id="settings-terms" type="button">عرض</button></div><div class="setting-row"><div><strong>سياسة الخصوصية</strong></div><button class="btn secondary" id="settings-privacy" type="button">عرض</button></div></div><div class="setting-section"><strong><i class="fa-solid fa-database"></i> بياناتي</strong><div class="setting-row"><div><strong>تحميل بياناتي</strong><p>ملف يضم ملفك ومنشوراتك ومحادثاتك.</p></div><button class="btn secondary" id="settings-export" type="button">تحميل</button></div><div class="setting-row"><div><strong>حذف حسابي</strong><p>حذف نهائي لا يمكن التراجع عنه.</p></div><button class="btn danger" id="settings-delete" type="button">حذف</button></div></div><div class="setting-section"><strong>حول كلمات</strong><p class="muted small">كلمات — نسخة تجريبية قيد التطوير.</p><p class="muted small" dir="ltr" style="text-align:right;margin:0;overflow-wrap:anywhere">${SUGGEST_EMAIL}</p><button class="btn secondary" id="settings-suggest" type="button">أرسل اقتراحك</button></div>`);
+ $("settings-suggest").onclick=()=>openSuggest(true);
+ if(isAdmin){const sec=document.createElement("div");sec.className="setting-section";sec.innerHTML='<div class="setting-row"><div><strong>لوحة الإشراف <em class="nbadge admin-badge hidden"></em></strong><p>مراجعة البلاغات والاعتراضات وتطبيق الإنذارات والحظر.</p></div><button class="btn" id="settings-admin" type="button">فتح</button></div>';const m=document.querySelector("#modal-root .modal");if(m){m.appendChild(sec);$("settings-admin").onclick=openAdminPanel;updateAdminBadge()}}
+ $("settings-terms").onclick=()=>openLegal("terms",true);
+ $("settings-privacy").onclick=()=>openLegal("privacy",true);
+ $("settings-export").onclick=exportMyData;
+ $("settings-delete").onclick=openDeleteAccount;
+ $("settings-profile").onclick=()=>editOwnProfile();
+ $("settings-logout").onclick=async()=>{
+  if(!confirm("هل تريد تسجيل الخروج؟"))return;
+  try{await closeModal();await clearOfflinePosts();await signOut(auth)}catch(e){showError(e)}
+ };
+ $("settings-theme").onclick=()=>{setTheme(document.body.classList.contains("dark")?"light":"dark");openSettings()};
+ $("settings-system").onclick=()=>{setTheme("system");openSettings()};
+ $("settings-install").onclick=installApp;
+ $("settings-blocked").onclick=openBlockedList;
+ $("settings-notifications").onclick=async()=>{await closeModal();showPage("notifications")};
+}
+async function openBlockedList(){
+ const us=(await Promise.all(asArray(currentUserData.blockedUsers).map(fetchUser))).filter(Boolean);
+ showModal("الأعضاء المحظورون",`<p class="muted small">إلغاء الحظر لا يعيد الصداقة تلقائيًا.</p><div>${us.length?us.map(u=>`<div class="person-row"><img class="avatar" src="${avatarOf(u)}" alt=""><div class="person-info"><strong>${esc(nameOf(u))}</strong></div><button class="btn secondary unblock-user" data-uid="${esc(u.uid)}">إلغاء الحظر</button></div>`).join(""):'<div class="feed-empty">لا يوجد أعضاء محظورون.</div>'}</div><button class="btn secondary" id="blocked-back">رجوع للإعدادات</button>`);
+ document.querySelectorAll(".unblock-user").forEach(b=>b.onclick=()=>{unblockUser(b.dataset.uid);openBlockedList()});
+ $("blocked-back").onclick=openSettings;
+}
+const INSTALL_KEY="kalimat-install-dismissed",INSTALL_SNOOZE=7*864e5;
+const isStandalone=()=>matchMedia("(display-mode: standalone)").matches||navigator.standalone===true;
+const installSnoozed=()=>{try{return Date.now()-Number(localStorage.getItem(INSTALL_KEY)||0)<INSTALL_SNOOZE}catch(e){return false}};
+function showInstallBanner(){if(isStandalone()||installSnoozed())return;setTimeout(()=>{if(!isStandalone()&&!installSnoozed())$("install-banner").classList.remove("hidden")},3500)}
+function hideInstallBanner(snooze){$("install-banner").classList.add("hidden");if(snooze)try{localStorage.setItem(INSTALL_KEY,String(Date.now()))}catch(e){}}
+$("install-banner-btn").onclick=async()=>{await installApp();if(!installPrompt)hideInstallBanner(false)};
+$("install-banner-close").onclick=()=>hideInstallBanner(true);
+window.addEventListener("beforeinstallprompt",e=>{e.preventDefault();installPrompt=e;showInstallBanner()});
+window.addEventListener("appinstalled",()=>{installPrompt=null;hideInstallBanner(false);toast("تم تثبيت كلمات بنجاح.")});
+if(/iphone|ipad|ipod/i.test(navigator.userAgent))showInstallBanner();
+/* ============ رسالة الترحيب والاقتراحات ============ */
+const SUGGEST_EMAIL="kalimat2026go@gmail.com",SITE_URL="https://tinyurl.com/Kalimat2011",WELCOME_KEY="kalimat-welcome-v2";
+try{if(localStorage.getItem(WELCOME_KEY)!=="1")$("welcome-note").classList.remove("hidden")}catch(e){$("welcome-note").classList.remove("hidden")}
+$("welcome-close").onclick=()=>{$("welcome-note").classList.add("hidden");try{localStorage.setItem(WELCOME_KEY,"1")}catch(e){}};
+$("suggest-btn").onclick=()=>openSuggest(false);
+function openSuggest(fromSettings){
+ const mail="mailto:"+SUGGEST_EMAIL+"?subject="+encodeURIComponent("اقتراح لمنصة كلمات")+"&body="+encodeURIComponent("السلام عليكم،\n\nاقتراحي لمنصة كلمات:\n");
+ showModal("اقتراحاتك تهمنا",`<p style="margin:0 0 12px">نعمل على تطوير كلمات خطوة بخطوة نحو الأفضل، ويسعدنا أن تشاركنا اقتراحك ورؤيتك.</p><div class="row wrap" style="margin-bottom:14px"><a class="btn" href="${mail}"><i class="fa-regular fa-envelope"></i> أرسل اقتراحك</a><button class="btn secondary" id="sg-copy-mail" type="button">نسخ البريد</button></div><div class="muted small" dir="ltr" style="text-align:right;overflow-wrap:anywhere;margin-bottom:14px">${SUGGEST_EMAIL}</div><div class="setting-section"><strong>رابط المنصة</strong><div class="muted small" dir="ltr" style="text-align:right;overflow-wrap:anywhere">${SITE_URL}</div><div class="row wrap"><button class="btn secondary" id="sg-copy-link" type="button">نسخ الرابط</button><button class="btn secondary" id="sg-share" type="button">مشاركة</button></div></div>${fromSettings?'<button class="btn secondary" id="sg-back" type="button" style="margin-top:6px">رجوع للإعدادات</button>':""}`);
+ $("sg-copy-mail").onclick=()=>copyText(SUGGEST_EMAIL,"تم نسخ البريد.");
+ $("sg-copy-link").onclick=()=>copyText(SITE_URL,"تم نسخ رابط المنصة.");
+ $("sg-share").onclick=async()=>{try{if(navigator.share)await navigator.share({title:"كلمات",text:"منصة كلمات",url:SITE_URL});else copyText(SITE_URL,"تم نسخ رابط المنصة.")}catch(e){}};
+ if(fromSettings)$("sg-back").onclick=openSettings;
+}
+
+/* ============ التعليقات (مجموعة فرعية) وتعديل المنشورات ============ */
+function postComments(p){
+ const legacy=asArray(p.comments).map(c=>({...c,legacy:true}));
+ return [...legacy,...(commentsByPost.get(p.id)||[])].sort((a,b)=>ms(a.createdAt)-ms(b.createdAt));
+}
+function commentHtml(c,postOwn,closed){
+ const me=currentUser.uid,mine=c.uid===me,canEdit=mine&&!c.legacy,canDel=!c.legacy&&(mine||postOwn);
+ const canRep=!mine&&!c.legacy&&!!c.id;
+ const cl=asArray(c.likes),on=cl.includes(me);
+ const tools=`<span class="comment-tools">${(!c.legacy&&c.id)?`<button type="button" class="link-btn muted like-comment ${on?"on":""}">${on?"أعجبني":"إعجاب"}</button>`:""}${(!c.legacy&&c.id&&!closed)?`<button type="button" class="link-btn muted reply-comment">رد</button>`:""}${canRep?`<button type="button" class="link-btn muted report-comment" data-cid="${esc(c.id)}">إبلاغ</button>`:""}${canEdit?`<button type="button" class="link-btn muted edit-comment" data-cid="${esc(c.id)}">تعديل</button>`:""}${canDel?`<button type="button" class="link-btn muted delete-comment" data-cid="${esc(c.id)}">حذف</button>`:""}</span>`;
+ const u=mine?{...currentUserData,uid:c.uid}:(userCache.get(c.uid)?.u||null);
+ const nm=u?nameOf(u):(c.name||"عضو");
+ const lk=cl.length?`<span class="c-lk">❤️ ${cl.length}</span>`:"";
+ return `<div class="comment" ${c.id?`data-cid="${esc(c.id)}"`:""}><button type="button" class="open-profile link-btn comment-av" data-uid="${esc(c.uid||"")}" aria-label="${esc(nm)}"><img class="avatar sm" src="${avatarOf(u)}" alt="" loading="lazy" decoding="async"></button><div class="comment-main"><div class="comment-bubble"><strong>${esc(nm)}</strong><div>${c.replyTo?`<span class="mention">@${esc(c.replyTo)}</span> `:""}${br(c.text||"")}</div></div><div class="comment-meta muted small">${esc(timeLabel(c.createdAt))}${c.editedAt?" · معدّل":""}${lk}${tools}</div></div></div>`;
+}
+let commenterRenderT=null;const commenterTried=new Set();
+function hydrateCommenters(list){
+ const need=[];
+ for(const c of list){
+  if(!c.uid||c.uid===currentUser.uid||commenterTried.has(c.uid)||userCache.has(c.uid))continue;
+  commenterTried.add(c.uid);need.push(c.uid);if(need.length>=15)break;
+ }
+ if(!need.length)return;
+ Promise.all(need.map(fetchUser)).then(()=>{clearTimeout(commenterRenderT);commenterRenderT=setTimeout(renderAll,150)});
+}
+async function openLikers(id){
+ const p=postsCache.get(id);if(!p)return;
+ const ids=asArray(p.likes).filter(u=>!isBlocked(u)),shown=ids.slice(0,60),st=reactionStats(p);
+ const sum=Object.entries(st.counts).sort((a,b)=>b[1]-a[1]).map(([k,n])=>`<span class="chip">${REACT_MAP[k][1]} ${n}</span>`).join("");
+ showModal("التفاعلات ("+ids.length+")",`<div class="likers-sum">${sum}</div><div id="likers-list" class="likers"><div class="feed-empty">جارٍ التحميل…</div></div>`);
+ const users=await Promise.all(shown.map(u=>u===currentUser.uid?Promise.resolve({...currentUserData,uid:u}):fetchUser(u)));
+ const box=$("likers-list");if(!box)return;
+ box.innerHTML=shown.map((u,i)=>{const x=users[i]||{uid:u};const r=reactionOf(p,u)||"love";return `<button type="button" class="liker-row open-profile" data-uid="${esc(u)}"><img class="avatar" src="${avatarOf(x)}" alt="" loading="lazy" decoding="async"><strong>${esc(nameOf(x))}</strong><span class="liker-emo">${REACT_MAP[r][1]}</span></button>`}).join("")+(ids.length>shown.length?`<div class="muted small" style="text-align:center;padding:8px">و ${ids.length-shown.length} آخرون</div>`:"");
+}
+function startComments(id){
+ if(commentSubs.has(id))return;
+ commentSubs.set(id,onSnapshot(query(collection(db,"posts",id,"comments"),orderBy("createdAt","desc"),limit(60)),s=>{
+  const list=s.docs.map(snapDoc).reverse();commentsByPost.set(id,list);
+  const p=postsCache.get(id);if(p)setPostLocal(p);
+  hydrateCommenters(list);
+ },listenErr("comments")));
+}
+function stopComments(id){
+ const f=commentSubs.get(id);if(f){try{f()}catch{}commentSubs.delete(id)}
+ commentsByPost.delete(id);
+}
+function openEditPost(id){
+ const p=postsCache.get(id);if(!p||authorUid(p)!==currentUser.uid)return;
+ const rp=!!p.repostOf,vis=p.visibility||"public";
+ const opt=(v,l)=>`<option value="${v}" ${vis===v?"selected":""}>${l}</option>`;
+ showModal("تعديل المنشور",`<form id="edit-post-form" class="post edit-opts">${rp?"":`<textarea class="field" name="t" rows="6" maxlength="5000">${esc(p.text||"")}</textarea>`}<label>من يرى المنشور<select class="field" name="v">${opt("public","🌍 عام")}${opt("friends","👥 الأصدقاء فقط")}${opt("me","🔒 أنا فقط")}</select></label><label class="chk"><input type="checkbox" name="c" ${p.commentsOff?"checked":""}> إغلاق التعليقات على هذا المنشور</label><button class="btn" type="submit">حفظ</button></form>`);
+ $("edit-post-form").onsubmit=async e=>{
+  e.preventDefault();
+  const f=e.currentTarget.elements,patch={},local={};
+  if(!rp){
+   const t=f.t.value.trim();
+   if(!t&&!safeUrlRaw(p.image)&&!safeVideoUrl(p.videoUrl))return toast("اكتب نصًا، أو أرفق صورة أو فيديو، أو احذف المنشور إن لم تعد تريده.");
+   if(t!==String(p.text||"").trim()){patch.text=t;patch.editedAt=serverTimestamp();local.text=t;local.editedAt=new Date().toISOString()}
+  }
+  const v=f.v.value;if(["public","friends","me"].includes(v)&&v!==vis){patch.visibility=v;local.visibility=v}
+  const c=!!f.c.checked;if(c!==!!p.commentsOff){patch.commentsOff=c;local.commentsOff=c}
+  if(!Object.keys(patch).length){await closeModal();return}
+  setPostLocal({...p,...local});
+  updateDoc(doc(db,"posts",id),patch).catch(err=>{setPostLocal(p);showError(err)});
+  await closeModal();toast(online()?"تم حفظ التعديل.":"سيُحفظ التعديل عند عودة الاتصال.");
+ };
+}
+function openEditComment(pid,cid){
+ const c=(commentsByPost.get(pid)||[]).find(x=>x.id===cid);if(!c||c.uid!==currentUser.uid)return;
+ showModal("تعديل التعليق",`<form id="edit-comment-form" class="post"><textarea class="field" name="t" rows="4" maxlength="1000">${esc(c.text||"")}</textarea><button class="btn" type="submit">حفظ التعديل</button></form>`);
+ $("edit-comment-form").onsubmit=async e=>{
+  e.preventDefault();
+  const t=e.currentTarget.elements.t.value.trim();
+  if(!t)return toast("لا يمكن حفظ تعليق فارغ؛ يمكنك حذفه بدلًا من ذلك.");
+  if(t!==c.text)updateDoc(doc(db,"posts",pid,"comments",cid),{text:t,editedAt:serverTimestamp()}).catch(showError);
+  await closeModal();
+ };
+}
+function deleteComment(pid,cid){
+ if(!confirm("هل تريد حذف هذا التعليق؟"))return;
+ const p=postsCache.get(pid),b=writeBatch(db);
+ const canAll=!!p&&(authorUid(p)===currentUser.uid||isAdmin);
+ const kids=canAll?(commentsByPost.get(pid)||[]).filter(x=>x.parentId===cid):[];
+ b.delete(doc(db,"posts",pid,"comments",cid));
+ kids.forEach(k=>b.delete(doc(db,"posts",pid,"comments",k.id)));
+ const dec=Math.min(1+kids.length,p?(p.commentCount||0):0);
+ if(p&&dec>0)b.update(doc(db,"posts",pid),{commentCount:increment(-dec)});
+ b.commit().then(()=>toast("تم حذف التعليق.")).catch(showError);
+}
+
+
+/* ============ البلاغات والإشراف ============ */
+const REPORT_HIDE=3;
+const REPORT_REASONS=[["abuse","إساءة أو شتم"],["harass","تحرش أو تهديد"],["hate","كراهية أو تحريض"],["indecent","محتوى مخالف للآداب"],["fraud","احتيال أو انتحال"],["misinfo","معلومات مضللة"],["other","سبب آخر"]];
+const reasonLabel=k=>(REPORT_REASONS.find(r=>r[0]===k)||[0,k])[1];
+function startModeration(){
+ if(modStarted)return;modStarted=true;
+ getDoc(doc(db,"admins",currentUser.uid)).then(s=>{if(s.exists()){isAdmin=true;renderAll();refreshAdminCount();setInterval(()=>{if(!document.hidden)refreshAdminCount()},300000)}}).catch(()=>{});
+ subscribe(onSnapshot(doc(db,"moderation",currentUser.uid),s=>{myMod=s.exists()?s.data({serverTimestamps:"estimate"}):null;updateModBanner()},listenErr("moderation")));
+}
+async function refreshAdminCount(){
+ if(!isAdmin||!online())return;
+ try{
+  const [a,b]=await Promise.all([getCountFromServer(query(collection(db,"reports"))),getCountFromServer(query(collection(db,"posts"),where("appealed","==",true)))]);
+  adminPending=a.data().count+b.data().count;updateAdminBadge();
+ }catch(e){console.warn("تعذر عدّ البلاغات",e)}
+}
+function updateAdminBadge(){
+ document.querySelectorAll(".admin-badge").forEach(el=>{el.textContent=adminPending>99?"99+":String(adminPending);el.classList.toggle("hidden",!(isAdmin&&adminPending>0))});
+}
+function banState(){
+ const m=myMod;if(!m)return null;
+ if(m.banned)return{perm:true};
+ const t=ms(m.banUntil);
+ return t>Date.now()?{until:t}:null;
+}
+function banText(b){return b.perm?"حسابك محظور نهائيًا بسبب مخالفة شروط الاستخدام.":"حسابك محظور مؤقتًا حتى "+new Date(b.until).toLocaleString("ar")+" بسبب مخالفة شروط الاستخدام."}
+function checkBan(){const b=banState();if(!b)return false;toast(banText(b));return true}
+function updateModBanner(){
+ let el=$("mod-banner");
+ if(!el){el=document.createElement("div");el.id="mod-banner";el.className="mod-banner hidden";$("app").insertBefore(el,$("app").firstChild)}
+ const b=banState();
+ el.textContent=b?banText(b):"";el.classList.toggle("hidden",!b);
+}
+async function openReport(type,postId,commentId,userUid){
+ if(needOnline())return;
+ if(checkBan())return;
+ let targetId,targetUid,pid="";
+ if(type==="user"){targetId=targetUid=userUid;}
+ else{
+  const p=postsCache.get(postId);if(!p)return toast("لم يعد هذا المنشور متاحًا.");
+  pid=postId;targetId=postId;targetUid=authorUid(p);
+  if(type==="comment"){
+   const c=postComments(p).find(x=>x.id===commentId);if(!c)return toast("لم يعد هذا التعليق متاحًا.");
+   targetId=commentId;targetUid=c.uid;
+  }
+ }
+ if(!targetUid||targetUid===currentUser.uid)return;
+ const rid=currentUser.uid+"_"+type+"_"+targetId;
+ try{const s=await getDoc(doc(db,"reports",rid));if(s.exists())return toast("سبق أن أبلغت عن هذا المحتوى، شكرًا لك.")}catch(e){}
+ showModal(type==="post"?"إبلاغ عن منشور":(type==="comment"?"إبلاغ عن تعليق":"إبلاغ عن عضو"),`<form id="report-form" class="post"><p class="muted small" style="margin:0">اختر سبب البلاغ. سيراجعه المشرف، ولن يعرف صاحب المحتوى من أبلغ.</p><div class="report-reasons">${REPORT_REASONS.map(r=>`<label class="report-reason"><input type="radio" name="reason" value="${r[0]}"> ${esc(r[1])}</label>`).join("")}</div><textarea class="field" name="note" rows="2" maxlength="200" placeholder="تفاصيل إضافية (اختياري)"></textarea><button class="btn" type="submit">إرسال البلاغ</button></form>`);
+ $("report-form").onsubmit=async e=>{
+  e.preventDefault();
+  const f=e.currentTarget,reason=f.elements.reason.value;
+  if(!reason)return toast("اختر سبب البلاغ أولًا.");
+  const note=f.elements.note.value.trim().slice(0,200);
+  const b=writeBatch(db);
+  b.set(doc(db,"reports",rid),{reporter:currentUser.uid,type,targetId,postId:pid,targetUid,reason,note,createdAt:serverTimestamp()});
+  if(type==="post")b.update(doc(db,"posts",postId),{reportCount:increment(1)});
+  try{
+   await b.commit();
+   if(type==="post"){const q=postsCache.get(postId);if(q)setPostLocal({...q,reportCount:(q.reportCount||0)+1})}
+   await closeModal();toast("تم إرسال البلاغ، شكرًا لمساعدتك في إبقاء كلمات آمنة.");
+  }catch(err){showError(err)}
+ };
+}
+/* سلّم العقوبات: 1 إنذار، 2 إنذار أخير، 3 حظر 3 أيام، 4 حظر 14 يومًا، 5 فأكثر حظر دائم */
+function penaltyFor(w){
+ const day=864e5;
+ if(w<=1)return{label:"إنذار أول",text:"إنذار أول: تم رصد مخالفة لشروط الاستخدام في أحد محتوياتك. التكرار قد يؤدي إلى الحظر.",banned:false,until:0};
+ if(w===2)return{label:"إنذار أخير",text:"إنذار أخير: تكرار المخالفة سيؤدي إلى حظر حسابك مؤقتًا.",banned:false,until:0};
+ if(w===3)return{label:"حظر 3 أيام",text:"تم حظر حسابك 3 أيام بسبب تكرار مخالفة شروط الاستخدام.",banned:false,until:Date.now()+3*day};
+ if(w===4)return{label:"حظر 14 يومًا",text:"تم حظر حسابك 14 يومًا بسبب تكرار مخالفة شروط الاستخدام.",banned:false,until:Date.now()+14*day};
+ return{label:"حظر دائم",text:"تم حظر حسابك نهائيًا بسبب تكرار مخالفة شروط الاستخدام.",banned:true,until:0};
+}
+async function readMod(uid){try{const s=await getDoc(doc(db,"moderation",uid));return s.exists()?s.data():null}catch{return null}}
+async function applyPenalty(uid,reason){
+ const m=await readMod(uid),w=(m?.warnings||0)+1,pn=penaltyFor(w);
+ await setDoc(doc(db,"moderation",uid),{warnings:w,banned:pn.banned,banUntil:new Date(pn.until),lastReason:reason||"",updatedAt:serverTimestamp()},{merge:true});
+ addNotification(uid,"warning",pn.text);
+ return pn;
+}
+const adminGroups=new Map();
+async function openAdminPanel(){
+ if(!isAdmin)return;
+ showModal("لوحة الإشراف",`<div id="admin-appeals" class="admin-list"></div><div id="admin-list" class="admin-list"><div class="feed-empty">جارٍ التحميل…</div></div>`);
+ loadAppeals();refreshAdminCount();
+ try{
+  const s=await getDocs(query(collection(db,"reports"),orderBy("createdAt","desc"),limit(150)));
+  adminGroups.clear();
+  s.docs.forEach(d=>{
+   const r=d.data(),key=r.type+"_"+r.targetId;
+   let g=adminGroups.get(key);
+   if(!g){g={key,type:r.type,targetId:r.targetId,postId:r.postId,targetUid:r.targetUid,ids:[],reasons:{},notes:[],count:0};adminGroups.set(key,g)}
+   g.ids.push(d.id);g.count++;g.reasons[r.reason]=(g.reasons[r.reason]||0)+1;if(r.note)g.notes.push(r.note);
+  });
+  const list=[...adminGroups.values()].sort((a,b)=>b.count-a.count).slice(0,30);
+  const box=$("admin-list");if(!box)return;
+  if(!list.length){box.innerHTML='<div class="feed-empty">لا توجد بلاغات. كل شيء هادئ.</div>';return}
+  await Promise.all(list.map(async g=>{
+   try{
+    if(g.type==="user"){const x=await fetchUser(g.targetUid);g.noDelete=true;g.content=x?(x.bio||"(بلا نبذة) "+nameOf(x)):null}
+    else if(g.type==="post"){const x=await getDoc(doc(db,"posts",g.postId));g.content=x.exists()?x.data().text||(x.data().repostOf?"(إعادة نشر)":"(صورة بلا نص)"):null}
+    else{const x=await getDoc(doc(db,"posts",g.postId,"comments",g.targetId));g.content=x.exists()?x.data().text:null}
+   }catch{g.content=null}
+   g.user=await fetchUser(g.targetUid);g.mod=await readMod(g.targetUid);
+  }));
+  box.innerHTML=list.map(adminCardHtml).join("");
+ }catch(e){const box=$("admin-list");if(box)box.innerHTML='<div class="feed-empty">تعذّر تحميل البلاغات.</div>';showError(e)}
+}
+function adminCardHtml(g){
+ const reasons=Object.entries(g.reasons).map(([k,n])=>`<span class="chip">${esc(reasonLabel(k))} ×${n}</span>`).join("");
+ const m=g.mod,st=m?`إنذارات: ${m.warnings||0}`+(m.banned?" · محظور نهائيًا":(ms(m.banUntil)>Date.now()?" · محظور حتى "+new Date(ms(m.banUntil)).toLocaleDateString("ar"):"")):"لا سوابق";
+ const next=penaltyFor((m?.warnings||0)+1).label;
+ return `<div class="admin-card" data-key="${esc(g.key)}"><div class="row between"><strong>${g.type==="post"?"منشور":(g.type==="user"?"عضو":"تعليق")} · ${g.count} بلاغ</strong><span class="muted small">${esc(nameOf(g.user))}</span></div><div class="chips">${reasons}</div><div class="admin-text">${g.content===null?'<span class="muted">المحتوى محذوف أو غير متاح.</span>':br(String(g.content).slice(0,300))}</div>${g.notes.length?`<div class="muted small">ملاحظات: ${esc(g.notes.slice(0,3).join(" | "))}</div>`:""}<div class="muted small">${esc(st)} · العقوبة التالية: ${esc(next)}</div><div class="row wrap" style="margin-top:8px"><button class="btn secondary admin-act" data-act="dismiss" data-key="${esc(g.key)}" type="button">تجاهل</button>${(g.content!==null&&!g.noDelete)?`<button class="btn secondary admin-act" data-act="delete" data-key="${esc(g.key)}" type="button">حذف المحتوى</button>`:""}<button class="btn admin-act" data-act="penalize" data-key="${esc(g.key)}" type="button">${(g.content!==null&&!g.noDelete)?"حذف + ":""}${esc(next)}</button>${(m&&(m.warnings||m.banned))?`<button class="btn secondary admin-act" data-act="lift" data-key="${esc(g.key)}" type="button">رفع العقوبة</button>`:""}</div></div>`;
+}
+async function adminDeleteContent(g){
+ if(g.type==="post"){
+  await deleteAllByQuery(query(collection(db,"posts",g.postId,"comments"),limit(400)),400);
+  await deleteDoc(doc(db,"posts",g.postId));
+  stopComments(g.postId);removePostLocal(g.postId);
+ }else{
+  const b=writeBatch(db);
+  b.delete(doc(db,"posts",g.postId,"comments",g.targetId));
+  const p=postsCache.get(g.postId);
+  if(!p||(p.commentCount||0)>0)b.update(doc(db,"posts",g.postId),{commentCount:increment(-1)});
+  await b.commit();
+ }
+}
+async function adminDismiss(g,resetCount){
+ for(const id of g.ids){try{await deleteDoc(doc(db,"reports",id))}catch(e){console.warn(e)}}
+ if(resetCount&&g.type==="post"){
+  try{
+   const x=await getDoc(doc(db,"posts",g.postId));
+   const d=x.exists()?x.data():null,was=!!d&&(d.reportCount||0)>=REPORT_HIDE;
+   const patch={reportCount:0};if(d&&d.appealed)patch.appealed=false;
+   if(d)await updateDoc(doc(db,"posts",g.postId),patch);
+   if(was)addNotification(g.targetUid,"moderation","راجعت الإدارة البلاغات عن منشورك ولم تجد مخالفة، وأعادت إظهاره للأعضاء.",g.postId);
+  }catch(e){console.warn(e)}
+ }
+ refreshAdminCount();
+}
+async function loadAppeals(){
+ try{
+  const s2=await getDocs(query(collection(db,"posts"),where("appealed","==",true),limit(20)));
+  const box=$("admin-appeals");if(!box||!s2.docs.length)return;
+  const ps=s2.docs.map(snapDoc);
+  await Promise.all(ps.map(async p=>{p._u=await fetchUser(authorUid(p))}));
+  box.innerHTML='<h3 style="margin:0">اعتراضات على منشورات مخفية ('+ps.length+')</h3>'+ps.map(p=>`<div class="admin-card" data-pid="${esc(p.id)}"><div class="row between"><strong>اعتراض</strong><span class="muted small">${esc(nameOf(p._u))}</span></div><div class="admin-text">${p.text?br(String(p.text).slice(0,300)):'<span class="muted">(منشور بلا نص)</span>'}</div>${p.appealNote?`<div class="muted small">كتب صاحبه: ${esc(p.appealNote)}</div>`:""}<div class="row wrap" style="margin-top:8px"><button class="btn appeal-act" data-act="accept" data-pid="${esc(p.id)}" type="button">قبول وإعادة الإظهار</button><button class="btn secondary appeal-act" data-act="reject" data-pid="${esc(p.id)}" type="button">رفض الاعتراض</button></div></div>`).join("");
+ }catch(e){console.warn("تعذر تحميل الاعتراضات",e)}
+}
+async function adminAppeal(act,pid){
+ if(!isAdmin||needOnline())return;
+ try{
+  const x=await getDoc(doc(db,"posts",pid));if(!x.exists()){toast("المنشور غير موجود.");return}
+  const owner=authorUid(x.data());
+  if(act==="accept"){
+   const rs=await getDocs(query(collection(db,"reports"),where("postId","==",pid),limit(100)));
+   for(const d of rs.docs){if(d.data().type==="post"){try{await deleteDoc(d.ref)}catch(e){console.warn(e)}}}
+   await updateDoc(doc(db,"posts",pid),{reportCount:0,appealed:false});
+   addNotification(owner,"moderation","راجعت الإدارة اعتراضك وأعادت إظهار منشورك. شكرًا لتفهمك.",pid);toast("أُعيد إظهار المنشور.");
+  }else{
+   await updateDoc(doc(db,"posts",pid),{appealed:false,appealRejected:true});
+   addNotification(owner,"moderation","راجعت الإدارة اعتراضك وبقي المنشور مخفيًا لمخالفته شروط الاستخدام.",pid);toast("تم رفض الاعتراض.");
+  }
+  document.querySelector(`.admin-card[data-pid="${CSS.escape(pid)}"]`)?.remove();
+  refreshAdminCount();
+ }catch(e){showError(e)}
+}
+function openAppeal(id){
+ const p=postsCache.get(id);if(!p||authorUid(p)!==currentUser.uid)return;
+ showModal("اعتراض على إخفاء المنشور",`<form id="appeal-form" class="post"><p class="muted small" style="margin:0">سيراجع المشرف اعتراضك. اشرح باختصار لماذا ترى أن المنشور لا يخالف شروط الاستخدام.</p><textarea class="field" name="n" rows="3" maxlength="300" placeholder="سبب الاعتراض (اختياري)"></textarea><button class="btn" type="submit">إرسال الاعتراض</button></form>`);
+ $("appeal-form").onsubmit=async e=>{
+  e.preventDefault();
+  if(needOnline())return;
+  const n=e.currentTarget.elements.n.value.trim().slice(0,300);
+  try{await updateDoc(doc(db,"posts",id),{appealed:true,appealNote:n});setPostLocal({...p,appealed:true});await closeModal();toast("أُرسل اعتراضك للمراجعة.")}catch(err){showError(err)}
+ };
+}
+async function adminAct(act,key){
+ const g=adminGroups.get(key);if(!g||needOnline())return;
+ try{
+  if(act==="dismiss"){
+   await adminDismiss(g,true);toast("تم تجاهل البلاغ.");
+  }else if(act==="delete"){
+   if(!confirm("حذف هذا المحتوى نهائيًا؟"))return;
+   await adminDeleteContent(g);await adminDismiss(g,false);
+   addNotification(g.targetUid,"moderation","تم حذف أحد محتوياتك لمخالفته شروط الاستخدام.");toast("تم حذف المحتوى.");
+  }else if(act==="penalize"){
+   const pn=penaltyFor(((g.mod?.warnings)||0)+1);
+   if(!confirm(((g.content!==null&&!g.noDelete)?"سيُحذف المحتوى وسيُطبَّق: ":"سيُطبَّق: ")+pn.label+" على "+nameOf(g.user)+". متابعة؟"))return;
+   if(g.content!==null&&!g.noDelete)await adminDeleteContent(g);
+   await adminDismiss(g,false);
+   await applyPenalty(g.targetUid,reasonLabel(Object.keys(g.reasons)[0]));
+   toast("تم تطبيق: "+pn.label+".");
+  }else if(act==="lift"){
+   if(!confirm("رفع كل العقوبات والإنذارات عن "+nameOf(g.user)+"؟"))return;
+   await setDoc(doc(db,"moderation",g.targetUid),{warnings:0,banned:false,banUntil:new Date(0),updatedAt:serverTimestamp()},{merge:true});
+   toast("تم رفع العقوبة.");
+  }
+  adminGroups.delete(key);
+  if(act==="lift"){openAdminPanel();return}
+  const card=document.querySelector(`.admin-card[data-key="${CSS.escape(key)}"]`);if(card)card.remove();
+  const box=$("admin-list");if(box&&!box.children.length)box.innerHTML='<div class="feed-empty">لا توجد بلاغات. كل شيء هادئ.</div>';
+ }catch(e){showError(e)}
+}
+
+/* ============ قائمة الأصدقاء: العرض والإخفاء ============ */
+function updateFriendsPrivacyUI(){
+ const hid=!!currentUserData.hideFriends,s=$("hide-friends-state"),b=$("hide-friends-btn");
+ if(s)s.textContent=hid?"قائمة أصدقائك مخفية عن الأعضاء.":"قائمة أصدقائك ظاهرة للأعضاء.";
+ if(b)b.textContent=hid?"إظهار القائمة":"إخفاء القائمة";
+}
+function toggleHideFriends(){
+ if(needOnline())return;
+ const v=!currentUserData.hideFriends;
+ currentUserData.hideFriends=v;updateFriendsPrivacyUI();
+ updateDoc(doc(db,"users",currentUser.uid),{hideFriends:v})
+  .then(()=>toast(v?"تم إخفاء قائمة أصدقائك عن الأعضاء.":"أصبحت قائمة أصدقائك ظاهرة للأعضاء."))
+  .catch(e=>{currentUserData.hideFriends=!v;updateFriendsPrivacyUI();showError(e)});
+}
+$("hide-friends-btn").onclick=toggleHideFriends;
+async function openFriendsOf(u){
+ const own=u.uid===currentUser.uid;
+ if(!own&&u.hideFriends)return toast("هذا العضو أخفى قائمة أصدقائه.");
+ if(needOnline())return;
+ const ids=asArray(u.friends),MAX=60;
+ showModal(own?"أصدقائي":"أصدقاء "+nameOf(u),'<div id="fl-box"><div class="feed-empty">جارٍ التحميل...</div></div>');
+ const us=(await Promise.all(ids.slice(0,MAX).map(fetchUser))).filter(x=>x&&!isBlocked(x.uid)&&!blockedBy(currentUser.uid,x));
+ const box=$("fl-box");if(!box)return;
+ box.innerHTML=(us.length?us.map(x=>`<div class="person-row"><img class="avatar" src="${avatarOf(x)}" alt=""><div class="person-info"><strong>${esc(nameOf(x))}</strong></div><button class="btn secondary friend-profile" data-uid="${esc(x.uid)}" type="button">الملف</button></div>`).join(""):'<div class="feed-empty">لا يوجد أصدقاء لعرضهم.</div>')+(ids.length>MAX?`<p class="muted small">يُعرض أول ${MAX} صديقًا.</p>`:"");
+}
+
+/* ============ الشروط والخصوصية وبيانات الحساب ============ */
+function legalHtml(kind){
+ const mail=`<span dir="ltr">${SUGGEST_EMAIL}</span>`;
+ if(kind==="terms")return `<p class="muted small">آخر تحديث: 9 أكتوبر 2026</p>
+<h3>1. القبول</h3><p>باستخدامك كلمات أو إنشاء حساب فيها فإنك توافق على هذه الشروط وعلى سياسة الخصوصية. كلمات نسخة تجريبية قيد التطوير، وقد تتغير ميزاتها.</p>
+<h3>2. الحساب</h3><ul><li>يجب ألا يقل عمرك عن 13 سنة.</li><li>أدخل بيانات صحيحة، وأنت مسؤول عن سرية كلمة مرورك وعن كل ما يتم عبر حسابك.</li><li>تحتاج الحسابات الجديدة إلى تأكيد البريد الإلكتروني.</li></ul>
+<h3>3. السلوك المقبول</h3><p>يُمنع في كلمات:</p><ul><li>التهديد والتحرش والتنمر والإساءة للآخرين.</li><li>خطاب الكراهية والتحريض على العنف.</li><li>المحتوى الجنسي أو أي محتوى يستغل القاصرين.</li><li>انتحال شخصية الآخرين.</li><li>الرسائل المزعجة والروابط الاحتيالية.</li><li>نشر معلومات خاصة بالآخرين دون إذنهم.</li><li>نشر محتوى تملك حقوقه جهة أخرى دون إذن.</li><li>محاولة اختراق المنصة أو تعطيلها.</li></ul>
+<h3>4. محتواك</h3><p>تبقى ملكية ما تنشره لك، وتأذن لكلمات بتخزينه وعرضه داخل المنصة لتشغيلها. منشوراتك وتعليقاتك وملفك الشخصي ظاهرة لأعضاء المنصة، وأنت مسؤول عما تنشره. يمكنك تحديد من يرى كل منشور (عام، أو الأصدقاء، أو أنت فقط) وإغلاق التعليقات عليه.</p>
+<h3>5. البلاغات والإشراف</h3><p>يمكنك الإبلاغ عن أي منشور أو تعليق أو عضو بزر «إبلاغ». إذا بلّغ عن منشور عدة أعضاء يُخفى مؤقتًا تلقائيًا بانتظار مراجعة المشرف. يراجع المشرف البلاغات، وله حذف المحتوى المخالف وتطبيق العقوبات بالتدرّج: إنذار أول، ثم إنذار أخير، ثم حظر مؤقت (3 أيام ثم 14 يومًا)، ثم حظر دائم. المحظور لا يستطيع النشر ولا التعليق ولا إرسال الرسائل. البلاغات الكيدية المتكررة مخالفة أيضًا. للاعتراض على قرار راسلنا على ${mail}.</p>
+<h3>6. تحكمك بحسابك</h3><p>يمكنك تعديل منشوراتك وتعليقاتك وحذفها، وحظر أي عضو، وتحميل بياناتك، وحذف حسابك نهائيًا من «مركز الإعدادات».</p>
+<h3>7. إخلاء المسؤولية</h3><p>تُقدَّم الخدمة مجانًا «كما هي» دون ضمان لاستمرارها أو خلوها من الأخطاء، وقد تتغير أو تتوقف. لا نتحمل مسؤولية محتوى الأعضاء. ننصحك بالاحتفاظ بنسخة من بياناتك المهمة.</p>
+<h3>8. التعديلات</h3><p>قد نعدّل هذه الشروط، واستمرارك في الاستخدام بعد التعديل يعني قبولك لها.</p>
+<h3>9. التواصل</h3><p>${mail}</p>`;
+ return `<p class="muted small">آخر تحديث: 9 أكتوبر 2026</p>
+<h3>1. البيانات التي نحتفظ بها</h3><ul><li><strong>الحساب:</strong> الاسم والبريد الإلكتروني وكلمة المرور. يديرها نظام الدخول من Google Firebase، ولا نرى كلمة مرورك. بريدك لا يظهر في ملفك العام.</li><li><strong>الملف الشخصي:</strong> الصورة (تُضغط تلقائيًا) والنبذة وقائمة الأصدقاء وقائمة المحظورين.</li><li><strong>ما تنشره:</strong> المنشورات والصور والتعليقات والإعجابات وطلبات الصداقة والإشعارات.</li><li><strong>الرسائل:</strong> محادثاتك الخاصة مع أصدقائك.</li></ul>
+<h3>2. من يرى بياناتك</h3><ul><li>اسمك وصورتك ونبذتك ومنشوراتك وتعليقاتك وتفاعلاتك: أعضاء كلمات، إلا ما اخترت أن يكون للأصدقاء فقط أو لك فقط.</li><li><strong>تنبيه عن خيار «الأصدقاء» و«أنا فقط»:</strong> يُطبَّقان داخل التطبيق ويُخفيان المنشور عن عرض الأعضاء الآخرين، لكنهما ليسا تشفيرًا؛ تُحفظ هذه المنشورات في قاعدة البيانات نفسها، فلا تضع فيها معلومات شديدة الحساسية.</li><li>رسائلك الخاصة: أنت والطرف الآخر داخل التطبيق.</li><li>بلاغاتك عن المحتوى: تُخزَّن مع اسم المُبلِّغ ولا يراها إلا مشرف المنصة، ولا يُخبَر صاحب المحتوى بمن أبلغ.</li><li>قائمة أصدقائك وقائمة المحظورين مخزّنة في ملفك، وهي قابلة للقراءة تقنيًا لأعضاء المنصة لأن التطبيق يحتاجها لتطبيق الصداقة والحظر. يعرض التطبيق قائمة أصدقائك للأعضاء ما لم تخفِها من صفحة «الأصدقاء»؛ والإخفاء يمنع عرضها داخل التطبيق ولا يمنع قراءتها تقنيًا.</li></ul><p class="legal-note">رسائلك الخاصة مخزّنة بالكامل في قواعد بيانات Google Firebase المحمية، وتُنقل وتُخزَّن مشفّرة لدى Google، ولا يستطيع أي عضو آخر الاطلاع عليها. وهي غير مشفّرة من طرف إلى طرف. ونلتزم بعدم الاطلاع على المحادثات الخاصة إلا عند الضرورة القصوى، كالتحقيق في بلاغ عن مخالفة جسيمة أو بطلب قانوني.</p>
+<h3>3. أين تُحفظ البيانات</h3><p>على خوادم Google Firebase (قاعدة بيانات Firestore). تُستضاف صفحة التطبيق على GitHub Pages، وتُحمَّل مكتبات Firebase من خوادم Google التي قد ترى عنوان الاتصال الخاص بك كأي موقع آخر. الأيقونات مضمّنة في التطبيق.</p>
+<h3>4. التخزين على جهازك</h3><p>نحفظ على جهازك نسخة من آخر المنشورات وملفات بعض الأعضاء ليعمل التطبيق دون اتصال، وتُحذف المنشورات المحفوظة عند تسجيل الخروج. كما نحفظ تفضيلات بسيطة مثل المظهر.</p>
+<h3>5. ما لا نفعله</h3><p>لا نعرض إعلانات، ولا نبيع بياناتك، ولا نستخدم أدوات تتبع أو تحليل سلوك.</p>
+<h3>6. حقوقك</h3><ul><li>تعديل ملفك ومنشوراتك وتعليقاتك وحذفها.</li><li>حظر أي عضو.</li><li>تحميل بياناتك: «مركز الإعدادات» ← «بياناتي».</li><li>حذف حسابك نهائيًا من المكان نفسه.</li></ul>
+<h3>7. عند حذف الحساب</h3><p>يُحذف ملفك ومنشوراتك وإشعاراتك وحساب الدخول. تبقى تعليقاتك على منشورات الآخرين، ورسائلك المرسلة في محادثاتهم، وقد تبقى آثار مؤقتة لدى مزودي الخدمة التقنيين بحسب سياساتهم.</p>
+<h3>8. الأطفال</h3><p>كلمات غير موجهة لمن هم دون 13 سنة.</p>
+<h3>9. التعديل والتواصل</h3><p>قد نحدّث هذه السياسة عند تطوير المنصة. للاستفسار: ${mail}</p>`;
+}
+function openLegal(kind,fromSettings){
+ showModal(kind==="terms"?"شروط الاستخدام":"سياسة الخصوصية",`<div class="legal-body">${legalHtml(kind)}</div>${fromSettings?'<button class="btn secondary" id="legal-back" type="button" style="margin-top:12px">رجوع للإعدادات</button>':""}`);
+ if(fromSettings)$("legal-back").onclick=openSettings;
+}
+document.addEventListener("click",e=>{const b=e.target.closest("[data-legal]");if(b){e.preventDefault();openLegal(b.dataset.legal,false)}});
+
+const plainData=v=>{
+ if(v&&typeof v.toMillis==="function")return new Date(v.toMillis()).toISOString();
+ if(Array.isArray(v))return v.map(plainData);
+ if(v&&typeof v==="object"){const o={};for(const[k,x]of Object.entries(v))o[k]=plainData(x);return o}
+ return v;
+};
+async function exportMyData(){
+ if(needOnline())return;
+ const btn=$("settings-export");btn.disabled=true;btn.textContent="جارٍ التجهيز…";
+ try{
+  const uid=currentUser.uid;
+  const us=await getDocFromServer(doc(db,"users",uid));
+  const ps=await getDocs(query(collection(db,"posts"),where("uid","==",uid),limit(200)));
+  const cs=await getDocs(query(collection(db,"chats"),where("members","array-contains",uid)));
+  const chats=[];
+  for(const c of cs.docs){
+   const ms2=await getDocs(query(collection(db,"chats",c.id,"messages"),orderBy("createdAt","desc"),limit(500)));
+   chats.push({with:asArray(c.data().members).find(x=>x!==uid)||"",messages:ms2.docs.map(d=>plainData(d.data())).reverse()});
+  }
+  const out={exportedAt:new Date().toISOString(),note:"حتى 200 منشور وحتى 500 رسالة لكل محادثة.",email:currentUser.email,profile:plainData(us.exists()?us.data():{}),posts:ps.docs.map(d=>({id:d.id,...plainData(d.data())})),chats};
+  const blob=new Blob([JSON.stringify(out,null,2)],{type:"application/json"});
+  const a=document.createElement("a");a.href=URL.createObjectURL(blob);a.download="kalimat-my-data.json";document.body.appendChild(a);a.click();a.remove();
+  setTimeout(()=>URL.revokeObjectURL(a.href),10000);
+  toast("تم تجهيز ملف بياناتك.");
+ }catch(e){showError(e)}
+ finally{btn.disabled=false;btn.textContent="تحميل"}
+}
+async function clearOfflineAll(){const d=await idb();if(!d)return;try{const tx=d.transaction(["posts","profiles"],"readwrite");tx.objectStore("posts").clear();tx.objectStore("profiles").clear();await txDone(tx)}catch{}}
+async function deleteAllByQuery(q,limitN){
+ for(;;){
+  const s=await getDocs(q);if(s.empty)return;
+  const b=writeBatch(db);s.docs.forEach(d=>b.delete(d.ref));await b.commit();
+  if(s.size<limitN)return;
+ }
+}
+async function deleteAccountData(){
+ const uid=currentUser.uid;
+ /* إزالة اسمي من قوائم أصدقائي (محاولة؛ لا توقف الحذف إن لم تُسمح) */
+ for(const f of asArray(currentUserData.friends)){try{await updateDoc(doc(db,"users",f),{friends:arrayRemove(uid)})}catch(e){console.warn(e)}}
+ /* منشوراتي: إلزامي */
+ for(;;){
+  const s=await getDocs(query(collection(db,"posts"),where("uid","==",uid),limit(100)));
+  if(s.empty)break;
+  for(const d of s.docs){try{await deleteAllByQuery(query(collection(db,"posts",d.id,"comments"),limit(400)),400)}catch(e){console.warn(e)}}
+  const b=writeBatch(db);s.docs.forEach(d=>b.delete(d.ref));await b.commit();
+  if(s.size<100)break;
+ }
+ /* الإشعارات وطلبات الصداقة: محاولة */
+ try{await deleteAllByQuery(query(collection(db,"users",uid,"notifications"),limit(400)),400)}catch(e){console.warn(e)}
+ try{await deleteAllByQuery(query(collection(db,"friendRequests"),where("from","==",uid),limit(400)),400)}catch(e){console.warn(e)}
+ try{await deleteAllByQuery(query(collection(db,"friendRequests"),where("to","==",uid),limit(400)),400)}catch(e){console.warn(e)}
+ /* ملفي الشخصي: إلزامي */
+ await deleteDoc(doc(db,"users",uid));
+}
+function openDeleteAccount(){
+ showModal("حذف الحساب",`<form id="delete-form" class="post"><p style="margin:0"><strong style="color:var(--danger)">تنبيه: الحذف نهائي ولا يمكن التراجع عنه.</strong></p><p class="muted small" style="margin:0">سيُحذف ملفك ومنشوراتك وإشعاراتك وحساب الدخول. تبقى تعليقاتك على منشورات الآخرين ورسائلك المرسلة في محادثاتهم. يمكنك تحميل بياناتك قبل الحذف من الإعدادات.</p><label>اكتب كلمة «حذف» للتأكيد<input class="field" name="word" autocomplete="off"></label><label>كلمة المرور<input class="field" name="pw" type="password" autocomplete="current-password"></label><button class="btn danger" id="delete-confirm" type="submit">حذف حسابي نهائيًا</button><button class="btn secondary" id="delete-back" type="button">رجوع للإعدادات</button></form>`);
+ $("delete-back").onclick=openSettings;
+ $("delete-form").onsubmit=async e=>{
+  e.preventDefault();
+  const f=e.currentTarget,pw=f.elements.pw.value,btn=$("delete-confirm");
+  if(f.elements.word.value.trim()!=="حذف")return toast("اكتب كلمة «حذف» للتأكيد.");
+  if(!pw)return toast("أدخل كلمة المرور.");
+  if(needOnline())return;
+  btn.disabled=true;btn.textContent="جارٍ الحذف…";
+  try{
+   await reauthenticateWithCredential(currentUser,EmailAuthProvider.credential(currentUser.email,pw));
+   await deleteAccountData();
+   await clearOfflineAll();
+   const u=currentUser;
+   await closeModal();
+   await deleteUser(u);
+   toast("تم حذف حسابك نهائيًا.");
+  }catch(err){showError(err);btn.disabled=false;btn.textContent="حذف حسابي نهائيًا"}
+ };
+}
+
+async function installApp(){
+ if(matchMedia("(display-mode: standalone)").matches)return toast("كلمات مثبت بالفعل.");
+ if(installPrompt){installPrompt.prompt();const c=await installPrompt.userChoice;installPrompt=null;toast(c?.outcome==="accepted"?"تم قبول طلب التثبيت.":"لم يتم إكمال التثبيت.");return}
+ const ios=/iphone|ipad|ipod/i.test(navigator.userAgent);
+ showModal("تثبيت كلمات",ios?'<ol><li>افتح الموقع في Safari.</li><li>اضغط زر المشاركة.</li><li>اختر «إضافة إلى الشاشة الرئيسية».</li><li>اضغط «إضافة».</li></ol>':'<p>لم يوفّر المتصفح نافذة التثبيت حاليًا.</p><ol><li>تأكد من فتح الموقع عبر HTTPS.</li><li>افتح قائمة المتصفح (⋮).</li><li>اختر «تثبيت التطبيق» أو «إضافة إلى الشاشة الرئيسية» إن ظهرت.</li></ol>');
+}
+
+/* ============ أزرار الواجهة والنقر المفوّض ============ */
+$("logo-main-btn").onclick=()=>{
+ showModal("كلمات",`<div style="text-align:center;padding:18px 8px 10px"><div style="font-size:27px;font-weight:900;color:var(--p);margin-bottom:14px">كلمات</div><p style="font-size:18px;line-height:2;margin:0 0 20px">«دائماً هناك كلمات لا يجيد كتابتها القلم، تغوص في قعر النفس ولا تطفو»</p><button id="slogan-home-btn" class="btn" type="button">العودة إلى الرئيسية</button></div>`);
+ $("slogan-home-btn").onclick=async()=>{await closeModal();showPage("home")};
+};
+$("header-profile-btn").onclick=()=>showPage("profile");
+$("settings-open-btn").onclick=openSettings;$("sidebar-settings-btn").onclick=openSettings;$("right-settings-btn").onclick=openSettings;
+
+let lpT=null,lpFired=false;
+document.addEventListener("pointerdown",e=>{const b=e.target.closest&&e.target.closest(".like-post");if(!b)return;lpFired=false;clearTimeout(lpT);lpT=setTimeout(()=>{lpFired=true;const a=b.closest("article[data-post-id]");if(a)showPicker(a.dataset.postId)},500)});
+["pointerup","pointercancel","pointermove"].forEach(ev=>document.addEventListener(ev,()=>clearTimeout(lpT)));
+document.addEventListener("contextmenu",e=>{if(e.target.closest&&e.target.closest(".like-post"))e.preventDefault()});
+document.addEventListener("click",async e=>{
+ const t=e.target;
+ const op=t.closest(".open-profile");if(op){if(op.dataset.uid)openUserProfile(op.dataset.uid);return}
+ if(t.closest("#load-more-btn")){loadMore();return}
+ const acc=t.closest(".accept-request");if(acc){acceptRequest(acc.dataset.id,acc.dataset.uid);return}
+ const rej=t.closest(".reject-request");if(rej){rejectRequest(rej.dataset.id);return}
+ const fp=t.closest(".friend-profile");if(fp){openUserProfile(fp.dataset.uid);return}
+ const fc=t.closest(".friend-chat");if(fc){const u=await fetchUser(fc.dataset.uid);if(u)openChatWith(u);return}
+ const aa=t.closest(".admin-act");if(aa){adminAct(aa.dataset.act,aa.dataset.key);return}
+ const nr=t.closest(".notif-row");if(nr){openNotification(nr.dataset.nid);return}
+ const mn=t.closest(".mark-notification");if(mn){markNotification(mn.dataset.id);return}
+ if(t.closest("#mark-all-read")){markAllRead();return}
+ const ap=t.closest(".appeal-act");if(ap){adminAppeal(ap.dataset.act,ap.dataset.pid);return}
+ if(pickerFor&&!t.closest(".react-picker,.react-more,.like-post"))closePicker();
+ const a=t.closest("article[data-post-id]");if(!a)return;
+ const id=a.dataset.postId;
+ if(t.closest(".react-pick")){setReaction(id,t.closest(".react-pick").dataset.r);return}
+ if(t.closest(".react-more")){pickerFor===id?closePicker():showPicker(id);return}
+ if(t.closest(".like-post")&&lpFired){lpFired=false;return}
+ if(t.closest(".appeal-post"))openAppeal(id);
+ else if(t.closest(".like-comment"))toggleCommentLike(id,t.closest("[data-cid]").dataset.cid);
+ else if(t.closest(".reply-comment"))startReply(id,t.closest("[data-cid]").dataset.cid);
+ else if(t.closest(".cancel-reply")){replyTarget.delete(id);const pp=postsCache.get(id);if(pp)setPostLocal(pp)}
+ else if(t.closest(".toggle-replies")){expandedReplies.add(t.closest(".toggle-replies").dataset.cid);const pp=postsCache.get(id);if(pp)setPostLocal(pp)}
+ else if(t.closest(".report-post"))openReport("post",id);
+ else if(t.closest(".report-comment"))openReport("comment",id,t.closest("[data-cid]").dataset.cid);
+ else if(t.closest(".like-post"))toggleLike(id);
+ else if(t.closest(".show-likers"))openLikers(id);
+ else if(t.closest(".delete-post"))deletePost(id);
+ else if(t.closest(".edit-post"))openEditPost(id);
+ else if(t.closest(".edit-comment"))openEditComment(id,t.closest("[data-cid]").dataset.cid);
+ else if(t.closest(".delete-comment"))deleteComment(id,t.closest("[data-cid]").dataset.cid);
+ else if(t.closest(".focus-comment")){
+  if(openComments.has(id)){openComments.delete(id);stopComments(id)}else{openComments.add(id);startComments(id)}
+  const p=postsCache.get(id);if(p)setPostLocal(p);
+  if(openComments.has(id))setTimeout(()=>document.querySelector(`article[data-post-id="${CSS.escape(id)}"] .comment-input`)?.focus(),60);
+ }
+ else if(t.closest(".share-post"))openShareOptions(id);
+ else if(t.closest(".toggle-comments")){expandedComments.has(id)?expandedComments.delete(id):expandedComments.add(id);const p=postsCache.get(id);if(p)setPostLocal(p)}
+});
+document.addEventListener("submit",e=>{
+ const f=e.target.closest(".comment-form");if(!f)return;
+ e.preventDefault();
+ const a=f.closest("article[data-post-id]");
+ if(a)addComment(a.dataset.postId,f.querySelector(".comment-input"));
+});
+
+/* ============ لوحة المفاتيح والتثبيت وعامل الخدمة ============ */
+if("serviceWorker" in navigator&&location.protocol.startsWith("http"))addEventListener("load",()=>navigator.serviceWorker.register("./sw.js").catch(console.warn));
+const NON_TEXT=["file","checkbox","radio","button","submit","range","color"];
+const isTyping=()=>{const f=document.activeElement;return !!f&&(f.tagName==="TEXTAREA"||(f.tagName==="INPUT"&&!NON_TEXT.includes(f.type)))};
+function updateKeyboardState(){
+ const vv=window.visualViewport,shrunk=!!vv&&(window.innerHeight-vv.height)>140;
+ document.body.classList.toggle("keyboard-open",window.innerWidth<900&&(isTyping()||shrunk));
+}
+document.addEventListener("focusin",()=>{
+ updateKeyboardState();
+ setTimeout(()=>{const f=document.activeElement;if(isTyping()&&f.scrollIntoView&&window.innerWidth<900)f.scrollIntoView({block:"center",behavior:"smooth"})},350);
+});
+document.addEventListener("focusout",()=>setTimeout(updateKeyboardState,150));
+if(window.visualViewport){window.visualViewport.addEventListener("resize",updateKeyboardState);window.visualViewport.addEventListener("scroll",updateKeyboardState)}
+window.addEventListener("resize",updateKeyboardState);updateKeyboardState();
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeModal()});
+window.addEventListener("unhandledrejection",e=>console.warn("وعد مرفوض:",e.reason));
+setAuthMode("login");
+</script>
+</body>
+                          </html>

@@ -3,7 +3,19 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover,interactive-widget=resizes-content">
-<style>html,body{touch-action:pan-x pan-y}</style>
+<style>html,body{touch-action:pan-x pan-y}
+/* تحسين محرر المنشور: الخيارات لا تظهر إلا عند طلبها */
+.composer{display:flex;flex-direction:column;gap:12px!important}
+.composer-text{width:100%;min-height:118px!important;resize:vertical;border:1px solid var(--b)!important;border-radius:16px!important;background:var(--bg)!important;padding:15px 17px!important;font-size:17px!important;line-height:1.7}
+.composer-options{padding:12px;border:1px solid var(--b);border-radius:14px;background:var(--bg);display:flex;flex-direction:column;gap:10px}
+.composer-options.hidden{display:none!important}.composer-option-row,.composer-footer{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap}
+.composer-options .video-url-label{margin:0;font-weight:700}.composer-options .video-url-label .field{display:block;width:100%;margin-top:7px}
+.privacy-label{display:flex;align-items:center;gap:9px;flex-wrap:wrap;font-weight:700}.privacy-label .vis-select{min-width:130px;width:auto;margin:0}
+.composer-hint{margin:0}.composer-footer{border-top:1px solid var(--b);padding-top:10px}.composer-footer .btn{min-height:42px}
+.bottom-nav .nav-btn{align-items:center!important;justify-content:center!important;white-space:nowrap;font-weight:650!important}.bottom-nav .nav-btn i{display:block!important;margin-bottom:2px}.bottom-nav .nav-btn.active{color:#1877f2!important;background:#e7f3ff!important}
+@media(max-width:420px){.bottom-nav .nav-btn{font-size:10px!important;padding:6px 1px!important}.bottom-nav .nav-btn i{font-size:18px!important}.composer-text{min-height:108px!important}.composer-footer .btn{flex:1;justify-content:center}}
+
+</style>
 <script>
 /* منع التكبير بإصبعين، النسخة Z2 */
 (function(){
@@ -192,6 +204,129 @@ button,a,.btn,.nav-btn,.action-btn,.field{touch-action:pan-x pan-y}
 input,textarea,select{font-size:16px}
 body{-webkit-tap-highlight-color:transparent}
 </style>
+<style id="kalimat-classic-refresh">
+
+/* ===== Kalimat Classic Social UI refresh ===== */
+:root{--p:#1877f2;--p-bright:#4599ff;--p-soft:#e7f3ff;--gold:#d6ad60;--bg:#f0f2f5;--s:#fff;--t:#1c1e21;--m:#65676b;--b:#dddfe2;--danger:#e41e3f;--shadow:0 1px 2px rgba(0,0,0,.10);--r:12px}
+body{background:var(--bg);color:var(--t);font-family:system-ui,-apple-system,"Segoe UI",Tahoma,Arial,sans-serif;line-height:1.55}
+.topbar{background:#1877f2;border:0;box-shadow:0 1px 4px #0002}
+.topbar-inner{max-width:1440px;min-height:62px;padding:8px 20px;gap:14px;position:relative}
+.brand{color:#fff!important;font-size:27px!important;font-weight:900;letter-spacing:-.7px;white-space:nowrap;text-shadow:0 1px 1px #0002}
+.topbar .search-wrap{max-width:430px}
+.topbar .search-wrap .field{background:#f0f2f5;color:#1c1e21;border:0;border-radius:24px;padding:11px 17px;min-height:42px}
+.topbar #settings-open-btn,.topbar #header-profile-btn{background:#ffffff20;color:#fff;border:1px solid #ffffff30;border-radius:50%;width:42px;height:42px}
+.topbar #header-user-avatar{border:2px solid #fff;width:30px!important;height:30px!important}
+.app-layout{max-width:1440px;grid-template-columns:245px minmax(420px,680px) 285px;gap:22px;margin:20px auto;padding:0 20px}
+.sidebar{top:78px}.right-column{position:sticky;top:78px;align-self:start;max-height:calc(100dvh - 95px);overflow:auto;scrollbar-width:thin}
+.card{border:1px solid #e4e6eb;border-radius:12px;box-shadow:0 1px 2px rgba(0,0,0,.07);padding:16px}
+.nav-list{gap:4px;padding:9px}.nav-btn{border-radius:10px;padding:12px 13px;font-weight:650;transition:background .15s,color .15s}
+.nav-btn:hover{background:#e7f3ff;color:#1877f2}.nav-btn.active{background:#e7f3ff;color:#1877f2}
+.nav-btn i{font-size:18px}
+.page-title{font-size:23px;font-weight:800;margin:0 0 13px;color:var(--t)}
+.post{gap:13px}.post .field{background:#f0f2f5;border:1px solid transparent;border-radius:12px}.post .field:focus{background:#fff;border-color:#1877f2}
+#new-post-text{min-height:94px;resize:vertical;padding:13px 15px}
+#publish-post-btn,.btn{border-radius:9px;font-weight:750;transition:filter .15s,transform .15s}
+.btn:hover{filter:brightness(.97)}.btn:active{transform:translateY(1px)}
+.btn.secondary{background:#f0f2f5;border:1px solid #e4e6eb;color:#3a3b3c}
+.action-btn{background:#f0f2f5;color:#606770;border-radius:8px;font-weight:650}
+.post-image{border-radius:10px;max-height:620px}
+.profile-head{padding:25px 18px 20px;gap:10px}.avatar.big{width:112px;height:112px;border:4px solid #e7f3ff;box-shadow:0 1px 4px #0001}
+#profile-view-name{font-size:26px;font-weight:850}.prof-tab{margin:10px 0 14px;padding:8px 0;border-bottom:1px solid var(--b)}
+#profile-posts-tab{background:#e7f3ff;color:#1877f2;border:0;border-radius:9px;padding:10px 17px}
+.profile-menu{position:absolute;z-index:60;top:calc(100% + 7px);left:max(12px,calc((100vw - 1440px)/2 + 20px));width:270px;padding:7px;background:#fff;border:1px solid #dddfe2;border-radius:12px;box-shadow:0 8px 28px #0002;color:#1c1e21}
+.profile-menu button{display:flex;align-items:center;gap:12px;width:100%;padding:12px;border:0;border-radius:8px;background:#fff;color:#1c1e21;text-align:right;font-weight:650}
+.profile-menu button i{width:20px;color:#1877f2;text-align:center}.profile-menu button:hover{background:#f0f2f5}
+.search-result:hover{background:#e7f3ff}
+#modal-root .modal{border:1px solid #dddfe2;border-radius:16px}
+.feed-empty{background:#fff;border-radius:12px}
+:focus-visible{outline:2px solid #1877f2;outline-offset:2px}
+@media(max-width:1120px){.app-layout{grid-template-columns:205px minmax(0,1fr);max-width:1000px}.right-column{display:none}}
+@media(max-width:680px){
+ .topbar-inner{min-height:56px;padding:7px 10px;gap:8px}.brand{font-size:23px!important}.topbar .search-wrap .field{min-height:38px;padding:8px 12px;font-size:13px}.topbar #settings-open-btn,.topbar #header-profile-btn{width:38px;height:38px;min-width:38px;padding:5px}
+ .app-layout{margin:12px auto;padding:0 9px 88px;min-height:calc(100dvh - 125px);display:block}.sidebar,.right-column{display:none}.main-column{gap:11px}
+ .card{padding:13px;border-radius:12px}.page-title{font-size:21px}.bottom-nav{background:#fff;border-top:1px solid #dddfe2;box-shadow:0 -2px 10px #00000014;padding:5px 3px calc(5px + env(safe-area-inset-bottom))}.bottom-nav .nav-btn{flex:1;min-width:0;padding:6px 2px;font-size:10px;color:#65676b;border-radius:8px}.bottom-nav .nav-btn.active{background:#e7f3ff;color:#1877f2}.bottom-nav .nav-btn i{font-size:18px}.profile-menu{position:fixed;top:58px;left:8px;width:min(280px,calc(100vw - 16px))}
+ .profile-head{padding:20px 12px}.avatar.big{width:96px;height:96px}#profile-view-name{font-size:23px}
+}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{scroll-behavior:auto!important;transition:none!important;animation-duration:.01ms!important;animation-iteration-count:1!important}}
+
+</style>
+<style id="kalimat-facebook-redesign-v2">
+/* KALIMAT — strong Facebook-inspired visual redesign */
+:root{--p:#1877f2;--p-bright:#4599ff;--p-soft:#e7f3ff;--gold:#f0b429;--bg:#f0f2f5;--s:#fff;--t:#1c1e21;--m:#65676b;--b:#e4e6eb;--danger:#e41e3f;--shadow:0 1px 2px rgba(0,0,0,.12);--r:9px}
+body{background:#f0f2f5!important;color:#1c1e21;font-family:Arial,Tahoma,sans-serif;line-height:1.45}
+body.dark{--bg:#18191a;--s:#242526;--t:#e4e6eb;--m:#b0b3b8;--b:#3e4042;--p:#2d88ff;--p-soft:#263951;--shadow:0 1px 2px #0005;background:#18191a!important}
+#app{min-height:100vh}
+.topbar{background:#1877f2!important;border:0!important;box-shadow:0 2px 5px #0002;position:sticky;top:0;z-index:100}
+.topbar-inner{max-width:1500px!important;min-height:58px;padding:7px 22px!important;gap:16px!important}
+.brand{color:#fff!important;font-size:28px!important;letter-spacing:-.7px;text-shadow:0 1px 1px #0002}
+.brand span{color:#fff!important}
+.topbar .field,#global-search-input{background:#f0f2f5!important;color:#1c1e21!important;border:0!important;border-radius:24px!important;padding:10px 16px!important;min-height:40px}
+.topbar .btn.secondary,.topbar #header-profile-btn{background:rgba(255,255,255,.17)!important;border:0!important;color:white!important;border-radius:50%!important;width:42px;height:42px;padding:5px!important}
+.topbar .btn.secondary i{color:#fff!important}
+#header-user-avatar{border:2px solid #fff!important;width:32px!important;height:32px!important}
+.app-layout{max-width:1500px!important;grid-template-columns:minmax(205px,260px) minmax(420px,680px) minmax(230px,300px)!important;gap:24px!important;margin:22px auto!important;padding:0 22px!important;align-items:start}
+.sidebar{top:78px!important}.sidebar>.card:first-child{background:transparent!important;border:0!important;box-shadow:none!important;padding:8px 10px!important}
+.card{background:var(--s)!important;border:1px solid rgba(0,0,0,.06)!important;border-radius:10px!important;box-shadow:0 1px 2px rgba(0,0,0,.12)!important;padding:16px!important}
+.nav-list{gap:3px!important;padding:8px!important}.nav-btn{border-radius:8px!important;padding:12px 13px!important;font-size:15px;font-weight:600;color:var(--t)!important;min-height:46px}.nav-btn i{font-size:20px;width:25px!important;color:#1877f2}.nav-btn:hover,.nav-btn.active{background:#e7f3ff!important;color:#1877f2!important}.nav-btn.active i{color:#1877f2!important}
+.page-title{font-size:23px!important;font-weight:750;margin:0 0 14px!important;color:var(--t)}
+.main-column{gap:14px!important}.page{min-width:0}.post{gap:12px!important;border-radius:10px!important;margin-bottom:14px!important}.post textarea.field{background:var(--bg)!important;border:0!important;border-radius:22px!important;min-height:48px;padding:13px 17px!important;resize:vertical}
+.post .row:first-child{padding-bottom:10px;border-bottom:1px solid var(--b)}
+.btn{border-radius:7px!important;font-weight:700;padding:9px 15px!important}.btn:not(.secondary):not(.danger){background:#1877f2!important;color:#fff!important}.btn.secondary{background:var(--bg)!important;color:var(--t)!important;border:1px solid var(--b)!important}.btn:hover,.nav-btn:hover{filter:brightness(.98)}
+.field{background:var(--bg);border:1px solid var(--b);border-radius:7px;padding:10px 12px}.avatar{border:0!important;width:42px;height:42px}.avatar.big{width:112px;height:112px;border:4px solid #fff!important;box-shadow:0 1px 3px #0002}
+#posts-feed,#user-profile-posts-feed{display:grid;gap:12px}.post-body{font-size:15px;line-height:1.65}.post-actions{border-top:1px solid var(--b)!important;justify-content:space-around!important;padding-top:9px!important;margin-top:8px}.action-btn{flex:1;justify-content:center;background:transparent!important;border-radius:7px!important;padding:9px 5px!important;font-weight:650;color:var(--m)!important}.action-btn:hover{background:var(--bg)!important}.action-btn.liked{color:#1877f2!important}.post-stats{color:var(--m);font-size:13px}
+.right-column{gap:14px!important}.right-column h3{font-size:16px!important;font-weight:700}.right-column .card p{line-height:1.55}
+.profile-head{text-align:center;padding:25px!important;border-radius:10px!important;background:linear-gradient(180deg,#e7f3ff 0,#fff 100%)!important}.profile-head h2{font-size:24px!important;margin-top:8px!important}.prof-tab{background:var(--s);border:1px solid var(--b);border-radius:9px;padding:6px;display:flex;justify-content:center}.prof-tab .btn{min-width:150px;border-radius:7px!important}
+.profile-menu{position:absolute;top:calc(100% + 8px);left:12px;right:auto;width:min(310px,calc(100vw - 24px));z-index:120;background:var(--s);border:1px solid var(--b);border-radius:10px;box-shadow:0 8px 24px #0002;padding:8px}.profile-menu button{width:100%;text-align:right;border:0;border-radius:7px;padding:12px;background:transparent;color:var(--t);font-weight:600}.profile-menu button:hover{background:var(--bg)}
+.bottom-nav{background:var(--s)!important;border-top:1px solid var(--b)!important;box-shadow:0 -2px 8px #0001}.bottom-nav .nav-btn{flex:1;display:flex;flex-direction:column;gap:3px;padding:7px 2px!important;font-size:11px!important;min-height:56px}.bottom-nav .nav-btn i{font-size:19px;width:auto!important}
+.auth-screen{background:#f0f2f5!important}.auth-card{max-width:430px!important;border-radius:12px!important;padding:28px!important;box-shadow:0 3px 14px #0002!important}.auth-title{color:#1877f2!important}
+#offline-bar{background:#b45309!important}
+/* ===== إصلاح الوضع الليلي لتصميم v2 ===== */
+body.dark .profile-head{background:linear-gradient(180deg,#263951 0,var(--s) 100%)!important}
+body.dark .nav-btn:hover,body.dark .nav-btn.active{background:var(--p-soft)!important;color:var(--p)!important}
+body.dark .auth-screen{background:var(--bg)!important}
+body.dark .avatar.big{border-color:var(--s)!important}
+body.dark .nav-btn i,body.dark .nav-btn.active i{color:var(--p)!important}
+body.dark .bottom-nav .nav-btn.active{background:transparent!important}
+body.dark .composer-options{background:var(--bg)}
+
+@media(max-width:1100px){.app-layout{grid-template-columns:210px minmax(0,1fr)!important;gap:16px!important;padding:0 14px!important}.right-column{display:none!important}}
+@media(max-width:700px){.topbar-inner{padding:7px 10px!important;gap:8px!important;min-height:54px}.brand{font-size:23px!important}.search-wrap{flex:1;min-width:0}.topbar .field{font-size:13px;padding:9px 12px!important}.app-layout{display:block!important;margin:12px auto!important;padding:0 8px 82px!important}.sidebar,.right-column{display:none!important}.main-column{display:block!important}.page-title{font-size:21px!important;margin:0 0 10px!important}.card{padding:13px!important}.post{margin-bottom:10px!important}.bottom-nav{display:flex!important;position:fixed!important;right:0;left:0;bottom:0;z-index:150;justify-content:space-around;padding-bottom:env(safe-area-inset-bottom)}.profile-head{padding:22px 12px!important}.auth-card{margin:16px!important}}
+@media(min-width:701px){.bottom-nav{display:none!important}}
+</style>
+<style id="kalimat-search-nav">
+/* بحث بالرمز فقط + أيقونات الشريط السفلي + لوحة البحث الشامل */
+:root{--ic-search:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Ccircle%20cx%3D%2710.5%27%20cy%3D%2710.5%27%20r%3D%276.5%27%20fill%3D%27none%27%20stroke%3D%27%23000%27%20stroke-width%3D%272.6%27%2F%3E%3Cpath%20d%3D%27M15.5%2015.5L21%2021%27%20stroke%3D%27%23000%27%20stroke-width%3D%272.6%27%20stroke-linecap%3D%27round%27%2F%3E%3C%2Fsvg%3E");--ic-book:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M11%207.2C9.7%205.9%207.8%205.2%205.4%205.2H3v12.3h2.6c2.3%200%204.2.5%205.4%201.6z%27%2F%3E%3Cpath%20d%3D%27M13%207.2c1.3-1.3%203.2-2%205.6-2H21v12.3h-2.6c-2.3%200-4.2.5-5.4%201.6z%27%2F%3E%3C%2Fsvg%3E");--ic-msg:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill-rule%3D%27evenodd%27%20d%3D%27M12%202.2C6.4%202.2%202%206.4%202%2011.7c0%202.8%201.2%205.2%203.2%206.9V22l3.1-1.7c1.1.3%202.4.5%203.7.5%205.6%200%2010-4.2%2010-9.5S17.6%202.2%2012%202.2zM5.6%2014.6l4.2-4.5%202.3%202.3%204-2.9-4.1%204.6-2.3-2.3z%27%2F%3E%3C%2Fsvg%3E");--ic-users:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Ccircle%20cx%3D%2712%27%20cy%3D%278%27%20r%3D%273.3%27%2F%3E%3Cpath%20d%3D%27M6.3%2019c0-3.2%202.4-5.6%205.7-5.6s5.7%202.4%205.7%205.6z%27%2F%3E%3Ccircle%20cx%3D%275%27%20cy%3D%279.6%27%20r%3D%272.4%27%2F%3E%3Cpath%20d%3D%27M.8%2017.6c0-2.4%201.7-4.1%204.2-4.1.7%200%201.3.1%201.9.4-1%201-1.6%202.3-1.7%203.7z%27%2F%3E%3Ccircle%20cx%3D%2719%27%20cy%3D%279.6%27%20r%3D%272.4%27%2F%3E%3Cpath%20d%3D%27M23.2%2017.6c0-2.4-1.7-4.1-4.2-4.1-.7%200-1.3.1-1.9.4%201%201%201.6%202.3%201.7%203.7z%27%2F%3E%3C%2Fsvg%3E");--ic-bolt:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20d%3D%27M13.5%202L4.5%2013.5h6L9.5%2022l9-11.5h-6z%27%2F%3E%3C%2Fsvg%3E");--ic-feather:url("data:image/svg+xml,%3Csvg%20xmlns%3D%27http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%27%20viewBox%3D%270%200%2024%2024%27%3E%3Cpath%20fill-rule%3D%27evenodd%27%20d%3D%27M20.7%203.3C14.5%202.4%208.9%205%206.6%2010.4c-.8%201.9-.9%203.9-.5%205.7L3%2019.2%204.8%2021l3.1-3.1c1.8.4%203.8.3%205.7-.5%205.4-2.3%208-7.9%207.1-14.1zM8.9%2015.1l.9.9%207.2-7.2-.9-.9z%27%2F%3E%3C%2Fsvg%3E");}
+.kn{display:inline-block;width:26px;height:26px;background-color:currentColor;-webkit-mask:var(--ic) center/contain no-repeat;mask:var(--ic) center/contain no-repeat;flex:none;font-style:normal}
+.kn-book{--ic:var(--ic-book)}.kn-msg{--ic:var(--ic-msg)}.kn-users{--ic:var(--ic-users)}.kn-bolt{--ic:var(--ic-bolt)}.kn-feather{--ic:var(--ic-feather)}.kn-search{--ic:var(--ic-search)}
+.search-wrap{display:flex!important;justify-content:flex-end;flex:1!important;max-width:none!important;min-width:0}
+#global-search-input,#search-results-dropdown{display:none!important}
+#search-open-btn{width:42px;height:42px;border:0;background:transparent;color:#fff;display:grid;place-items:center;padding:0;border-radius:50%;cursor:pointer}
+#search-open-btn .kn{width:25px;height:25px}
+#search-open-btn:active{background:#ffffff26}
+.bottom-nav .nav-btn{min-height:54px!important;padding:12px 2px!important;display:flex!important;align-items:center!important;justify-content:center!important;border-radius:0!important;background:transparent!important;color:var(--m)!important;position:relative}
+.bottom-nav .nav-btn i.kn,.bottom-nav .nav-btn i.kp-ic{width:26px!important;height:26px!important;font-size:26px!important;margin:0!important;display:block!important;color:inherit!important}
+.bottom-nav .nav-btn.active{color:var(--p)!important;background:transparent!important;box-shadow:inset 0 3px 0 var(--p)}
+.bottom-nav .nav-btn .nbadge{position:absolute;top:7px;inset-inline-start:calc(50% + 5px)}
+.bottom-nav .kp-lbl{display:none}
+body.dark .bottom-nav .nav-btn.active{color:var(--p)!important}
+.sp-overlay{position:fixed;inset:0;z-index:300;background:rgba(0,0,0,.45);display:flex;justify-content:center;align-items:flex-start}
+.sp-box{background:var(--s);color:var(--t);width:100%;max-width:640px;height:100%;display:flex;flex-direction:column}
+@media(min-width:700px){.sp-overlay{padding:60px 16px}.sp-box{height:auto;max-height:80vh;border-radius:14px;overflow:hidden}}
+.sp-head{display:flex;gap:8px;align-items:center;padding:10px 12px;border-bottom:1px solid var(--b)}
+.sp-head .field{flex:1;min-width:0;border-radius:22px!important;padding:10px 16px!important}
+.sp-back{border:0;background:var(--bg);color:var(--t);width:40px;height:40px;border-radius:50%;flex:none;display:grid;place-items:center;padding:0}
+.sp-tabs{display:flex;gap:6px;padding:8px 12px;border-bottom:1px solid var(--b)}
+.sp-tabs button{flex:1;border:0;border-radius:10px;padding:10px 6px;background:transparent;color:var(--m);font-weight:700}
+.sp-tabs button.on{background:var(--p-soft);color:var(--p)}
+.sp-results{flex:1;overflow:auto;padding:4px 12px 24px;overscroll-behavior:contain}
+.sp-row{display:flex;gap:10px;align-items:center;width:100%;border:0;background:none;color:inherit;text-align:right;padding:10px 4px;border-bottom:1px solid var(--b);cursor:pointer}
+.sp-row>div{flex:1;min-width:0}
+.sp-snip{overflow-wrap:anywhere;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.sp-play{flex:none;background:var(--p-soft);color:var(--p);border-radius:8px;padding:4px 8px;font-size:12px;font-weight:700}
+.sp-hint{text-align:center;color:var(--m);padding:28px 8px;line-height:1.8}
+.sp-more{display:block;margin:14px auto 0}
+body.sp-open{overflow:hidden}
+</style>
 </head>
 <body>
 <section id="boot-screen" class="boot-screen" role="status" aria-live="polite"><div><div class="boot-brand">كلمات</div><div class="boot-note">جارٍ تجهيز مساحتك الفكرية…</div><div class="boot-spinner" aria-hidden="true"></div></div></section>
@@ -222,30 +357,32 @@ body{-webkit-tap-highlight-color:transparent}
 <div id="app" class="hidden">
 <header class="topbar"><div class="topbar-inner">
 <button id="logo-main-btn" class="brand" style="border:0;background:none" aria-label="الرئيسية">كلمات</button>
-<div class="search-wrap"><input id="global-search-input" class="field" placeholder="ابحث عن الأعضاء بالاسم..." autocomplete="off"><div id="search-results-dropdown" class="hidden"></div></div>
+<div class="search-wrap"><button id="search-open-btn" type="button" aria-label="بحث" title="بحث"><i class="kn kn-search"></i></button><input id="global-search-input" class="field" placeholder="ابحث عن الأعضاء بالاسم..." autocomplete="off"><div id="search-results-dropdown" class="hidden"></div></div>
 <button id="settings-open-btn" class="btn secondary icon-btn" title="الإعدادات" aria-label="الإعدادات"><i class="fa-solid fa-gear"></i><em class="nbadge admin-badge hidden"></em></button>
 <button id="header-profile-btn" class="btn secondary icon-btn" title="ملفي الشخصي" aria-label="ملفي الشخصي"><img id="header-user-avatar" class="avatar" alt="صورتي" style="width:28px;height:28px"></button>
+<div class="profile-menu hidden" id="header-profile-menu" role="menu" aria-label="قائمة الحساب"><button type="button" role="menuitem" data-profile-menu="profile"><i class="fa-solid fa-user"></i><span>عرض ملفي الشخصي</span></button><button type="button" role="menuitem" data-profile-menu="settings"><i class="fa-solid fa-gear"></i><span>الإعدادات والخصوصية</span></button></div>
 </div><div id="offline-bar" class="offline-bar hidden">أنت غير متصل بالإنترنت — تُعرض آخر المنشورات المحفوظة، وستُرسل تغييراتك عند عودة الاتصال.</div></header>
 <div class="app-layout">
 <aside class="sidebar"><div class="card" style="margin-bottom:12px"><div class="row"><img id="menu-user-avatar" class="avatar" alt=""><div style="min-width:0"><strong id="menu-profile-name"></strong></div></div></div>
-<nav class="card nav-list"><button class="nav-btn active" data-page="home"><i class="fa-solid fa-house"></i> الرئيسية</button><button class="nav-btn" data-page="chat"><i class="fa-solid fa-comments"></i> المحادثات</button><button class="nav-btn" data-page="friends"><i class="fa-solid fa-user-group"></i> الأصدقاء</button><button class="nav-btn" data-page="notifications"><i class="fa-solid fa-bell"></i> الإشعارات <em class="nbadge hidden"></em></button><button class="nav-btn" data-page="profile"><i class="fa-solid fa-user"></i> ملفي الشخصي</button><button class="nav-btn" id="sidebar-settings-btn"><i class="fa-solid fa-gear"></i> الإعدادات</button></nav></aside>
+<nav class="card nav-list"><button class="nav-btn active" data-page="home"><i class="fa-solid fa-house"></i> الرئيسية</button><button class="nav-btn" data-page="chat"><i class="fa-solid fa-comments"></i> المحادثات</button><button class="nav-btn" data-page="friends"><i class="fa-solid fa-user-group"></i> الأصدقاء</button><button class="nav-btn" data-page="notifications"><i class="fa-solid fa-bell"></i> الإشعارات <em class="nbadge hidden"></em></button><button class="nav-btn" id="sidebar-settings-btn"><i class="fa-solid fa-gear"></i> الإعدادات</button></nav></aside>
 <main class="main-column">
 <section id="page-home" class="page"><h2 class="page-title">الرئيسية</h2>
 <div id="welcome-note" class="card welcome-note hidden"><div class="wn-text"><strong>أهلًا بك في كلمات 👋</strong> شاركنا اقتراحك لنطوّر المنصة معًا.</div><button id="suggest-btn" class="sg-btn" type="button" title="أرسل اقتراحك" aria-label="أرسل اقتراحك"><i class="fa-regular fa-lightbulb"></i></button><button id="welcome-close" class="ib-close" type="button" aria-label="إغلاق">×</button></div>
-<form id="new-post-form" class="card post" style="margin-bottom:14px"><div class="row"><img id="post-user-avatar" class="avatar" alt=""><strong>ماذا يدور في فكرك؟</strong></div>
-<textarea id="new-post-text" class="field" rows="3" maxlength="5000" placeholder="شارك فكرة أو خاطرة أو سؤالًا..."></textarea>
-<label class="video-url-label">رابط فيديو (اختياري)<input id="new-post-video-url" class="field" type="url" inputmode="url" maxlength="1000" placeholder="https://youtu.be/... أو رابط فيديو مباشر"></label>
+<form id="new-post-form" class="card post composer" style="margin-bottom:14px"><div class="row"><img id="post-user-avatar" class="avatar" alt=""><strong>ماذا يدور في فكرك؟</strong></div>
+<textarea id="new-post-text" class="field composer-text" rows="3" maxlength="5000" placeholder="شارك فكرة أو خاطرة أو سؤالًا..."></textarea>
+<div id="composer-options" class="composer-options hidden" aria-label="خيارات المنشور"><label class="video-url-label"><i class="fa-brands fa-youtube"></i> رابط فيديو (اختياري)<input id="new-post-video-url" class="field" type="url" inputmode="url" maxlength="1000" placeholder="ألصق رابط يوتيوب أو فيديو هنا"></label>
+<div class="composer-option-row"><button id="attach-media-trigger" class="btn secondary" type="button"><i class="fa-regular fa-image"></i> إرفاق صورة</button><label class="privacy-label"><span><i class="fa-solid fa-earth-americas"></i> خصوصية المنشور</span><select id="new-post-vis" class="field vis-select" aria-label="من يرى المنشور"><option value="public">عام</option><option value="friends">الأصدقاء</option><option value="me">أنا فقط</option></select></label></div><p class="muted small composer-hint">اختر الصورة أو رابط الفيديو وحدد من يمكنه رؤية المنشور.</p></div>
 <div id="media-preview-container" class="hidden"><img id="media-preview-content" class="post-image" alt="معاينة الصورة"><button id="remove-media-btn" class="btn secondary" type="button">إزالة الصورة</button></div>
-<input id="post-media-file" class="hidden" type="file" accept="image/*"><div class="row between wrap"><button id="attach-media-trigger" class="btn secondary" type="button"><i class="fa-regular fa-image"></i> إرفاق صورة</button><span class="row"><select id="new-post-vis" class="field vis-select" aria-label="من يرى المنشور"><option value="public">🌍 عام</option><option value="friends">👥 الأصدقاء</option><option value="me">🔒 أنا فقط</option></select><button id="publish-post-btn" class="btn" type="submit">نشر</button></span></div><p class="muted small" style="margin:0">تُضغط الصور تلقائيًا، ويمكنك إضافة رابط يوتيوب أو فيسبوك أو فيديو مباشر.</p></form>
+<input id="post-media-file" class="hidden" type="file" accept="image/*"><div class="composer-footer"><button id="composer-options-toggle" class="btn secondary" type="button" aria-expanded="false"><i class="fa-solid fa-sliders"></i> خيارات المنشور</button><button id="publish-post-btn" class="btn" type="submit"><i class="fa-solid fa-paper-plane"></i> نشر</button></div></form>
 <div id="posts-feed" class="main-column"><div class="skeleton"></div><div class="skeleton"></div></div></section>
 <section id="page-chat" class="page hidden"><h2 class="page-title">المحادثات</h2><div class="card chat-layout"><div class="chat-rooms"><strong>المحادثات</strong><div id="chat-rooms-list" style="margin-top:8px"></div></div><div class="chat-box"><div id="chat-heading" class="muted">اختر صديقًا لبدء المحادثة</div><div id="chat-messages"><div class="feed-empty">لا توجد محادثة محددة.</div></div><form id="chat-form" class="chat-form"><input id="chat-input" class="field" maxlength="2000" placeholder="اكتب رسالة..." disabled><button id="chat-send-btn" class="btn" type="submit" disabled aria-label="إرسال"><i class="fa-solid fa-paper-plane"></i></button></form></div></div></section>
 <section id="page-friends" class="page hidden"><h2 class="page-title">الأصدقاء والطلبات</h2><div class="card" style="margin-bottom:14px"><h3 style="margin-top:0">طلبات الصداقة</h3><div id="friend-requests-list"><div class="feed-empty">جارٍ التحميل...</div></div></div><div class="card"><h3 style="margin-top:0">قائمة الأصدقاء</h3><div class="setting-row" style="margin-bottom:10px"><div><strong>ظهور قائمة أصدقائك</strong><p id="hide-friends-state"></p></div><button id="hide-friends-btn" class="btn secondary" type="button">إخفاء القائمة</button></div><div id="friends-list"><div class="feed-empty">جارٍ التحميل...</div></div></div></section>
 <section id="page-notifications" class="page hidden"><h2 class="page-title">الإشعارات</h2><div id="notifications-list" class="card"><div class="feed-empty">لا توجد إشعارات.</div></div></section>
-<section id="page-profile" class="page hidden"><div class="card profile-head"><img id="profile-view-avatar" class="avatar big" alt=""><h2 id="profile-view-name" style="margin:0"></h2><div id="profile-view-meta" class="muted small"></div><p id="profile-view-bio" class="profile-bio"></p><div id="profile-view-info" class="muted small"></div><button type="button" class="btn secondary hidden" id="profile-info-btn">معلومات العضو</button><div id="profile-actions" class="row wrap" style="justify-content:center"></div></div><div class="prof-tab"><button type="button" class="btn" id="profile-posts-tab"><i class="fa-regular fa-pen-to-square"></i> النشر</button></div><div id="user-profile-posts-feed" class="main-column"></div></section>
+<section id="page-profile" class="page hidden"><div class="card profile-head"><img id="profile-view-avatar" class="avatar big" alt=""><h2 id="profile-view-name" style="margin:0"></h2><div id="profile-view-meta" class="muted small"></div><p id="profile-view-bio" class="profile-bio"></p><div id="profile-view-info" class="muted small"></div><button type="button" class="btn secondary hidden" id="profile-info-btn">معلومات العضو</button><div id="profile-actions" class="row wrap" style="justify-content:center"></div></div><div class="prof-tab"><button type="button" class="btn" id="profile-posts-tab"><i class="fa-regular fa-newspaper"></i> المنشورات</button></div><div id="user-profile-posts-feed" class="main-column"></div></section>
 </main>
 <aside class="right-column"><div class="card"><h3 style="margin-top:0">مرحبًا بك في كلمات</h3><p class="muted small">مساحة عربية للفكر والمعرفة والحوار المحترم.</p><button class="btn secondary" data-page="friends" style="width:100%">اكتشف الأصدقاء</button></div><div class="card"><h3 style="margin-top:0">الخصوصية</h3><p class="muted small">أدر قائمة الحظر من مركز الإعدادات.</p><button class="btn secondary" id="right-settings-btn" style="width:100%">فتح الإعدادات</button></div></aside>
 </div>
-<nav class="bottom-nav"><button class="nav-btn active" data-page="home"><i class="fa-solid fa-house"></i> الرئيسية</button><button class="nav-btn" data-page="chat"><i class="fa-solid fa-comments"></i> الرسائل</button><button class="nav-btn" data-page="friends"><i class="fa-solid fa-user-group"></i> الأصدقاء</button><button class="nav-btn" data-page="notifications"><i class="fa-solid fa-bell"></i> التنبيهات <em class="nbadge hidden"></em></button><button class="nav-btn" data-page="profile"><i class="fa-solid fa-user"></i> ملفي</button></nav>
+<nav class="bottom-nav"><button class="nav-btn active" data-page="home" aria-label="الرئيسية" title="الرئيسية"><i class="kn kn-book"></i></button><button class="nav-btn" data-page="chat" aria-label="الرسائل" title="الرسائل"><i class="kn kn-msg"></i></button><button class="nav-btn" data-page="friends" aria-label="الأصدقاء" title="الأصدقاء"><i class="kn kn-users"></i></button><button class="nav-btn" data-page="notifications" aria-label="التنبيهات" title="التنبيهات"><i class="kn kn-bolt"></i><em class="nbadge hidden"></em></button></nav>
 </div>
 <div id="modal-root" class="hidden"></div><div id="install-banner" class="install-banner hidden" role="dialog" aria-label="تثبيت كلمات"><img src="./kalimat_192x192-1.png" alt=""><div class="ib-text"><strong>ثبّت كلمات على شاشتك</strong>افتحها كتطبيق بضغطة واحدة دون المتصفح.</div><button id="install-banner-btn" class="btn" type="button">تثبيت</button><button id="install-banner-close" class="ib-close" type="button" aria-label="إغلاق">×</button></div>
 <div id="toast" class="toast hidden" role="status" aria-live="polite"></div>
@@ -888,11 +1025,12 @@ $("new-post-form").addEventListener("submit",e=>{
  if(Date.now()-lastPostAt<3000)return toast("انتظر لحظات قبل النشر مجددًا.");
  lastPostAt=Date.now();
  const vis=$("new-post-vis").value;const data={uid:currentUser.uid,author:myAuthor(),text,image:selectedImage||"",videoUrl,likes:[],comments:[],reactions:{},visibility:["public","friends","me"].includes(vis)?vis:"public",commentsOff:false,createdAt:serverTimestamp()};
- $("new-post-text").value="";$("new-post-video-url").value="";selectedImage="";$("media-preview-container").classList.add("hidden");$("media-preview-content").src="";$("post-media-file").value="";
+ $("new-post-text").value="";$("new-post-video-url").value="";selectedImage="";$("media-preview-container").classList.add("hidden");$("media-preview-content").src="";$("post-media-file").value="";$("composer-options").classList.add("hidden");$("composer-options-toggle").setAttribute("aria-expanded","false");$("publish-post-btn").innerHTML='<i class="fa-solid fa-paper-plane"></i> نشر';
  addDoc(collection(db,"posts"),data).catch(showError);
  toast(online()?"تم نشر المنشور.":"سيُنشر المنشور عند عودة الاتصال.");
 });
-$("attach-media-trigger").onclick=()=>$("post-media-file").click();
+$("composer-options-toggle").onclick=()=>{const box=$("composer-options"),opening=box.classList.contains("hidden");box.classList.toggle("hidden");$("composer-options-toggle").setAttribute("aria-expanded",String(opening));if(opening)box.scrollIntoView({behavior:"smooth",block:"nearest"});};
+$("attach-media-trigger").onclick=()=>{$("composer-options").classList.remove("hidden");$("composer-options-toggle").setAttribute("aria-expanded","true");$("post-media-file").click();};
 $("remove-media-btn").onclick=()=>{selectedImage="";$("post-media-file").value="";$("media-preview-container").classList.add("hidden")};
 $("post-media-file").addEventListener("change",async e=>{
  const f=e.target.files?.[0];if(!f)return;
@@ -999,7 +1137,7 @@ async function openUserProfile(uid){
    $("add-friend-btn")?.addEventListener("click",()=>sendFriendRequest(u));
    $("remove-friend-btn")?.addEventListener("click",()=>removeFriend(uid));
   }
-  $("profile-posts-tab").onclick=()=>{if(own){showPage("home");setTimeout(()=>{const t=$("new-post-text");if(t){t.scrollIntoView({block:"center"});t.focus()}},120)}else{$("user-profile-posts-feed").scrollIntoView({behavior:"smooth",block:"start"})}};
+  $("profile-posts-tab").onclick=()=>$("user-profile-posts-feed").scrollIntoView({behavior:window.matchMedia("(prefers-reduced-motion: reduce)").matches?"auto":"smooth",block:"start"});
   loadProfilePosts(uid);
  }catch(e){showError(e)}
 }
@@ -1203,6 +1341,80 @@ $("search-results-dropdown").addEventListener("click",e=>{
  const i=e.target.closest("[data-search-uid]");
  if(i){$("search-results-dropdown").classList.add("hidden");$("global-search-input").value="";openUserProfile(i.dataset.searchUid)}
 });
+
+
+/* ============ البحث الشامل: أعضاء + منشورات + فيديوهات ============ */
+const normAr=s=>String(s||"").toLowerCase().replace(/[ً-ٰٟـ]/g,"").replace(/[إأآٱ]/g,"ا").replace(/ى/g,"ي").replace(/ة/g,"ه");
+let sp=null,spTab="users",spSeq=0,spTimer=0,searchPool=null;
+function closeSearchPanel(){clearTimeout(spTimer);if(sp){sp.remove();sp=null}document.body.classList.remove("sp-open")}
+function openSearchPanel(){
+ if(sp)return;
+ sp=document.createElement("div");sp.className="sp-overlay";
+ sp.innerHTML='<div class="sp-box" role="dialog" aria-label="البحث"><div class="sp-head"><button type="button" class="sp-back" data-sp="close" aria-label="إغلاق"><i class="fa-solid fa-xmark"></i></button><input id="sp-input" class="field" type="search" placeholder="ابحث في كلمات..." autocomplete="off" maxlength="80" enterkeyhint="search"></div><div class="sp-tabs"><button type="button" class="on" data-sp-tab="users">الأعضاء</button><button type="button" data-sp-tab="posts">المنشورات</button><button type="button" data-sp-tab="videos">الفيديوهات</button></div><div id="sp-results" class="sp-results"><div class="sp-hint">ابحث عن عضو أو منشور أو فيديو، ثم اختر نوع البحث.</div></div></div>';
+ document.body.appendChild(sp);document.body.classList.add("sp-open");
+ spTab="users";
+ sp.addEventListener("click",e=>{
+  if(e.target===sp||e.target.closest("[data-sp=close]"))return closeSearchPanel();
+  const t=e.target.closest("[data-sp-tab]");
+  if(t){spTab=t.dataset.spTab;sp.querySelectorAll("[data-sp-tab]").forEach(b=>b.classList.toggle("on",b===t));runSearch();return}
+  const u=e.target.closest("[data-sp-uid]");if(u){const id=u.dataset.spUid;closeSearchPanel();openUserProfile(id);return}
+  const q=e.target.closest("[data-sp-post]");if(q){const id=q.dataset.spPost;closeSearchPanel();openPostModal(id);return}
+  if(e.target.closest("[data-sp-deep]"))deepSearch();
+ });
+ const inp=$("sp-input");
+ inp.addEventListener("input",()=>{clearTimeout(spTimer);spTimer=setTimeout(runSearch,350)});
+ inp.addEventListener("keydown",e=>{if(e.key==="Enter"){clearTimeout(spTimer);runSearch()}});
+ setTimeout(()=>inp.focus(),60);
+}
+function searchPostPool(){
+ const m=new Map();
+ for(const p of allPosts())m.set(p.id,p);
+ for(const p of (searchPool||[]))m.set(p.id,p);
+ return [...m.values()].filter(p=>p&&p.id&&!isBlocked(authorUid(p))&&canSeePost(p)).sort((a,b)=>ms(b.createdAt)-ms(a.createdAt));
+}
+async function deepSearch(){
+ if(needOnline())return;
+ const box=$("sp-results");if(box)box.innerHTML='<div class="sp-hint">جارٍ تحميل منشورات أقدم...</div>';
+ try{
+  const s=await getDocs(query(collection(db,"posts"),orderBy("createdAt","desc"),limit(200)));
+  searchPool=s.docs.map(d=>({id:d.id,...d.data()}));registerPosts(searchPool);
+ }catch(e){showError(e)}
+ runSearch();
+}
+async function runSearch(){
+ const inp=$("sp-input"),box=$("sp-results");if(!inp||!box)return;
+ const raw=inp.value.trim(),seq=++spSeq;
+ if(raw.length<2){box.innerHTML='<div class="sp-hint">اكتب حرفين على الأقل للبحث.</div>';return}
+ if(spTab==="users"){
+  if(needOnline())return;
+  const term=raw.toLowerCase();
+  try{
+   let us=searchCache.get(term);
+   if(!us){
+    const s=await getDocs(query(collection(db,"users"),orderBy("nameLower"),startAt(term),endAt(term+""),limit(15)));
+    us=s.docs.map(d=>({uid:d.id,...d.data()}));searchCache.set(term,us);
+   }
+   if(seq!==spSeq||!sp)return;
+   const list=us.filter(u=>u.uid!==currentUser.uid&&!isBlocked(u.uid)&&!blockedBy(currentUser.uid,u));
+   box.innerHTML=list.length?list.map(u=>`<button type="button" class="sp-row" data-sp-uid="${esc(u.uid)}"><img class="avatar" src="${avatarOf(u)}" alt=""><div><strong>${esc(nameOf(u))}</strong></div></button>`).join(""):'<div class="sp-hint">لا يوجد أعضاء بهذا الاسم. جرّب بداية الاسم فقط.</div>';
+  }catch(e){showError(e)}
+  return;
+ }
+ const term=normAr(raw),vids=spTab==="videos";
+ const hits=searchPostPool().filter(p=>{
+  if(vids&&!p.videoUrl)return false;
+  const hay=normAr([p.text,nameOf(p.author),p.originalPost?.text,vids?p.videoUrl:""].join(" "));
+  return hay.includes(term);
+ }).slice(0,40);
+ if(seq!==spSeq||!sp)return;
+ let html=hits.length?hits.map(p=>{
+  const snip=String(p.text||p.originalPost?.text||(p.videoUrl?"فيديو":"")).replace(/\s+/g," ").slice(0,140);
+  return `<button type="button" class="sp-row" data-sp-post="${esc(p.id)}"><img class="avatar" src="${avatarOf(p.author)}" alt=""><div><strong>${esc(nameOf(p.author))}</strong><div class="sp-snip">${esc(snip)}</div><span class="muted small">${esc(timeLabel(p.createdAt))}</span></div>${p.videoUrl?'<span class="sp-play">فيديو</span>':""}</button>`}).join(""):`<div class="sp-hint">لا توجد ${vids?"فيديوهات":"منشورات"} مطابقة في المنشورات المحمّلة.</div>`;
+ if(!searchPool&&online())html+='<button type="button" class="btn secondary sp-more" data-sp-deep>ابحث في منشورات أقدم</button>';
+ box.innerHTML=html;
+}
+$("search-open-btn").onclick=openSearchPanel;
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeSearchPanel()});
 
 /* ============ الإشعارات (مجموعة فرعية لكل مستخدم) ============ */
 function updateBadge(){document.querySelectorAll(".nbadge:not(.admin-badge)").forEach(b=>{b.textContent=unreadCount>9?"9+":String(unreadCount);b.classList.toggle("hidden",!unreadCount)})}
@@ -1783,7 +1995,14 @@ $("logo-main-btn").onclick=()=>{
  showModal("كلمات",`<div style="text-align:center;padding:18px 8px 10px"><div style="font-size:27px;font-weight:900;color:var(--p);margin-bottom:14px">كلمات</div><p style="font-size:18px;line-height:2;margin:0 0 20px">«دائماً هناك كلمات لا يجيد كتابتها القلم، تغوص في قعر النفس ولا تطفو»</p><button id="slogan-home-btn" class="btn" type="button">العودة إلى الرئيسية</button></div>`);
  $("slogan-home-btn").onclick=async()=>{await closeModal();showPage("home")};
 };
-$("header-profile-btn").onclick=()=>showPage("profile");
+const profileMenu=$("header-profile-menu");
+function closeProfileMenu(){profileMenu?.classList.add("hidden");$("header-profile-btn")?.setAttribute("aria-expanded","false")}
+$("header-profile-btn").setAttribute("aria-haspopup","menu");
+$("header-profile-btn").setAttribute("aria-expanded","false");
+$("header-profile-btn").onclick=(e)=>{e.stopPropagation();const open=profileMenu.classList.contains("hidden");profileMenu.classList.toggle("hidden",!open);$("header-profile-btn").setAttribute("aria-expanded",String(open))};
+profileMenu?.addEventListener("click",e=>{const b=e.target.closest("[data-profile-menu]");if(!b)return;closeProfileMenu();if(b.dataset.profileMenu==="profile")showPage("profile");else if(b.dataset.profileMenu==="settings")openSettings()});
+document.addEventListener("click",e=>{if(!e.target.closest("#header-profile-menu")&&!e.target.closest("#header-profile-btn"))closeProfileMenu()});
+document.addEventListener("keydown",e=>{if(e.key==="Escape")closeProfileMenu()});
 $("settings-open-btn").onclick=openSettings;$("sidebar-settings-btn").onclick=openSettings;$("right-settings-btn").onclick=openSettings;
 
 let lpT=null,lpFired=false;
@@ -1875,5 +2094,4 @@ setAuthMode("login");
 </script>
 <script type="module" src="./home-plus.js"></script>
 </body>
- 
                           </html>

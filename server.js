@@ -1,76 +1,22 @@
-const http = require('http');
-const { WebSocketServer } = require('ws');
-const { createClient } = require('@supabase/supabase-js');
+/* كلمات — الإضافة الأولى: شاشة رئيسية بمقاس فيسبوك + قسم الاقتراحات (أشخاص + مواقع ومنصات)
+   ملف مستقل: لا يغيّر index.htm إلا بسطر واحد في آخره. */
+import{getApps,getApp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+import{getAuth,onAuthStateChanged}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+import{getFirestore,doc,getDoc,setDoc,addDoc,collection,query,where,orderBy,limit,getDocs,serverTimestamp}from"https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
 
-const PORT = process.env.PORT || 10000;
+const MAX_SECTIONS=12,MAX_SITES=60,PEOPLE_TTL=30*60*1000,SITES_TTL=10*60*1000;
+const Q=s=>document.querySelector(s);
+const esc=v=>String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+const arr=v=>Array.isArray(v)?v:[];
+const safeImg=v=>{v=String(v||"");return /^(https:\/\/|data:image\/(jpeg|png|webp|gif);base64,)/i.test(v)?v:""};
+const safeLink=v=>{try{const u=new URL(String(v||"").trim());return u.protocol==="https:"?u.href:""}catch{return""}};
+const DEF="data:image/svg+xml;charset=UTF-8,"+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" width="100" height="100"><rect width="100" height="100" rx="50" fill="#dbeafe"/><circle cx="50" cy="36" r="19" fill="#0284c7"/><path d="M15 100c2-26 17-38 35-38s33 12 35 38" fill="#0284c7"/></svg>');
+const uid8=()=>Math.random().toString(36).slice(2,9);
+const online=()=>navigator.onLine!==false;
+let tT=null;
+function toast(s){const t=Q("#toast");if(!t)return;t.textContent=s;t.classList.remove("hidden");clearTimeout(tT);tT=setTimeout(()=>t.classList.add("hidden"),3500)}
+const lsGet=k=>{try{return JSON.parse(localStorage.getItem(k)||"null")}catch{return null}};
+const lsSet=(k,v)=>{try{localStorage.setItem(k,JSON.stringify(v))}catch{}};
 
-const RELAY_METADATA = {
-  name: "كلمات والقلم",
-  description: "مرحّل كلمات الخاص لنشر المحتوى والتواصل عبر Nostr",
-  pubkey: "",
-  contact: "bal612.com@gmail.com",
-  supported_nips: [1, 11, 20],
-  software: "kalimat-custom-relay",
-  version: "1.0.0",
-  icon: "https://kalimat-ruddy.vercel.app/icon.png",
-  privacy_policy: "https://kalimat.app/privacy",
-  terms_of_service: "https://kalimat.app/terms"
-};
-
-const server = http.createServer((req, res) => {
-  res.setHeader('Access-Control-Allow-Origin', '*');
-  res.setHeader('Access-Control-Allow-Methods', 'GET, OPTIONS');
-  res.setHeader('Access-Control-Allow-Headers', 'Content-Type, Accept');
-
-  if (req.method === 'OPTIONS') {
-    res.writeHead(200);
-    res.end();
-    return;
-  }
-
-  if (req.headers['accept'] === 'application/nostr+json') {
-    res.writeHead(200, { 'Content-Type': 'application/json' });
-    res.end(JSON.stringify(RELAY_METADATA));
-  } else {
-    res.writeHead(200, { 'Content-Type': 'text/plain; charset=utf-8' });
-    res.end('مرحباً بك في مرحّل كلمات (Kalimat Nostr Relay)');
-  }
-});
-
-const wss = new WebSocketServer({ server });
-
-const SUPABASE_URL = 'https://iewuxvilbwlvvxgdnfze.supabase.co';
-const SUPABASE_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imlld3V4dmlsYndsdnZ4Z2RuZnplIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTc2OTA1OTUsImV4cCI6MjA3MzI2NjU5NX0.S_J4H6Y3oG6wYvWv8F0-fE4uP4nZ5h6g7-h8i9j0k1l2';
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
-
-wss.on('connection', (ws) => {
-  ws.on('message', async (data) => {
-    try {
-      const message = JSON.parse(data.toString());
-      if (message[0] === 'EVENT') {
-        const event = message[1];
-        const { error } = await supabase.from('events').insert([{
-          id: event.id,
-          pubkey: event.pubkey,
-          created_at: event.created_at,
-          kind: event.kind,
-          tags: JSON.stringify(event.tags),
-          content: event.content,
-          sig: event.sig
-        }]);
-
-        if (!error) {
-          ws.send(JSON.stringify(['OK', event.id, true, 'saved']));
-        } else {
-          ws.send(JSON.stringify(['OK', event.id, false, error.message]));
-        }
-      }
-    } catch (e) {
-      console.error(e);
-    }
-  });
-});
-
-server.listen(PORT, '0.0.0.0', () => {
-  console.log(`Relay running on port ${PORT}`);
-});
+let auth,db,user=null,injected=false,tab="people",isAdmin=false,myName="عضو";
+let people=null,peopleAt=0,cfg=null,cfgAt=0,cfgNoRules=false,adminUid="";

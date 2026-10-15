@@ -25,6 +25,11 @@
  var t=0;
  function check(){var v=window.visualViewport;if(v&&v.scale>1.02){reset();clearTimeout(t);t=setTimeout(function(){var w=window.visualViewport;if(w&&w.scale>1.02)reset()},120)}}
  if(window.visualViewport){visualViewport.addEventListener('resize',check);visualViewport.addEventListener('scroll',check)}
+ var ERR=[];function showErr(m){ERR.push(String(m).slice(0,160));var d=D.getElementById('kerr');if(!d&&D.body){d=D.createElement('div');d.id='kerr';d.style.cssText='position:fixed;z-index:99998;bottom:70px;left:6px;right:6px;background:#7a0000;color:#fff;font:11px/1.4 monospace;padding:6px 8px;border-radius:8px;direction:ltr;white-space:pre-wrap;max-height:35vh;overflow:auto';D.body.appendChild(d)}if(d)d.textContent='ERR '+ERR.slice(-4).join('\n')}
+ if(/[?&]debug=1/.test(location.search)){
+  addEventListener('error',function(e){showErr((e.message||'')+' @'+(e.lineno||'')+':'+(e.colno||''))});
+  addEventListener('unhandledrejection',function(e){showErr('promise: '+((e.reason&&(e.reason.code||e.reason.message))||e.reason))});
+ }
  if(/[?&]debug=1/.test(location.search)){
   addEventListener('DOMContentLoaded',function(){
    var d=D.createElement('div');
@@ -230,7 +235,7 @@ body{-webkit-tap-highlight-color:transparent}
 <aside class="sidebar"><div class="card" style="margin-bottom:12px"><div class="row"><img id="menu-user-avatar" class="avatar" alt=""><div style="min-width:0"><strong id="menu-profile-name"></strong></div></div></div>
 <nav class="card nav-list"><button class="nav-btn active" data-page="home"><i class="fa-solid fa-house"></i> الرئيسية</button><button class="nav-btn" data-page="chat"><i class="fa-solid fa-comments"></i> المحادثات</button><button class="nav-btn" data-page="friends"><i class="fa-solid fa-user-group"></i> الأصدقاء</button><button class="nav-btn" data-page="notifications"><i class="fa-solid fa-bell"></i> الإشعارات <em class="nbadge hidden"></em></button><button class="nav-btn" data-page="profile"><i class="fa-solid fa-user"></i> ملفي الشخصي</button><button class="nav-btn" id="sidebar-settings-btn"><i class="fa-solid fa-gear"></i> الإعدادات</button></nav></aside>
 <main class="main-column">
-<section id="page-home" class="page"><h2 class="page-title">الرئيسية</h2>
+<section id="page-home" class="page"><h2 class="page-title">الرئيسية <small class="muted" id="app-ver" style="font-size:11px;font-weight:normal">إصدار 15-10-B1</small></h2>
 <div id="welcome-note" class="card welcome-note hidden"><div class="wn-text"><strong>أهلًا بك في كلمات 👋</strong> شاركنا اقتراحك لنطوّر المنصة معًا.</div><button id="suggest-btn" class="sg-btn" type="button" title="أرسل اقتراحك" aria-label="أرسل اقتراحك"><i class="fa-regular fa-lightbulb"></i></button><button id="welcome-close" class="ib-close" type="button" aria-label="إغلاق">×</button></div>
 <form id="new-post-form" class="card post" style="margin-bottom:14px"><div class="row"><img id="post-user-avatar" class="avatar" alt=""><strong>ماذا يدور في فكرك؟</strong></div>
 <textarea id="new-post-text" class="field" rows="3" maxlength="5000" placeholder="شارك فكرة أو خاطرة أو سؤالًا..."></textarea>
